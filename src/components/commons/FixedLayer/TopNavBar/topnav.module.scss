@@ -1,0 +1,103 @@
+@use "@/styles/index.scss" as s;
+
+
+.container {
+  width: 100%;
+  //max-width: 70rem;
+  padding: 1rem 4rem;
+  //margin: 1rem auto 0;
+  margin: auto 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+
+  pointer-events: none;
+  backdrop-filter: blur(8px);
+
+  //box-shadow: 0 .7rem 1rem 0 rgba(0, 0, 0, .02), 0 -.06rem 1rem 0 rgba(0, 0, 0, .01);
+  box-shadow: 0 .7rem 1rem 0 rgba(0, 0, 0, .02);
+  //border-radius: 500000px;
+
+
+  & > * {
+    pointer-events: initial;
+  }
+
+
+  & :local {
+
+    .logo_stack {
+      p {
+        font-weight: 900;
+      }
+    }
+
+    .logo {
+      max-width: 2.6rem;
+
+      img {
+        object-fit: cover;
+        border-radius: 50%;
+      }
+    }
+
+    .links {
+      display: flex;
+      gap: 1.5rem;
+
+
+      .link {
+
+        &.active {
+          color: s.$clrs-accent;
+          text-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.1);
+          transition: color 0.2s ease-in-out;
+
+          p {
+            font-weight: 900;
+          }
+        }
+
+        p {
+          font-weight: 300;
+          position: relative;
+          text-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.17);
+          text-transform: capitalize;
+          transition: color 0.17s ease-out;
+
+          &::after {
+            content: '';
+            display: block;
+            background-color: s.$clrs-accent;
+            height: 2px;
+            width: 0;
+            transition: width 0.2s ease-in-out;
+          }
+
+          &:hover {
+            color: s.$clrs-accent;
+            text-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.17);
+            transition: color 0.2s ease-in-out;
+
+            // animate the sudo class to underline on hover
+            &::after {
+              width: 100%;
+              transition: width 0.2s ease-in-out;
+            }
+          }
+        }
+
+
+      }
+
+    }
+
+
+  }
+}
+
+.menu_item {
+  margin: 1rem 0;
+  display: block;
+}

@@ -1,0 +1,33 @@
+@use '@/styles' as s;
+
+@mixin rotate-anim{
+  animation: rotate-svg 1s linear infinite;
+}
+
+.container {
+  width: 100%;
+  display: grid;
+  place-items: center;
+  height: 100vh;
+  //border: 1px solid red;
+
+  // @include s.margin(top, 10rem);
+  // @include s.padding(bottom, 8rem);
+
+  & :local {
+    @keyframes rotate-svg {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    // animate the svg to rotate infinitely
+    svg {
+      //@include rotate-anim;
+      animation: rotate-svg 1s linear infinite;
+
+    }
+
+
+  }
+}

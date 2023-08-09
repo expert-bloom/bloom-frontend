@@ -1,0 +1,87 @@
+@use '@/styles/index.scss' as s;
+
+.container {
+  width: 100%;
+  margin: 15rem 0 8vmax;
+
+  //border: 1px solid red;
+
+  & :local {
+
+    .wrapper {
+      max-width: 75rem;
+      margin: 0 auto;
+    }
+
+    .title {
+      position: relative;
+      font-size: 5rem;
+      text-align: center;
+      text-decoration: underline;
+      font-weight: 300;
+    }
+
+    .content {
+      box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.03);
+      border: 1px solid #f3f3f3;
+      padding: 8rem;
+      border-radius: 1rem;
+      display: flex;
+      flex-flow: column;
+      margin-top: 4rem;
+
+
+      .item {
+        //margin: 1rem 0;
+        padding: 1rem 0;
+        overflow: hidden;
+
+        &:not(:first-child) {
+          border-top: 1px solid lightblue;
+        }
+
+        header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          cursor: pointer;
+          background-color: white;
+
+          //border: 1px solid blue;
+
+          &.selected {
+            padding-bottom: 0;
+          }
+
+          p {
+            //font-weight: 400;
+            font-size: 1.2rem;
+            //font-family: s.$fonts-sofia-pro-soft;
+            //margin-top: 1.5rem;
+          }
+        }
+
+        .answer {
+          margin-top: 1rem;
+          border-top: 1px solid lightblue;
+          padding-top: 1.5rem;
+          //display: none;
+
+          //border: 1px solid yellow;
+
+          &.selected {
+            display: block;
+          }
+
+          p {
+            color: #343434;
+            font-weight: 300;
+            font-size: 1.1rem;
+            //display: none;
+          }
+        }
+      }
+
+    }
+  }
+}

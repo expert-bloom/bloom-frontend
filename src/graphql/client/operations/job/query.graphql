@@ -1,0 +1,11 @@
+query FindAccount($input: AccountInput!) {
+    findAccount(input: $input){
+        errors {
+            message
+        }
+        account {
+            ...AuthAccountPayload
+        }
+    }
+}
+

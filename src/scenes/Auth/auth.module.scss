@@ -1,0 +1,12 @@
+@use '@/styles/index.scss' as s;
+
+.container{
+  width: 100%;
+
+  & :local{
+
+    .wrapper{
+
+    }
+  }
+}

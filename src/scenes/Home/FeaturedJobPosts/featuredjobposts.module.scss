@@ -1,0 +1,106 @@
+@use '@/styles/index.scss' as s;
+
+.container {
+  width: 100%;
+  padding: 10vmax 0;
+  //border: 1px solid gray;
+  margin-top: 5rem;
+
+  & :local {
+
+    .wrapper {
+
+      .swiper {
+        border: 1px solid blue;
+        padding: 1rem;
+        //height: 50vmax;
+
+
+        .slide{
+          position: relative;
+          border: 2px solid #000;
+          padding: .5rem;
+          //width: max-content !important;
+          height: max-content !important;
+          max-width: max-content;
+        }
+      }
+
+
+      .card {
+        border: 1px solid red;
+        padding: 6rem;
+        display: grid;
+        place-items: center;
+        font-size: 2rem;
+        //width: 100%;
+        //max-width: 30rem;
+        max-width: 100%;
+      }
+    }
+  }
+}
+
+.container {
+  & :global {
+
+    @at-root {
+      & :global{
+        //--swiper-scrollbar-top: 110%;
+      }
+    }
+
+    .swiper-scrollbar {
+      border-radius: var(--swiper-scrollbar-border-radius, 10px);
+      position: relative;
+      -ms-touch-action: none;
+      background: var(--swiper-scrollbar-bg-color, rgba(0, 0, 0, .1));
+
+      .swiper-scrollbar-disabled > &,
+      &.swiper-scrollbar-disabled {
+        display: none !important;
+      }
+
+      .swiper-horizontal > &,
+      &.swiper-scrollbar-horizontal {
+        position: absolute;
+        left: var(--swiper-scrollbar-sides-offset, 1%);
+        bottom: var(--swiper-scrollbar-bottom, 4px);
+        top: var(--swiper-scrollbar-top, auto);
+        z-index: 50;
+        height: var(--swiper-scrollbar-size, 4px);
+        width: calc(100% - 2 * var(--swiper-scrollbar-sides-offset, 1%));
+      }
+
+      .swiper-vertical > &,
+      &.swiper-scrollbar-vertical {
+        position: absolute;
+        left: var(--swiper-scrollbar-left, auto);
+        right: var(--swiper-scrollbar-right, 4px);
+        top: var(--swiper-scrollbar-sides-offset, 1%);
+        z-index: 50;
+        width: var(--swiper-scrollbar-size, 4px);
+        height: calc(100% - 2 * var(--swiper-scrollbar-sides-offset, 1%));
+      }
+    }
+
+    .swiper-scrollbar-drag {
+      height: 100%;
+      width: 100%;
+      position: relative;
+      background: var(--swiper-scrollbar-drag-bg-color, rgba(0, 0, 0, 0.5));
+      border-radius: var(--swiper-scrollbar-border-radius, 10px);
+      left: 0;
+      top: 0;
+    }
+
+    .swiper-scrollbar-cursor-drag {
+      cursor: move;
+    }
+
+    .swiper-scrollbar-lock {
+      display: none;
+    }
+
+  }
+}

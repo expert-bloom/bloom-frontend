@@ -1,0 +1,63 @@
+@use '@/styles/index.scss' as s;
+
+.container {
+  width: 100%;
+  margin: 7vmax 0;
+  overflow-x: hidden;
+  //border: 1px solid red;
+
+  & :local {
+    .txt {
+      font-size: 6rem;
+      font-weight: 300;
+      white-space: nowrap;
+      padding-left: 6rem;
+      //display: inline-block;
+      //border: 1px solid blue;
+    }
+
+    .logo_container {
+      position: relative;
+      //border: 1px solid blue;
+      max-width: 90rem;
+      margin: 0 auto;
+      overflow-x: hidden;
+      //border: 1px solid red;
+
+      // white gradient on the left and right for marquee effect
+      &::before, &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 5rem;
+        background: linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+        z-index: 1;
+      }
+
+      &::before {
+        right: 0;
+        background: linear-gradient(to left, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
+
+      }
+
+
+    }
+
+    .logo_ipsum {
+      display: flex;
+      align-items: center;
+      gap: 3rem;
+      margin-top: 2rem;
+      margin-left: 3rem;
+      //border: 1px solid red;
+
+      //border: 1px solid red;
+
+      img {
+        filter: grayscale(100);
+        opacity: .3;
+      }
+    }
+  }
+}

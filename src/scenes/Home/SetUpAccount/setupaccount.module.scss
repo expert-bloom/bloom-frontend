@@ -1,0 +1,38 @@
+@use '@/styles/index.scss' as s;
+
+.container{
+  width: 100%;
+  padding: 10vmax 0;
+  background: #f7f9fb;
+
+
+
+  & :local{
+
+    .wrapper{
+      max-width: 80rem;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .title{
+        font-size: 4rem;
+        font-weight: 300;
+        letter-spacing: 0;
+        text-decoration: underline;
+      }
+
+      form{
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+
+        & > :first-child{
+          width: 20rem;
+          scale: 1.05;
+        }
+      }
+    }
+  }
+}

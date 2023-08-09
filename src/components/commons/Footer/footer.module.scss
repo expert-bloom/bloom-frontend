@@ -1,0 +1,83 @@
+@use '@/styles/index.scss' as s;
+
+.container {
+  position: relative;
+  width: 100%;
+  padding: 2rem;
+  background-color: rgb(33, 33, 61);
+  color: white;
+
+  @include s.media-breakpoint-up(md){
+    padding: 2rem 6rem;
+  }
+
+  & :local {
+
+    .links{
+      margin: 2rem auto;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      //max-width: 80%;
+
+      .logo_stack {
+        p {
+          font-weight: 900;
+        }
+      }
+
+      .logo {
+        max-width: 2.6rem;
+
+        img {
+          object-fit: cover;
+          border-radius: 50%;
+        }
+      }
+
+      .row{
+        display: flex;
+        flex-flow: column;
+        gap: 1rem;
+        max-width: 30ch;
+
+        button{
+          background-color: rgba(139, 140, 248, 0.1);
+          border: 1px solid rgba(139, 140, 248, 0.2);
+          font-weight: 300;
+          font-size: 1rem;
+          max-width: 14rem;
+        }
+      }
+    }
+
+    .contact_link{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 5rem;
+
+      p{
+        font-weight: 300;
+      }
+
+      button{
+        border: 1px solid white;
+      }
+    }
+
+    hr{
+      margin-top: 1rem;
+      border-color: gray;
+    }
+
+    .copyright{
+      width: 100%;
+      text-align: center;
+      p{
+        margin-top: 3rem;
+        font-weight: 300;
+      }
+    }
+  }
+}

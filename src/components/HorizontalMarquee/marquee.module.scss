@@ -1,0 +1,29 @@
+@use 'src/styles/index' as s;
+
+.container {
+  width: 100%;
+  //margin-bottom: 10vmax;
+
+  & :local {
+
+    .wrapper {
+
+      max-width: 100rem;
+      margin: 0 auto;
+      // white gradient for scrolling content horizontaly on the start and end of the container
+      background: linear-gradient(to right, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 5%, rgba(255, 255, 255, 0) 10%, rgba(255, 255, 255, 0) 90%, rgba(255, 255, 255, 1) 95%, rgba(255, 255, 255, 1) 100%);
+
+      //border: 1px solid red;
+      padding: .2rem;
+
+      .scroller{
+        display: flex;
+        overflow-x: visible;
+        //gap: 5rem;
+        padding: .3rem;
+        width: max-content;
+        //border: 1px dashed #000;
+      }
+    }
+  }
+}

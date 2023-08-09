@@ -1,0 +1,15 @@
+@use '@/styles/index.scss' as s;
+
+.container{
+  width: 100%;
+
+  & :global{
+    .MuiCardHeader-root{
+      border-bottom: solid 1px #e1e1e1;
+    }
+  }
+
+  & :local{
+
+  }
+}

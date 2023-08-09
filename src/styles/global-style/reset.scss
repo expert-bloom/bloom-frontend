@@ -1,0 +1,198 @@
+@use "normalize";
+@use "../variables/fonts" as f;
+@use "../mixins/font" as *;
+@use "../variables/breakpoints" as *;
+@use "../variables/colors" as *;
+
+
+:root {
+  --coef-indent: 1; // for margin and padding
+  --coef-title: 1; // for title font-size
+  --coef-text: 1; // for regular text which size less than 20px font-size
+  --coef-size: 1; // for element width, height
+  --column-width: 100vw / 64; // column width
+
+
+  @media screen and (min-width: 1600px) {
+    --coef-indent: 1.25;
+    --coef-title: 1.25;
+    --coef-text: 1.25;
+    --coef-size: 1.25;
+  }
+
+  @media screen and (max-width: 1024px) {
+    --coef-title: 0.9;
+    --coef-text: 0.9;
+  }
+
+  @media screen and (max-width: $md) {
+    --coef-indent: 0.7;
+    --coef-title: 0.8;
+    --coef-size: 0.8;
+  }
+  @media screen and (max-width: $sm) {
+    --coef-indent: 0.5;
+    --coef-title: 0.6;
+    --coef-size: 0.7;
+  }
+
+
+  /* @media screen and (min-width: 1920px) {
+     font-size: .84vw
+   }
+
+   @media screen and (min-width: 1440px) {
+     font-size: .926vw
+   }
+
+   @media screen and (min-width: 1280px) {
+     font-size: 1vw
+   }
+
+   @media screen and (max-width: 991px) {
+     font-size: 1.44vw
+   }
+
+   @media screen and (max-width: 767px) {
+     font-size: 1.9vw
+   }
+
+   @media screen and (max-width: 479px) {
+     font-size: 3.1vw
+   }*/
+
+
+}
+
+html {
+  box-sizing: border-box;
+}
+
+*, *::after, *::before {
+  box-sizing: inherit;
+}
+
+html,
+body {
+  //height: 100%;
+
+   // filepond global style
+  .filepond--root {
+    font-family: 'SofiaProSoft', sans-serif;
+  }
+
+}
+
+* {
+  outline: none;
+}
+
+html {
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  font-size: 18px;
+
+  font-family: f.$sofia-pro;
+  //font-weight: 300;
+
+
+  @include fluid-type(1920px, 5120px, 18px, 20px);
+
+  @media screen and (max-width: 1920px) {
+    font-size: 16px;
+
+  }
+  @media screen and (max-width: 1400px) {
+    font-size: 14px;
+
+  }
+  @media screen and (max-width: 1200px) {
+    //font-size: 13.2px;
+
+  }
+
+  @media screen and (max-width: 600px) {
+    //font-size: 16px;
+
+  }
+}
+
+body {
+  position: relative;
+  margin: 0;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+
+  //background-color: initial !important;
+  //color: initial !important;
+  //background-color: rgb(16, 16, 16) !important;
+  //color: rgba(242,241,243,1.00) !important;
+
+
+  /* width */
+  ::-webkit-scrollbar {
+    width: 3px;
+    scrollbar-width: thin;
+    cursor: pointer;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    cursor: pointer;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: $accent;
+    border-radius: 50000px;
+    cursor: pointer;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #b40d0d;
+  }
+
+  ::-webkit-scrollbar {
+    //width: 0.2rem;
+  }
+
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #3719ca #1e213d;
+}
+
+*::-webkit-scrollbar {
+  width: 0;
+}
+
+* {
+  outline: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  //margin: 0;
+  font-family: f.$gramatika !important;
+  font-weight: 900 !important;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}

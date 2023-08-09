@@ -1,0 +1,67 @@
+@use '@/styles/index.scss' as s;
+
+@mixin cardListStyle {
+  .tl {
+    display: grid;
+    //place-content: center;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.4rem;
+    grid-row-gap: 3rem;
+
+    @include s.media-breakpoint-up(md) {
+      grid-template-columns: repeat(auto-fit, minmax(15rem, 19rem));
+    }
+
+    @include s.media-breakpoint-up(xl) {
+      //grid-template-columns: repeat(auto-fit, minmax(15rem, 19rem));
+    }
+
+    //border: 1px solid red;
+
+    .t_card {
+      flex: 1;
+
+      h6 {
+        letter-spacing: .04vmax;
+        word-spacing: .6vmax;
+      }
+
+      .img_wrapper {
+        position: relative;
+        aspect-ratio: 1/1.1;
+        overflow: hidden;
+        border-radius: 1rem;
+        margin: 0 auto;
+
+        img {
+          display: block;
+          object-fit: cover;
+          border-radius: 1rem;
+          overflow: hidden;
+          width: 100%;
+          scale: 1.08;
+        }
+      }
+
+      .text {
+        padding: 0 1rem;
+
+        .detail {
+          display: flex;
+          justify-content: space-between;
+          gap: 1rem;
+        }
+      }
+
+      .profile_detail {
+        color: gray;
+        display: flex;
+        flex-flow: column;
+        align-items: flex-start;
+        justify-content: space-between;
+
+      }
+    }
+  }
+
+}

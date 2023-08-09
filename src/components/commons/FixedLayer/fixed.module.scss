@@ -1,0 +1,30 @@
+@use "@/styles" as s;
+
+
+.container {
+  position: fixed;
+  z-index: 10;
+  inset: 0;
+  pointer-events: none;
+
+  display: grid;
+  place-items: center;
+  align-content: space-between;
+
+  & > * {
+    pointer-events: auto;
+  }
+
+
+  & :local {
+
+    .gradient{
+      z-index: -1;
+
+    }
+
+  }
+
+  //border: thick solid tomato;
+}
+

@@ -1,0 +1,32 @@
+@use '@/styles/index.scss' as s;
+
+.container{
+  width: 100%;
+  display: flex;
+  flex-flow: column;
+  gap: 2.5rem;
+
+  // @include s.margin(top, 10rem);
+  // @include s.padding(bottom, 8rem);
+
+  & :local{
+
+    //border: 1px solid red;
+
+    .step_title{
+      font-size: 2rem;
+      font-weight: 300;
+    }
+
+    .ver{
+      display: flex;
+      flex-flow: column;
+      flex: 1;
+      justify-content: space-between;
+    }
+
+    .wrapper{
+
+    }
+  }
+}

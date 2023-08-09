@@ -1,0 +1,144 @@
+@use '@/styles/index.scss' as s;
+
+.container {
+  position: relative;
+  width: 100%;
+  padding: 10vmax 0;
+
+
+  // @include s.margin(top, 10rem);
+  // @include s.padding(bottom, 8rem);
+
+  & :local {
+
+    .decor{
+      position: absolute;
+      top: 40vh;
+      z-index: -1;
+    }
+
+    .wrapper {
+      display: flex;
+      flex-flow: column;
+      max-width: 1500px;
+      margin: 0 auto;
+      z-index: 1;
+
+
+      header {
+        max-width: 100%;
+
+        .divider {
+          margin-top: 1rem;
+          width: calc(1500px + (100vw - 1500px));
+          transform: translateX(calc((100vw - 1500px) / 2 * -1));
+          //style={{ width: '100%', borderColor: 'lightgray' }}
+          border-color: lightgray;
+        }
+
+        .title {
+          color: #414141;
+          font-family: 'SofiaPro', sans-serif !important;
+          font-weight: 800 !important;
+          letter-spacing: 0;
+          align-self: flex-start;
+        }
+      }
+    }
+
+    .content {
+      display: flex;
+      gap: 3rem;
+      margin-top: 5rem;
+
+      & > * {
+        //boxshadow
+        box-shadow: 0 .7rem 1rem 0 rgba(0, 0, 0, .05), 0 -.06rem 1rem 0 rgba(0, 0, 0, .05);
+        //height: 100%;
+      }
+
+    }
+
+    .left {
+      position: sticky;
+      top: 20%;
+      align-self: flex-start;
+      padding: 2rem;
+      flex: .27;
+      border-radius: 1rem;
+      backdrop-filter: blur(4px);
+
+
+      header{
+        width: calc(100% + 4rem);
+        //border-bottom: thin solid gray;
+        //border: 1px solid red;
+
+        p{
+          font-size: 1.5rem;
+          color: gray;
+        }
+      }
+
+      .filters{
+        margin-top: 2rem;
+
+        & > :not(:first-child) {
+          margin-top: 1rem;
+        }
+      }
+    }
+
+    .right {
+      padding: 0 3rem 3rem;
+      flex: .75;
+      box-shadow: none;
+      //border: 1px solid gray;
+
+      & > :not(:first-child) {
+        margin-top: 4rem;
+      }
+
+      .job_card {
+        padding: 3rem 4rem;
+
+        //border-radius: 1.5rem;
+        //box-shadow: 0 .7rem 1rem 0 rgba(0, 0, 0, .05), 0 -.06rem 1rem 0 rgba(0, 0, 0, .05);
+        // make the card look like a paper and add shadow and rounded corners
+        //background-color: white;
+
+        border-radius: 1.5rem;
+        box-shadow: 0 .7rem 1rem 0 rgba(0, 0, 0, .05), 0 -.06rem 1rem 0 rgba(0, 0, 0, .05);
+
+
+        display: flex;
+        flex-flow: column;
+        gap: 1rem;
+
+        .hor {
+          display: flex;
+          gap: 1rem;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .title {
+          //font-size: 1.2rem;
+        }
+
+        .detail {
+          color: gray;
+          font-weight: 300;
+          letter-spacing: 0.04vmax;
+          font-size: 1rem;
+        }
+
+        .tags {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        }
+      }
+    }
+  }
+}

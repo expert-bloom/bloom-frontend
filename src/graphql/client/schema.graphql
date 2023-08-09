@@ -1,0 +1,229 @@
+# This file was generated. Do not edit manually.
+
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+interface IAccount {
+    accountType: AccountType!
+    createdAt: DateTime!
+    email: String!
+    firstName: String!
+    id: String!
+    image: String
+    lastName: String!
+    phone: String
+}
+
+interface PayloadError {
+    errors: [Error!]!
+}
+
+type Account implements IAccount {
+    accountType: AccountType!
+    createdAt: DateTime!
+    email: String!
+    firstName: String!
+    id: String!
+    image: String
+    lastName: String!
+    phone: String
+}
+
+type Affiliate implements IAccount {
+    accountType: AccountType!
+    createdAt: DateTime!
+    email: String!
+    firstName: String!
+    id: String!
+    image: String
+    lastName: String!
+    phone: String
+}
+
+type AffiliateLight {
+    id: String!
+}
+
+type Applicant implements IAccount {
+    accountType: AccountType!
+    createdAt: DateTime!
+    email: String!
+    experienceYear: Int
+    firstName: String!
+    gender: String
+    id: String!
+    image: String
+    lastName: String!
+    phone: String
+    resume: String
+}
+
+type ApplicantLight {
+    experienceYear: Int
+    gender: String
+    id: String!
+    resume: String
+}
+
+type AuthAccountPayload implements IAccount {
+    accountType: AccountType!
+    affiliate: AffiliateLight
+    applicant: ApplicantLight
+    company: CompanyLight
+    createdAt: DateTime!
+    email: String!
+    firstName: String!
+    id: String!
+    image: String
+    lastName: String!
+    phone: String
+}
+
+type AuthPayload implements PayloadError {
+    account: AuthAccountPayload
+    errors: [Error!]!
+}
+
+type Company implements IAccount {
+    accountType: AccountType!
+    companyName: String
+    createdAt: DateTime!
+    email: String!
+    firstName: String!
+    id: String!
+    image: String
+    lastName: String!
+    logo: String
+    phone: String
+}
+
+type CompanyLight {
+    companyName: String
+    id: String!
+    logo: String
+}
+
+type Error {
+    message: String!
+}
+
+type JobPost {
+    _id: String!
+    compensation: String!
+    description: String!
+    englishLevel: String
+    isVisible: Boolean!
+    jobCategory: [String]!
+    jobDeadline: DateTime!
+    jobExperience: Int!
+    jobSkills: [String!]!
+    jobType: String!
+    jobVacancy: Int!
+    otherLanguages: [String!]!
+    salary: [Int]!
+    title: String!
+}
+
+type Mutation {
+    createJobPost(input: CreateJobPostInput!): JobPost
+    logIn(input: LoginInput!): AuthPayload!
+    logInOAuth(input: LoginInput!): AuthPayload!
+    signUp(input: SignUpInput!): AuthPayload!
+    signUpOAuth(input: OAuthSignUpInput!): AuthPayload!
+}
+
+type Query {
+    findAccount(input: AccountInput!): AuthPayload
+    getJobPosts(input: JopPostFilterInput!): [JobPost!]!
+    me: String
+    sayHi: String
+}
+
+enum AccountType {
+    AFFILIATE
+    APPLICANT
+    COMPANY
+}
+
+enum Gender {
+    FEMALE
+    MALE
+    OTHER
+}
+
+"A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar."
+scalar DateTime
+
+input AccountInput {
+    email: String
+    id: ID
+    phone: String
+}
+
+input CreateJobPostInput {
+    company: String!
+    compensation: String!
+    description: String!
+    email: String!
+    englishLevel: String
+    isVisible: Boolean!
+    jobCategory: [String]!
+    jobDeadline: String!
+    jobExperience: Int!
+    jobSkills: [String!]!
+    jobType: String!
+    jobVacancy: Int!
+    otherLanguages: [String]!
+    salary: [Int]!
+    title: String!
+}
+
+input JopPostFilterInput {
+    company: String
+}
+
+input LoginInput {
+    email: String!
+    password: String!
+}
+
+input OAuthAccountInput {
+    accountType: AccountType!
+    email: String!
+    firstName: String!
+    image: String
+    lastName: String!
+    userName: String
+}
+
+input OAuthInput {
+    accessToken: String!
+    expires: DateTime!
+    provider: String!
+    providerAccountId: String!
+    refreshToken: String
+    tokenType: String!
+}
+
+input OAuthLoginInput {
+    OAuth: OAuthInput!
+    account: SignUpInput!
+}
+
+input OAuthSignUpInput {
+    OAuth: OAuthInput!
+    account: OAuthAccountInput!
+}
+
+input SignUpInput {
+    accountType: AccountType!
+    country: String!
+    email: String!
+    firstName: String!
+    image: String
+    lastName: String!
+    name: String
+    password: String!
+}
