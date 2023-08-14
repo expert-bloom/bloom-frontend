@@ -1,24 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import s from './jobdetails.module.scss';
+
+import { DateRangeSharp } from '@mui/icons-material';
 import {
   Autocomplete,
+  FormControlLabel,
   FormLabel,
   InputAdornment,
-  Slider,
   type SliderProps,
   Stack,
+  Switch,
   TextField,
   Typography,
 } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers';
-import moment from 'moment/moment';
-import { DateRangeSharp } from '@mui/icons-material';
-import { useFormikContext } from 'formik';
-import { motion } from 'framer-motion';
-import { type FormValuesType } from 'src/scenes/CreateJobPost';
 import debounce from '@mui/utils/debounce';
+import { DatePicker } from '@mui/x-date-pickers';
+import { useFormikContext } from 'formik';
+import moment from 'moment/moment';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
+
+import { type FormValuesType } from 'src/scenes/CreateJobPost';
+
+import s from './jobdetails.module.scss';
 
 const jobTypeOptions = [
   { label: 'Full-time' },
@@ -35,9 +38,22 @@ const jobCategoryOptions = [
     label: 'Marketing',
   },
   { label: 'IT' },
-  { label: 'Frontend' },
-  { label: 'Backend' },
-  { label: 'Fullstack' },
+];
+
+const jobSalaryType = [
+  {
+    label: 'Monthly',
+  },
+  { label: 'Hourly' },
+  { label: 'Contractual' },
+];
+
+const workLocation = [
+  {
+    label: 'Remote',
+  },
+  { label: 'Onsite' },
+  { label: 'Hybrid' },
 ];
 
 const minDistance = 10;
@@ -50,7 +66,11 @@ export const schema = toFormikValidationSchema(
       .nonempty()
       .min(10, 'Too short description')
       .max(500, 'Too long description'),
+
+    // salary: z.union([z.tuple([z.number(), z.number()]), z.number()]),
   }),
+
+  // salary type, monthly, hourly, contractual
 );
 
 const JobDetails = () => {
@@ -60,6 +80,8 @@ const JobDetails = () => {
   const [priceRange, setPriceRange] = React.useState<number[]>([20, 37]);
   const [labelDisplay, setValueLabelDisplay] =
     useState<SliderProps['valueLabelDisplay']>('auto');
+
+  const [isFixed, setIsFixed] = useState(true);
 
   useEffect(() => {
     // console.log('formik: ', formik);
@@ -97,6 +119,12 @@ const JobDetails = () => {
     [],
   );
 
+  const inputProps = {
+    InputProps: {
+      endAdornment: <InputAdornment position="start">$</InputAdornment>,
+    },
+  };
+
   return (
     <div className={s.container}>
       <Typography className={s.step_title} gutterBottom>
@@ -114,6 +142,22 @@ const JobDetails = () => {
           label="Job Title"
           value={values.title}
           onChange={handleChange}
+        />
+      </Stack>
+
+      <Stack spacing={0.5} flex="1" style={{ width: '100%' }}>
+        <FormLabel>Job Description</FormLabel>
+        <TextField
+          name="description"
+          required
+          fullWidth
+          label="Job Description"
+          multiline
+          rows={4}
+          onChange={handleChange}
+          value={values.description}
+          error={Boolean(formik.errors.description)}
+          helperText={formik.errors.description as string}
         />
       </Stack>
 
@@ -146,7 +190,7 @@ const JobDetails = () => {
         </Stack>
 
         <Stack spacing={0.5} flex="1" justifyContent="space-between">
-          <FormLabel>What Category are you looking for? (max 5)</FormLabel>
+          <FormLabel>Category</FormLabel>
 
           <Autocomplete
             disablePortal
@@ -227,28 +271,128 @@ const JobDetails = () => {
       </Stack>
 
       <Stack spacing={3} direction="row">
-        <motion.div
-          className={s.ver}
-          onHoverStart={() => {
-            setValueLabelDisplay('on');
-          }}
-          onHoverEnd={() => {
-            setValueLabelDisplay('auto');
-          }}
-        >
-          <FormLabel>What is the salary range?</FormLabel>
+        <Stack spacing={0.5} flex="1" justifyContent="space-between">
+          <FormLabel>Salary compensation</FormLabel>
 
-          <Slider
-            getAriaLabel={() => 'Minimum distance'}
-            value={values.salary}
-            onChange={debouncedPriceRangeOnChange}
-            valueLabelDisplay={labelDisplay}
-            valueLabelFormat={(x) => `$ ${x}`}
-            disableSwap
+          <Autocomplete
+            disablePortal
+            fullWidth
+            options={jobSalaryType}
+            sx={{ width: 300 }}
+            value={values.compensation}
+            onChange={(event, newValue) => {
+              void formik.setFieldValue('compensation', newValue).then();
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                name="compensation"
+                label="Compensation"
+                fullWidth
+                required
+              />
+            )}
           />
-        </motion.div>
+        </Stack>
 
         <Stack spacing={0.5} flex="1" justifyContent="space-between">
+          <FormLabel>Work Location</FormLabel>
+
+          <Autocomplete
+            disablePortal
+            fullWidth
+            options={workLocation}
+            sx={{ width: 300 }}
+            value={values.location}
+            onChange={(event, newValue) => {
+              void formik.setFieldValue('location', newValue).then();
+            }}
+            isOptionEqualToValue={(option, value) =>
+              option.label === value.label
+            }
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                name="location"
+                label="Work Location"
+                fullWidth
+                required
+              />
+            )}
+          />
+        </Stack>
+      </Stack>
+
+      <Stack spacing={3} direction="row" alignItems="center">
+        <Stack spacing={0.5} flex="1">
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <FormLabel>Salary</FormLabel>
+            <FormControlLabel
+              sx={{ mr: '.6rem' }}
+              control={<Switch size="small" checked={isFixed} />}
+              label={<Typography variant="body2">Fixed</Typography>}
+              labelPlacement="start"
+              onChange={(event, checked) => {
+                setIsFixed(checked);
+                console.log('event: ', event);
+              }}
+            />
+          </Stack>
+
+          {isFixed ? (
+            <TextField
+              name="salary"
+              required
+              fullWidth
+              label="Salary"
+              type="number"
+              onChange={(value) => {
+                void formik.setFieldValue('salary', [value.target.value]);
+              }}
+              value={values.salary[0]}
+              {...inputProps}
+            />
+          ) : (
+            <Stack direction="row" gap={1}>
+              <TextField
+                name="salary"
+                required
+                fullWidth
+                label="From"
+                type="number"
+                onChange={(value) => {
+                  void formik.setFieldValue('salary', [
+                    value.target.value,
+                    values.salary[1],
+                  ]);
+                }}
+                value={values.salary[0]}
+                {...inputProps}
+              />
+              <TextField
+                name="salary"
+                required
+                fullWidth
+                label="To"
+                type="number"
+                onChange={(value) => {
+                  void formik.setFieldValue('salary', [
+                    values.salary[0],
+                    value.target.value,
+                  ]);
+                }}
+                value={values.salary[1]}
+                {...inputProps}
+              />
+            </Stack>
+          )}
+        </Stack>
+
+        <Stack spacing={0.5} flex="1" justifyContent="flex-start">
           <FormLabel>Contact Email Address</FormLabel>
 
           <TextField
@@ -261,22 +405,6 @@ const JobDetails = () => {
             value={values.email}
           />
         </Stack>
-      </Stack>
-
-      <Stack spacing={0.5} flex="1" style={{ width: '100%' }}>
-        <FormLabel>Job Description</FormLabel>
-        <TextField
-          name="description"
-          required
-          fullWidth
-          label="Job Description"
-          multiline
-          rows={4}
-          onChange={handleChange}
-          value={values.description}
-          error={Boolean(formik.errors.description)}
-          helperText={formik.errors.description as string}
-        />
       </Stack>
     </div>
   );

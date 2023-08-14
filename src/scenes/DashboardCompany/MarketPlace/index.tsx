@@ -1,5 +1,5 @@
 import React from 'react';
-import s from './marketplace.module.scss';
+
 import {
   Alert,
   AlertTitle,
@@ -8,18 +8,14 @@ import {
   CardActions,
   CardContent,
   CardHeader,
-  IconButton,
   Typography,
 } from '@mui/material';
 import Link from 'next/link';
-import { useGetJobPostsQuery } from '@/graphql/client/gql/schema';
+
+import s from './marketplace.module.scss';
 
 const MarketPlace = () => {
   const posts = [];
-
-  const jobPosts = useGetJobPostsQuery({
-    variables: {},
-  });
 
   return (
     <Card className={s.container}>

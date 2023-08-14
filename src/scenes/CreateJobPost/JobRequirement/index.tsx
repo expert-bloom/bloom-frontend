@@ -1,34 +1,47 @@
 import React, { useEffect, useState } from 'react';
-import s from './jobrequirment.module.scss';
+
+import {
+  AddCircleOutlineTwoTone,
+  CircleTwoTone,
+  Delete,
+  Edit,
+} from '@mui/icons-material';
 import {
   Autocomplete,
+  Box,
+  Button,
   Checkbox,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControl,
   FormControlLabel,
   FormGroup,
   FormLabel,
+  IconButton,
+  InputLabel,
+  List,
+  ListItem,
+  ListItemText,
+  MenuItem,
+  OutlinedInput,
+  Radio,
+  RadioGroup,
+  Select,
+  SelectChangeEvent,
   Stack,
   TextField,
   Typography,
 } from '@mui/material';
 import { useFormikContext } from 'formik';
+import { z } from 'zod';
+import { toFormikValidationSchema } from 'zod-formik-adapter';
+
 import { type FormValuesType } from 'src/scenes/CreateJobPost';
 
-const jobSalaryType = [
-  {
-    label: 'Monthly',
-  },
-  { label: 'Hourly' },
-  { label: 'Contractual' },
-];
-
-const workLocation = [
-  {
-    label: 'Remote',
-  },
-  { label: 'Onsite' },
-  { label: 'Hybrid' },
-];
+import s from './jobrequirment.module.scss';
 
 const jobExperience = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
@@ -42,32 +55,47 @@ const skillOption = [
   { label: 'C++' },
 ];
 
+const languageLevel = ['Fluent', 'Conversational', 'Basic'];
+const languages = [
+  'Spanish',
+  'French',
+  'German',
+  'Italian',
+  'Portuguese',
+  'Russian',
+  'Chinese',
+  'Japanese',
+  'Arabic',
+  'Hindi',
+];
+
+export const schema = toFormikValidationSchema(z.object({}));
+
 const JobRequirement = () => {
-  const [state, setState] = React.useState({
-    gilad: true,
-    jason: false,
-    antoine: false,
-  });
-
-  const { gilad, jason, antoine } = state;
-
-  const [languageLevel, setLanguageLevel] = useState([
-    { label: 'Fluent', checked: false },
-    {
-      label: 'Conversational',
-      checked: false,
-    },
-    {
-      label: 'Basic',
-      checked: false,
-    },
-  ]);
+  const [qualification, setQualification] = useState('');
+  const [open, setOpen] = React.useState(false);
+  const [age, setAge] = React.useState<number | string>('');
 
   const formik = useFormikContext<FormValuesType>();
   const { values, handleChange } = formik;
+  const [selectedLanguage, setSelectedLanguage] = useState({
+    language: '',
+    level: '',
+  });
+
+  const [isError, setIsError] = useState({
+    language: false,
+    level: false,
+  });
+
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedLanguage({ language: '', level: '' });
+    setIsError({ language: false, level: false });
+  };
 
   useEffect(() => {
-    // console.log('job-req formik: ', formik.values);
+    console.log('job-req formik: ', formik.values);
   }, [values]);
 
   return (
@@ -75,59 +103,6 @@ const JobRequirement = () => {
       <Typography className={s.step_title} gutterBottom>
         Job Requirements
       </Typography>
-
-      <Stack spacing={3} direction="row">
-        <Stack spacing={0.5} flex="1" justifyContent="space-between">
-          <FormLabel>Salary compensation</FormLabel>
-
-          <Autocomplete
-            disablePortal
-            fullWidth
-            options={jobSalaryType}
-            sx={{ width: 300 }}
-            value={values.compensation}
-            onChange={(event, newValue) => {
-              void formik.setFieldValue('compensation', newValue).then();
-            }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                name="compensation"
-                label="Compensation"
-                fullWidth
-                required
-              />
-            )}
-          />
-        </Stack>
-
-        <Stack spacing={0.5} flex="1" justifyContent="space-between">
-          <FormLabel>Work Location</FormLabel>
-
-          <Autocomplete
-            disablePortal
-            fullWidth
-            options={workLocation}
-            sx={{ width: 300 }}
-            value={values.location}
-            onChange={(event, newValue) => {
-              void formik.setFieldValue('location', newValue).then();
-            }}
-            isOptionEqualToValue={(option, value) =>
-              option.label === value.label
-            }
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                name="location"
-                label="Work Location"
-                fullWidth
-                required
-              />
-            )}
-          />
-        </Stack>
-      </Stack>
 
       <Stack spacing={3} direction="row">
         <Stack spacing={0.5} flex="1" justifyContent="space-between">
@@ -190,57 +165,251 @@ const JobRequirement = () => {
         </Stack>
       </Stack>
 
-      <FormControl component="fieldset" variant="standard">
-        <FormLabel component="legend">
-          What level of English fluency is required?
+      <Stack>
+        <FormLabel htmlFor="qualification" inputMode="text">
+          Enter Job Qualifications
         </FormLabel>
-        <FormGroup>
-          {languageLevel.map((item, idx) => (
-            <FormControlLabel
-              key={idx}
-              control={
-                <Checkbox
-                  checked={item.checked}
-                  onChange={(event, checked) => {
-                    // uncheck all other options
-                    const newLanguageLevel = [...languageLevel];
-                    newLanguageLevel[idx].checked = checked;
-                    setLanguageLevel(newLanguageLevel);
-                  }}
-                  name="languageLevel"
+        <div className={s.qualifications}>
+          <List dense={true}>
+            {formik.values.qualifications.map((item, idx) => (
+              <ListItem
+                key={idx}
+                secondaryAction={
+                  <Stack direction="row">
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      onClick={() => {
+                        setQualification(item);
+                        const newQualifications =
+                          formik.values.qualifications.filter(
+                            (_, index) => index !== idx,
+                          );
+
+                        void formik.setFieldValue(
+                          'qualifications',
+                          newQualifications,
+                        );
+                      }}
+                    >
+                      <Edit fontSize="small" />
+                    </IconButton>
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      onClick={() => {
+                        const newQualifications =
+                          formik.values.qualifications.filter(
+                            (_, index) => index !== idx,
+                          );
+
+                        void formik.setFieldValue(
+                          'qualifications',
+                          newQualifications,
+                        );
+                      }}
+                    >
+                      <Delete fontSize="small" />
+                    </IconButton>
+                  </Stack>
+                }
+              >
+                <CircleTwoTone fontSize="small" />
+                <ListItemText
+                  primary={
+                    <Typography variant="body1" className={s.q_item}>
+                      {item}
+                    </Typography>
+                  }
                 />
+              </ListItem>
+            ))}
+          </List>
+
+          <TextField
+            id="qualification"
+            name="vacancy"
+            label="type qualification here ..."
+            value={qualification}
+            fullWidth
+            onKeyDownCapture={(event) => {
+              if (event.key === 'Enter') {
+                event.preventDefault();
+                event.nativeEvent.stopPropagation();
+
+                void formik.setFieldValue('qualifications', [
+                  ...formik.values.qualifications,
+                  qualification,
+                ]);
+                setQualification('');
               }
-              label={item.label}
+            }}
+            onChange={(value) => {
+              setQualification(value.target.value);
+            }}
+            helperText={'max 100'}
+          />
+        </div>
+      </Stack>
+
+      <Stack>
+        <FormLabel htmlFor="qualification" inputMode="text">
+          Other additional languages ( optional )
+        </FormLabel>
+
+        <div className={s.additional_lang}>
+          {formik.values.otherLanguages.map((lang, idx) => (
+            <Chip
+              key={idx}
+              label={lang.language + ' - ' + lang.level}
+              onDelete={() => {
+                const newLangs = formik.values.otherLanguages.filter(
+                  (_, index) => index !== idx,
+                );
+
+                void formik.setFieldValue('otherLanguages', newLangs);
+              }}
             />
           ))}
-        </FormGroup>
-      </FormControl>
 
-      <FormControl component="fieldset" variant="standard">
-        <FormLabel component="legend">
-          What other languages are required? (optional)
-        </FormLabel>
-        <FormGroup>
-          <FormControlLabel
-            control={<Checkbox checked={gilad} name="gilad" />}
-            label="Spanish"
-          />
-          <FormControlLabel
-            control={<Checkbox checked={jason} name="jason" />}
-            label="French"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={antoine}
-                onChange={handleChange}
-                name="antoine"
-              />
+          <Button
+            size="small"
+            startIcon={
+              <AddCircleOutlineTwoTone fontSize="small" color="primary" />
             }
-            label="Other"
-          />
-        </FormGroup>
-      </FormControl>
+            onClick={() => {
+              setOpen(true);
+            }}
+            variant="outlined"
+          >
+            Add Language
+          </Button>
+
+          <Dialog disableEscapeKeyDown open={open} onClose={handleClose}>
+            <DialogTitle>Add other required languages</DialogTitle>
+            <DialogContent>
+              <Box
+                component="form"
+                sx={{ display: 'flex', flexWrap: 'wrap', width: '25rem' }}
+              >
+                <FormControl sx={{ m: 1, flex: 0.8 }} error={isError.language}>
+                  <InputLabel id="language">Age</InputLabel>
+
+                  <Select
+                    labelId="lang-label"
+                    id="lang"
+                    value={selectedLanguage.language}
+                    onChange={(event) => {
+                      setIsError((prev) => ({
+                        ...prev,
+                        language: false,
+                      }));
+
+                      setSelectedLanguage({
+                        ...selectedLanguage,
+                        language: event.target.value,
+                      });
+                    }}
+                    input={<OutlinedInput label="Language" />}
+                  >
+                    {languages.map((lang, idx) => (
+                      <MenuItem value={lang} key={idx}>
+                        {lang}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl sx={{ m: 1, flex: 1.2 }} error={isError.level}>
+                  <InputLabel id="level-label">Level</InputLabel>
+                  <Select
+                    labelId="level-label"
+                    id="level"
+                    value={selectedLanguage.level}
+                    onChange={(event) => {
+                      setIsError((prev) => ({
+                        ...prev,
+                        level: false,
+                      }));
+
+                      setSelectedLanguage({
+                        ...selectedLanguage,
+                        level: event.target.value,
+                      });
+                    }}
+                    input={<OutlinedInput label="Age" />}
+                  >
+                    {languageLevel.map((level, idx) => (
+                      <MenuItem value={level} key={idx}>
+                        {level}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Cancel</Button>
+              <Button
+                onClick={() => {
+                  // add it to formik
+                  if (!selectedLanguage.language) {
+                    setIsError((prev) => ({
+                      ...prev,
+                      language: true,
+                    }));
+                    return;
+                  }
+
+                  if (!selectedLanguage.level) {
+                    setIsError((prev) => ({
+                      ...prev,
+                      level: true,
+                    }));
+                    return;
+                  }
+
+                  void formik.setFieldValue('otherLanguages', [
+                    ...formik.values.otherLanguages,
+                    selectedLanguage,
+                  ]);
+
+                  setSelectedLanguage({
+                    language: '',
+                    level: '',
+                  });
+
+                  handleClose();
+                }}
+              >
+                Ok
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </div>
+      </Stack>
+
+      <Stack direction="row">
+        <FormControl sx={{ flex: 1 }} component="fieldset" variant="standard">
+          <FormLabel component="legend">
+            What level of English fluency is required?
+          </FormLabel>
+
+          <RadioGroup
+            name="englishLevel"
+            onChange={formik.handleChange}
+            value={formik.values.englishLevel}
+          >
+            {languageLevel.map((level, idx) => (
+              <FormControlLabel
+                key={idx}
+                value={level}
+                control={<Radio />}
+                label={level}
+              />
+            ))}
+          </RadioGroup>
+        </FormControl>
+      </Stack>
     </div>
   );
 };

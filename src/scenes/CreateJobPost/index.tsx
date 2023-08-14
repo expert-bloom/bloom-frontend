@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import s from './postjob.module.scss';
+
+import {
+  ArrowCircleLeftTwoTone,
+  ArrowCircleRightTwoTone,
+} from '@mui/icons-material';
 import {
   Button,
   Divider,
@@ -11,31 +15,32 @@ import {
 } from '@mui/material';
 import { Form, Formik } from 'formik';
 import { AnimatePresence, motion, transform } from 'framer-motion';
-import {
-  ArrowCircleLeftTwoTone,
-  ArrowCircleRightTwoTone,
-} from '@mui/icons-material';
-import JobRequirement from '@/scenes/CreateJobPost/JobRequirement';
-import Review from '@/scenes/CreateJobPost/Review';
+import { useRouter } from 'next/router';
+import { useSelector } from 'react-redux';
+
+import { MoButton } from '@/components/MoButton';
+import { type CreateJobPostInput } from '@/graphql/client/gql/schema';
+import InterviewQuestions, {
+  schema as InterviewSchema,
+} from '@/scenes/CreateJobPost/InterviewQuestions';
 import JobDetails, {
   schema as JobDetailsSchema,
 } from '@/scenes/CreateJobPost/JobDetails';
-import { MoButton } from '@/components/MoButton';
+import JobRequirement, {
+  schema as JobReqSchema,
+} from '@/scenes/CreateJobPost/JobRequirement';
+import Review from '@/scenes/CreateJobPost/Review';
 import {
   transition,
   wrapperVariants,
 } from '@/scenes/CreateJobPost/util/variants';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
-import { useRouter } from 'next/router';
-import {
-  type CreateJobPostInput,
-  useCreateJobPostMutation,
-} from '@/graphql/client/gql/schema';
+
+import s from './postjob.module.scss';
 
 const stepNames = {
   Details: 'Job Details',
   Requirements: 'Job Requirements',
+  Interview: 'Interview Questions',
   Post: 'Review & Post',
   Done: 'Done',
 } as const;
@@ -49,14 +54,20 @@ interface FormStepType {
 }
 
 const formSteps: FormStepType[] = [
-  {
+  /* {
     name: stepNames.Details, // components: (props: any) => <Review {...props} />,
     component: (props: any) => <JobDetails {...props} />,
     schema: JobDetailsSchema,
-  },
+  }, */
   {
     name: stepNames.Requirements,
-    component: (props: any) => <JobRequirement {...props} />, // schema: JobDetailsSchema,
+    component: (props: any) => <JobRequirement {...props} />,
+    schema: JobReqSchema,
+  },
+  {
+    name: stepNames.Interview,
+    component: (props: any) => <InterviewQuestions {...props} />,
+    schema: InterviewSchema,
   },
   {
     name: stepNames.Post,
@@ -67,38 +78,21 @@ const formSteps: FormStepType[] = [
   }, */,
 ];
 
-/* const initialValues = {
-  title: '',
-  description: '',
-  type: null as unknown as { label: string },
-  category: [],
-  vacancy: '',
-  deadline: '',
-  email: '',
-  salary: [20, 1_000_000_000], // requirements
-  location: null as unknown as { label: string },
-  compensation: null as unknown as { label: string },
-  experience: null as unknown as { label: string },
-  skill: [] as unknown as Array<{ label: string }>,
-}; */
-
-// const { boo: 'a;skdjf;alksdj', ...value } = obj;
-
 const initialValues = {
-  title: 'Dawit',
-  description: 'jhlkjhlkjh',
+  title: 'Dawit' as string,
+  description: 'jhlkjhlkjh' as string,
   type: {
     label: 'Internship',
-  },
+  } satisfies { label: string },
   category: [
     {
       label: 'IT',
     },
-  ],
-  vacancy: 88,
-  deadline: '',
+  ] as Array<{ label: string }>,
+  vacancy: 88 as number,
+  deadline: undefined,
   email: 'henokgetachew500@gmail.com',
-  salary: [20, 1000000000],
+  salary: [30] as unknown as [number, number] | [number],
   location: {
     label: 'Remote',
   },
@@ -111,6 +105,9 @@ const initialValues = {
       label: 'Vue.js',
     },
   ],
+  englishLevel: '' as string,
+  otherLanguages: [] as unknown as [{ language: string; level: string }],
+  qualifications: [] as string[],
 };
 
 export type FormValuesType = typeof initialValues;
@@ -194,7 +191,7 @@ const PostJob = () => {
                   handleNext();
                   break;
                 case stepNames.Post: {
-                  const job: CreateJobPostInput = {
+                  /* const job: CreateJobPostInput = {
                     title: values.title,
                     description: values.description,
                     salary: values.salary,
@@ -210,45 +207,8 @@ const PostJob = () => {
                     company: '-',
                     otherLanguages: [],
                     email: values.email,
-                  };
+                  }; */
 
-                  /* const res = await createPost({
-                    variables: {
-                      input: job,
-                    },
-                  })
-                    .then((res) => {
-                      console.log('res :', res);
-                      return res;
-                    })
-                    .catch((err) => {
-                      console.log('err :', err);
-                    });
-*/
-                  console.log('res: ', res);
-
-                  return;
-
-                  axios
-                    .post(
-                      `${
-                        process.env.NEXT_PUBLIC_API_BASE_URL ??
-                        (function () {
-                          throw new Error('NEXT_PUBLIC_API_BASE_URL not set');
-                        })()
-                      }/api/job/postAJob`,
-                      job,
-                    )
-                    .then((res) => {
-                      console.log('job list: ', res.data);
-
-                      void router.push('/job-posts');
-                    })
-                    .catch((err) => {
-                      console.log('error geting jobs: ', err);
-                    });
-
-                  console.log('job :', job);
                   return;
 
                   handleNext();

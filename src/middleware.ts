@@ -8,21 +8,19 @@ const secret = process.env.NEXTAUTH_SECRET;
 export async function middleware(request: NextRequest) {
   const token = await getToken({ req: request, secret });
 
-  // console.log(
-  //   'token ------------------------------- : ',
-  //   JSON.stringify(token, null, 2),
-  // );
+  console.log(
+    'token ------------------------------- : ',
+    JSON.stringify(token, null, 2),
+  );
 
   if (token == null) {
     return NextResponse.redirect(new URL('/auth/login', request.url));
   }
 
-  if (
-    request.nextUrl.pathname !== '/dashboard/company' &&
-    request.nextUrl.pathname === '/dashboard'
-  ) {
+  if (request.nextUrl.pathname === '/dashboard') {
     // todo : check if user is client or freelancer
-    return NextResponse.redirect(new URL('/dashboard/company', request.url));
+    if (token.accountType === 'COMPANY')
+      return NextResponse.redirect(new URL('/dashboard/company', request.url));
   }
 
   return NextResponse.next();
