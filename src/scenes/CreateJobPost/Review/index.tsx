@@ -1,16 +1,21 @@
 import React, { useEffect } from 'react';
-import s from './review.module.scss';
+
+import { Edit } from '@mui/icons-material';
 import {
   Alert,
+  Chip,
   FormLabel,
   IconButton,
   Stack,
   TextField,
   Typography,
 } from '@mui/material';
-import { Edit } from '@mui/icons-material';
+import clsx from 'clsx';
 import { useFormikContext } from 'formik';
+
 import { type FormValuesType } from 'src/scenes/CreateJobPost';
+
+import s from './review.module.scss';
 
 const Review = () => {
   const formik = useFormikContext<FormValuesType>();
@@ -65,6 +70,14 @@ const Review = () => {
         Review Job Post
       </Typography>
 
+      <Alert severity="info">
+        <Typography className={s.alert}>
+          The job post will be visible to agents for 20 days, and they can apply
+          for the position. You can update your job post’s visibility at any
+          time.
+        </Typography>
+      </Alert>
+
       <Stack spacing={0.5} flex="1" style={{ width: '100%' }}>
         <FormLabel sx={{ ml: '1rem' }}>Job Post Title</FormLabel>
         <TextField
@@ -78,27 +91,23 @@ const Review = () => {
         />
       </Stack>
 
-      <Alert severity="info">
-        <Typography className={s.alert}>
-          The job post will be visible to agents for 20 days, and they can apply
-          for the position. You can update your job post’s visibility at any
-          time.
-        </Typography>
-      </Alert>
+      <Stack spacing={0.5} flex="1" style={{ width: '100%' }}>
+        <FormLabel sx={{ ml: '1rem' }}>Job Post Description</FormLabel>
+        <TextField
+          name="title"
+          required
+          fullWidth
+          label="Job Title"
+          value={values.description}
+          placeholder="not provided"
+          onChange={handleChange}
+          multiline={true}
+          rows={2}
+        />
+      </Stack>
+
       <div className={s.column}>
         <div className={s.row}>
-          <div className={s.item}>
-            <header>
-              <Typography>Job Description</Typography>
-              <IconButton className={s.edit_btn} size="small">
-                <Edit fontSize="small" />
-              </IconButton>
-            </header>
-            <Typography variant="body1" className={s.value}>
-              {values.description ?? 'Not provided'}
-            </Typography>
-          </div>
-
           <div className={s.item}>
             <header>
               <Typography>Job Type</Typography>
@@ -149,7 +158,7 @@ const Review = () => {
               </IconButton>
             </header>
             <Typography variant="body1" className={s.value}>
-              First language is English
+              {values.englishLevel ?? 'Not selected (required)'}
             </Typography>
           </div>
 
@@ -160,9 +169,16 @@ const Review = () => {
                 <Edit fontSize="small" />
               </IconButton>
             </header>
-            <Typography variant="body1" className={s.value}>
-              Spanish
-            </Typography>
+            <div className={clsx([s.value, s.other_lang])}>
+              {formik.values.otherLanguages.map((otherLang, index) => (
+                <Chip
+                  key={index}
+                  label={otherLang.language + ' - ' + otherLang.level}
+                  className={s.chip}
+                  variant="outlined"
+                />
+              ))}
+            </div>
           </div>
         </div>
 
@@ -188,7 +204,7 @@ const Review = () => {
             </header>
             <Typography variant="body1" className={s.value}>
               {(Boolean(values.deadline) &&
-                new Date(values.deadline).toDateString()) ??
+                new Date(values.deadline as any).toDateString()) ??
                 'Not selected (required)'}
             </Typography>
           </div>
@@ -215,19 +231,19 @@ const Review = () => {
               </IconButton>
             </header>
             <Typography variant="body1" className={s.value}>
-              First language is English
+              {values.compensation.label ?? 'Not selected (required)'}
             </Typography>
           </div>
 
           <div className={s.item}>
             <header>
-              <Typography>Experience</Typography>
+              <Typography>Experience (year)</Typography>
               <IconButton className={s.edit_btn} size="small">
                 <Edit fontSize="small" />
               </IconButton>
             </header>
             <Typography variant="body1" className={s.value}>
-              Spanish
+              {values.experience ?? 'Not selected (required)'}
             </Typography>
           </div>
         </div>

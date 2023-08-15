@@ -139,22 +139,34 @@ export type CompanyLight = {
 };
 
 export type CreateJobPostInput = {
-  company: Scalars['String']['input'];
-  compensation: Scalars['String']['input'];
+  affiliateId?: InputMaybe<Scalars['String']['input']>;
+  applicationDeadline: Scalars['DateTime']['input'];
+  category: Array<Scalars['String']['input']>;
+  companyId: Scalars['String']['input'];
   description: Scalars['String']['input'];
   email: Scalars['String']['input'];
-  englishLevel?: InputMaybe<Scalars['String']['input']>;
+  englishLevel: EnglishLevel;
   isVisible: Scalars['Boolean']['input'];
-  jobCategory: Array<InputMaybe<Scalars['String']['input']>>;
-  jobDeadline: Scalars['String']['input'];
+  jobDeadline: Scalars['DateTime']['input'];
   jobExperience: Scalars['Int']['input'];
-  jobSkills: Array<Scalars['String']['input']>;
-  jobType: Scalars['String']['input'];
-  jobVacancy: Scalars['Int']['input'];
-  otherLanguages: Array<InputMaybe<Scalars['String']['input']>>;
-  salary: Array<InputMaybe<Scalars['Int']['input']>>;
+  jobSite: JobSite;
+  jobType: JobType;
+  otherLanguages: Array<Scalars['String']['input']>;
+  postedBy: Scalars['String']['input'];
+  qualifications: Array<Scalars['String']['input']>;
+  salary: Array<Scalars['Int']['input']>;
+  salaryType: SalaryType;
+  skills: Array<Scalars['String']['input']>;
   title: Scalars['String']['input'];
+  vacancy: Scalars['Int']['input'];
 };
+
+export enum EnglishLevel {
+  Basic = 'BASIC',
+  Conversational = 'CONVERSATIONAL',
+  Fluent = 'FLUENT',
+  Native = 'NATIVE',
+}
 
 export type Error = {
   __typename?: 'Error';
@@ -180,21 +192,45 @@ export type IAccount = {
 
 export type JobPost = {
   __typename?: 'JobPost';
-  _id: Scalars['String']['output'];
-  compensation: Scalars['String']['output'];
+  applicationDeadline: Scalars['DateTime']['output'];
+  category: Array<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
   description: Scalars['String']['output'];
-  englishLevel?: Maybe<Scalars['String']['output']>;
+  email: Scalars['String']['output'];
+  englishLevel: EnglishLevel;
+  id: Scalars['String']['output'];
   isVisible: Scalars['Boolean']['output'];
-  jobCategory: Array<Maybe<Scalars['String']['output']>>;
-  jobDeadline: Scalars['DateTime']['output'];
   jobExperience: Scalars['Int']['output'];
-  jobSkills: Array<Scalars['String']['output']>;
-  jobType: Scalars['String']['output'];
-  jobVacancy: Scalars['Int']['output'];
+  jobSite: JobSite;
+  jobType: JobType;
   otherLanguages: Array<Scalars['String']['output']>;
-  salary: Array<Maybe<Scalars['Int']['output']>>;
+  qualifications: Array<Scalars['String']['output']>;
+  salary: Array<Scalars['Int']['output']>;
+  salaryType: SalaryType;
+  skills: Array<Scalars['String']['output']>;
   title: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+  vacancy: Scalars['Int']['output'];
 };
+
+export type JobPostPayload = {
+  __typename?: 'JobPostPayload';
+  errors: Array<Error>;
+  jobPost?: Maybe<JobPost>;
+};
+
+export enum JobSite {
+  Hybrid = 'HYBRID',
+  Onsite = 'ONSITE',
+  Remote = 'REMOTE',
+}
+
+export enum JobType {
+  Contract = 'CONTRACT',
+  FullTime = 'FULL_TIME',
+  Internship = 'INTERNSHIP',
+  PartTime = 'PART_TIME',
+}
 
 export type JopPostFilterInput = {
   company?: InputMaybe<Scalars['String']['input']>;
@@ -207,9 +243,10 @@ export type LoginInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createJobPost?: Maybe<JobPost>;
+  createJobPost: JobPostPayload;
   logIn: AuthPayload;
   logInOAuth: AuthPayload;
+  sayHi: Scalars['String']['output'];
   signUp: AuthPayload;
   signUpOAuth: AuthPayload;
 };
@@ -269,7 +306,6 @@ export type PayloadError = {
 export type Query = {
   __typename?: 'Query';
   findAccount?: Maybe<AuthPayload>;
-  getJobPosts: Array<JobPost>;
   me?: Maybe<Scalars['String']['output']>;
   sayHi?: Maybe<Scalars['String']['output']>;
 };
@@ -278,9 +314,12 @@ export type QueryFindAccountArgs = {
   input: AccountInput;
 };
 
-export type QueryGetJobPostsArgs = {
-  input: JopPostFilterInput;
-};
+export enum SalaryType {
+  Hourly = 'HOURLY',
+  Monthly = 'MONTHLY',
+  OneTime = 'ONE_TIME',
+  Yearly = 'YEARLY',
+}
 
 export type SignUpInput = {
   accountType: AccountType;
@@ -410,6 +449,19 @@ export type SignUpOAuthMutation = {
       } | null;
       affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
     } | null;
+  };
+};
+
+export type CreateJobPostMutationVariables = Exact<{
+  input: CreateJobPostInput;
+}>;
+
+export type CreateJobPostMutation = {
+  __typename?: 'Mutation';
+  createJobPost: {
+    __typename?: 'JobPostPayload';
+    errors: Array<{ __typename?: 'Error'; message: string }>;
+    jobPost?: { __typename?: 'JobPost'; id: string } | null;
   };
 };
 
@@ -637,6 +689,61 @@ export type SignUpOAuthMutationResult =
 export type SignUpOAuthMutationOptions = Apollo.BaseMutationOptions<
   SignUpOAuthMutation,
   SignUpOAuthMutationVariables
+>;
+export const CreateJobPostDocument = gql`
+  mutation CreateJobPost($input: CreateJobPostInput!) {
+    createJobPost(input: $input) {
+      errors {
+        message
+      }
+      jobPost {
+        id
+      }
+    }
+  }
+`;
+export type CreateJobPostMutationFn = Apollo.MutationFunction<
+  CreateJobPostMutation,
+  CreateJobPostMutationVariables
+>;
+
+/**
+ * __useCreateJobPostMutation__
+ *
+ * To run a mutation, you first call `useCreateJobPostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateJobPostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createJobPostMutation, { data, loading, error }] = useCreateJobPostMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateJobPostMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateJobPostMutation,
+    CreateJobPostMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    CreateJobPostMutation,
+    CreateJobPostMutationVariables
+  >(CreateJobPostDocument, options);
+}
+export type CreateJobPostMutationHookResult = ReturnType<
+  typeof useCreateJobPostMutation
+>;
+export type CreateJobPostMutationResult =
+  Apollo.MutationResult<CreateJobPostMutation>;
+export type CreateJobPostMutationOptions = Apollo.BaseMutationOptions<
+  CreateJobPostMutation,
+  CreateJobPostMutationVariables
 >;
 export const FindAccountDocument = gql`
   query FindAccount($input: AccountInput!) {

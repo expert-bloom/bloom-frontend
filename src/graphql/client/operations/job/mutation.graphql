@@ -1,69 +1,10 @@
-fragment AccountFragment on Account{
-    id
-    email
-    accountType
-    image
-    firstName
-    lastName
-    createdAt
-}
-
-fragment AuthAccountPayload on AuthAccountPayload{
-    id
-    email
-    accountType
-    image
-    firstName
-    lastName
-    createdAt
-
-    applicant{
-        id
-    }
-    company {
-        id
-        companyName
-        logo
-    }
-
-    affiliate {
-        id
-    }
-}
-
-
-mutation Login($input: LoginInput!) {
-    logIn(input: $input) {
+mutation CreateJobPost($input: CreateJobPostInput!) {
+    createJobPost(input: $input) {
         errors {
             message
         }
-        account {
-            ...AuthAccountPayload
-        }
-    }
-}
-
-
-mutation SignUp($input: SignUpInput!) {
-    signUp(input: $input) {
-        errors {
-            message
-        }
-
-        account {
-            ...AuthAccountPayload
-        }
-    }
-}
-
-mutation SignUpOAuth($input: OAuthSignUpInput!) {
-    signUpOAuth(input: $input) {
-        errors {
-            message
-        }
-
-        account {
-            ...AuthAccountPayload
+        jobPost {
+            id
         }
     }
 }

@@ -1,24 +1,27 @@
-import { store } from '@/Store/store';
-import { Provider } from 'react-redux';
 import React, { type ReactElement, type ReactNode } from 'react';
-import { CacheProvider, type EmotionCache } from '@emotion/react';
-import { type AppProps } from 'next/app';
-import { type NextPage } from 'next';
-import createEmotionCache from '@/utils/createEmotoinCache';
-import { SessionProvider } from 'next-auth/react';
-import { ThemeProvider } from '@mui/system';
-import { CssBaseline } from '@mui/material';
-import { createTheme } from '@/theme/admin-theme';
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { useNProgress } from '@/hooks/use-nprogress';
-import Layout from '@/components/commons/layout';
 
 import '@/styles/globals.css';
 import '@global/index.scss';
+import '@/lib/filePong/doka/doka.min.css';
+
 import { ApolloProvider } from '@apollo/client';
-import apollo from '@/lib/apollo';
+import { CacheProvider, type EmotionCache } from '@emotion/react';
+import { CssBaseline } from '@mui/material';
+import { ThemeProvider } from '@mui/system';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { type NextPage } from 'next';
+import { type AppProps } from 'next/app';
 import { type Session } from 'next-auth';
+import { SessionProvider } from 'next-auth/react';
+import { Provider } from 'react-redux';
+
+import Layout from '@/components/commons/layout';
+import { useNProgress } from '@/hooks/use-nprogress';
+import apollo from '@/lib/apollo';
+import { store } from '@/Store/store';
+import { createTheme } from '@/theme/admin-theme';
+import createEmotionCache from '@/utils/createEmotoinCache';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();

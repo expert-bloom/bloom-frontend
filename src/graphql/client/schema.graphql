@@ -110,33 +110,43 @@ type Error {
 }
 
 type JobPost {
-    _id: String!
-    compensation: String!
+    applicationDeadline: DateTime!
+    category: [String!]!
+    createdAt: DateTime!
     description: String!
-    englishLevel: String
+    email: String!
+    englishLevel: EnglishLevel!
+    id: String!
     isVisible: Boolean!
-    jobCategory: [String]!
-    jobDeadline: DateTime!
     jobExperience: Int!
-    jobSkills: [String!]!
-    jobType: String!
-    jobVacancy: Int!
+    jobSite: JobSite!
+    jobType: JobType!
     otherLanguages: [String!]!
-    salary: [Int]!
+    qualifications: [String!]!
+    salary: [Int!]!
+    salaryType: SalaryType!
+    skills: [String!]!
     title: String!
+    updatedAt: DateTime!
+    vacancy: Int!
+}
+
+type JobPostPayload {
+    errors: [Error!]!
+    jobPost: JobPost
 }
 
 type Mutation {
-    createJobPost(input: CreateJobPostInput!): JobPost
+    createJobPost(input: CreateJobPostInput!): JobPostPayload!
     logIn(input: LoginInput!): AuthPayload!
     logInOAuth(input: LoginInput!): AuthPayload!
+    sayHi: String!
     signUp(input: SignUpInput!): AuthPayload!
     signUpOAuth(input: OAuthSignUpInput!): AuthPayload!
 }
 
 type Query {
     findAccount(input: AccountInput!): AuthPayload
-    getJobPosts(input: JopPostFilterInput!): [JobPost!]!
     me: String
     sayHi: String
 }
@@ -147,10 +157,37 @@ enum AccountType {
     COMPANY
 }
 
+enum EnglishLevel {
+    BASIC
+    CONVERSATIONAL
+    FLUENT
+    NATIVE
+}
+
 enum Gender {
     FEMALE
     MALE
     OTHER
+}
+
+enum JobSite {
+    HYBRID
+    ONSITE
+    REMOTE
+}
+
+enum JobType {
+    CONTRACT
+    FULL_TIME
+    INTERNSHIP
+    PART_TIME
+}
+
+enum SalaryType {
+    HOURLY
+    MONTHLY
+    ONE_TIME
+    YEARLY
 }
 
 "A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar."
@@ -163,21 +200,26 @@ input AccountInput {
 }
 
 input CreateJobPostInput {
-    company: String!
-    compensation: String!
+    affiliateId: String
+    applicationDeadline: DateTime!
+    category: [String!]!
+    companyId: String!
     description: String!
     email: String!
-    englishLevel: String
+    englishLevel: EnglishLevel!
     isVisible: Boolean!
-    jobCategory: [String]!
-    jobDeadline: String!
+    jobDeadline: DateTime!
     jobExperience: Int!
-    jobSkills: [String!]!
-    jobType: String!
-    jobVacancy: Int!
-    otherLanguages: [String]!
-    salary: [Int]!
+    jobSite: JobSite!
+    jobType: JobType!
+    otherLanguages: [String!]!
+    postedBy: String!
+    qualifications: [String!]!
+    salary: [Int!]!
+    salaryType: SalaryType!
+    skills: [String!]!
     title: String!
+    vacancy: Int!
 }
 
 input JopPostFilterInput {

@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-import { type Components } from '@mui/material/styles/components';
-import { type Theme } from '@mui/material/styles/createTheme';
-import { type PaletteOptions } from '@mui/material/styles/createPalette';
-import { createTheme } from '@mui/material/styles';
 import { filledInputClasses } from '@mui/material/FilledInput';
-import { outlinedInputClasses } from '@mui/material/OutlinedInput';
 import { inputLabelClasses } from '@mui/material/InputLabel';
-import { tableCellClasses } from '@mui/material/TableCell';
+import { outlinedInputClasses } from '@mui/material/OutlinedInput';
 import { paperClasses } from '@mui/material/Paper';
+import { createTheme } from '@mui/material/styles';
+import { type Components } from '@mui/material/styles/components';
+import { type PaletteOptions } from '@mui/material/styles/createPalette';
+import { type Theme } from '@mui/material/styles/createTheme';
+import { tableCellClasses } from '@mui/material/TableCell';
 
 const UnChecked = (
   <svg
@@ -58,6 +58,9 @@ export function createComponents(config: { palette: PaletteOptions }) {
     MuiAlert: {
       styleOverrides: {
         filledError: {},
+        standardWarning: {
+          border: '2px solid #06AED4',
+        },
       },
     },
 

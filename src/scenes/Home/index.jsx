@@ -8,7 +8,7 @@ import SetUpAccount from '@/scenes/Home/SetUpAccount';
 import PostIt from '@/scenes/Home/PostIt';
 import FeaturedJobPosts from '@/scenes/Home/FeaturedJobPosts';
 
-const Home = ({ userName }) => {
+const Home = () => {
   return (
     <div className={s.container}>
       <Hero />

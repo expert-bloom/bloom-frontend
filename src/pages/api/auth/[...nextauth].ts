@@ -1,11 +1,10 @@
 /* eslint-disable no-extra-boolean-cast */
-import NextAuth, { type NextAuthOptions } from 'next-auth';
-import GoogleProvider from 'next-auth/providers/google';
-import GithubProvider from 'next-auth/providers/github';
 import { type NextApiRequest, type NextApiResponse } from 'next';
-import LoginProvider from './loginProvider';
-import SignupProvider from './signupProvider';
-import apollo from '@/lib/apollo';
+import NextAuth, { type NextAuthOptions } from 'next-auth';
+import GithubProvider from 'next-auth/providers/github';
+import GoogleProvider from 'next-auth/providers/google';
+import { type Awaitable, type User } from 'next-auth/src';
+
 import {
   FindAccountDocument,
   type FindAccountQuery,
@@ -14,12 +13,14 @@ import {
   type SignUpOAuthMutation,
   type SignUpOAuthMutationVariables,
 } from '@/graphql/client/gql/schema';
-import { type Awaitable, type User } from 'next-auth/src';
+import apollo from '@/lib/apollo';
+
+import LoginProvider from './loginProvider';
+import SignupProvider from './signupProvider';
 
 const getOptions: (req: NextApiRequest) => NextAuthOptions = (req) => ({
   // Configure one or more authentication providers
   events: {
-    // implement all event handlers
     signIn: async (message) => {
       // console.log('signIn event ---> ', message);
     },
@@ -188,7 +189,7 @@ const getOptions: (req: NextApiRequest) => NextAuthOptions = (req) => ({
       return url ?? baseUrl;
     }, */,
     async jwt({ token, user, account, profile, trigger, session }) {
-      console.log(
+      /* console.log(
         'jwt callback ---------> ',
         'token:',
         token,
@@ -202,7 +203,7 @@ const getOptions: (req: NextApiRequest) => NextAuthOptions = (req) => ({
         trigger,
         ', Session: ',
         session,
-      );
+      ); */
       if (trigger === 'signIn' && account?.type === 'credentials') {
         return {
           ...token,

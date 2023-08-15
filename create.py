@@ -57,7 +57,7 @@ if not os.path.exists(src_name):
     with open(src_name + '/-.module.scss'.replace('-', name.lower()), 'wt') as f:
         f.write(styleTxt)
 
-    with open(src_name + '/index.tsx', 'wt') as f:
+    with open(src_name + '/index.js', 'wt') as f:
         f.write(componentTxt.replace('-', name).replace('_', name.lower()))
 else:
     raise Exception('directory already exists: -'.replace('-', name))

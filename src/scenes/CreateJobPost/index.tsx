@@ -54,11 +54,11 @@ interface FormStepType {
 }
 
 const formSteps: FormStepType[] = [
-  /* {
+  {
     name: stepNames.Details, // components: (props: any) => <Review {...props} />,
     component: (props: any) => <JobDetails {...props} />,
     schema: JobDetailsSchema,
-  }, */
+  },
   {
     name: stepNames.Requirements,
     component: (props: any) => <JobRequirement {...props} />,
@@ -91,14 +91,16 @@ const initialValues = {
   ] as Array<{ label: string }>,
   vacancy: 88 as number,
   deadline: undefined,
-  email: 'henokgetachew500@gmail.com',
+  compensation: {
+    label: 'Hourly',
+  },
   salary: [30] as unknown as [number, number] | [number],
   location: {
     label: 'Remote',
   },
-  compensation: {
-    label: 'Hourly',
-  },
+  email: 'henokgetachew500@gmail.com',
+
+  // requirements
   experience: 3,
   skill: [
     {
@@ -108,6 +110,7 @@ const initialValues = {
   englishLevel: '' as string,
   otherLanguages: [] as unknown as [{ language: string; level: string }],
   qualifications: [] as string[],
+  interviewQuestions: [] as string[],
 };
 
 export type FormValuesType = typeof initialValues;
@@ -188,6 +191,9 @@ const PostJob = () => {
                   handleNext();
                   break;
                 case stepNames.Requirements:
+                  handleNext();
+                  break;
+                case stepNames.Interview:
                   handleNext();
                   break;
                 case stepNames.Post: {

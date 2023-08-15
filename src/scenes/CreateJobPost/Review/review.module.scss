@@ -4,7 +4,7 @@
   width: 100%;
   display: flex;
   flex-flow: column;
-  gap: 2.5rem;
+  gap: 1.5rem;
 
   & :local {
 
@@ -17,6 +17,7 @@
     .alert {
       font-weight: 300;
       color: gray;
+      border: rebeccapurple;
     }
 
     .column {
@@ -55,6 +56,13 @@
       .value {
         color: #738aa7;
         font-weight: 300;
+      }
+
+      .other_lang{
+        display: flex;
+        flex-wrap: wrap;
+        gap: .5rem;
+        align-items: flex-start;
       }
     }
   }

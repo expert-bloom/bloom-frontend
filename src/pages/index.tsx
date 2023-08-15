@@ -1,4 +1,5 @@
 import Head from 'next/head';
+
 import HomePage from '@/scenes/Home';
 
 const Header = () => (
@@ -38,12 +39,11 @@ export async function getStaticProps() {
   };
 }
 
-export default function Home({ userName }) {
-  const user = 'al;ksdjf;lkasdf';
+export default function Home() {
   return (
     <>
       <Header />
-      <HomePage userName={user} />
+      <HomePage />
     </>
   );
 }
