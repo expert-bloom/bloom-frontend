@@ -39,6 +39,8 @@ import { useFormikContext } from 'formik';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 
+import { EnglishLevel, SalaryType } from '@/graphql/client/gql/schema';
+import { capitalize } from '@/utils';
 import { type FormValuesType } from 'src/scenes/CreateJobPost';
 
 import s from './jobrequirment.module.scss';
@@ -104,11 +106,12 @@ const JobRequirement = () => {
         Job Requirements
       </Typography>
 
-      <Stack spacing={3} direction="row">
-        <Stack spacing={0.5} flex="1" justifyContent="space-between">
-          <FormLabel>List of Skills required</FormLabel>
+      <Stack gap={3} direction="row">
+        <Stack gap={0.5} flex="1" justifyContent="space-between">
+          <FormLabel htmlFor="skills">List of Skills required</FormLabel>
 
           <Autocomplete
+            id="skills"
             multiple
             limitTags={3}
             options={skillOption}
@@ -139,29 +142,62 @@ const JobRequirement = () => {
           />
         </Stack>
 
-        <Stack spacing={0.5} flex="1" justifyContent="space-between">
+        <Stack gap={0.5} flex="1" justifyContent="space-between">
           <FormLabel>Job Experience</FormLabel>
 
-          <Autocomplete
-            disablePortal
-            fullWidth
-            options={jobExperience}
-            getOptionLabel={(option) => option.toString()}
-            // sx={{ width: 300 }}
-            value={values.experience}
-            onChange={(event, newValue) => {
-              void formik.setFieldValue('experience', newValue);
-            }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                name="experience"
-                label="Experience"
-                fullWidth
-                required
-              />
-            )}
-          />
+          <Select
+            value={formik.values.experience}
+            onChange={formik.handleChange}
+            name="experience"
+          >
+            {jobExperience.map((value, idx) => (
+              <MenuItem value={value} key={idx}>
+                {value}
+              </MenuItem>
+            ))}
+          </Select>
+        </Stack>
+      </Stack>
+
+      <Stack gap={3} direction="row">
+        <Stack gap={0.5} flex="1">
+          <FormLabel htmlFor="eng-level">Level of English fluency</FormLabel>
+
+          <Select
+            id="eng-level"
+            name="englishLevel"
+            onChange={formik.handleChange}
+            value={formik.values.englishLevel}
+          >
+            {Object.values(EnglishLevel).map((value, idx) => (
+              <MenuItem value={value} key={idx}>
+                {capitalize(value.toLowerCase()).replace('_', '-')}
+              </MenuItem>
+            ))}
+          </Select>
+        </Stack>
+
+        <Stack gap={0.5} flex="1">
+          <FormLabel>Skill Level</FormLabel>
+
+          <Select
+            value={formik.values.skillLevel}
+            onChange={formik.handleChange}
+            name="skillLevel"
+          >
+            {[
+              'Beginner',
+              'Intermediate',
+              'Advanced',
+              'Expert',
+              'Junior',
+              'Senior',
+            ].map((value, idx) => (
+              <MenuItem value={value} key={idx}>
+                {value}
+              </MenuItem>
+            ))}
+          </Select>
         </Stack>
       </Stack>
 
@@ -229,6 +265,7 @@ const JobRequirement = () => {
           <TextField
             id="qualification"
             name="vacancy"
+            variant="standard"
             label="type qualification here ..."
             value={qualification}
             fullWidth
@@ -293,7 +330,7 @@ const JobRequirement = () => {
                 sx={{ display: 'flex', flexWrap: 'wrap', width: '25rem' }}
               >
                 <FormControl sx={{ m: 1, flex: 0.8 }} error={isError.language}>
-                  <InputLabel id="language">Age</InputLabel>
+                  <InputLabel id="language">Language</InputLabel>
 
                   <Select
                     labelId="lang-label"
@@ -386,29 +423,6 @@ const JobRequirement = () => {
             </DialogActions>
           </Dialog>
         </div>
-      </Stack>
-
-      <Stack direction="row">
-        <FormControl sx={{ flex: 1 }} component="fieldset" variant="standard">
-          <FormLabel component="legend">
-            What level of English fluency is required?
-          </FormLabel>
-
-          <RadioGroup
-            name="englishLevel"
-            onChange={formik.handleChange}
-            value={formik.values.englishLevel}
-          >
-            {languageLevel.map((level, idx) => (
-              <FormControlLabel
-                key={idx}
-                value={level}
-                control={<Radio />}
-                label={level}
-              />
-            ))}
-          </RadioGroup>
-        </FormControl>
       </Stack>
     </div>
   );

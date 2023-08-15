@@ -1,0 +1,40 @@
+fragment FindAccountAccountPayloadFragment on FindOneAccountPayload{
+    id
+    email
+    accountType
+    image
+    firstName
+    lastName
+    createdAt
+
+    applicant{
+        id
+    }
+    company {
+        id
+        companyName
+        logo
+    }
+
+    oAuthClient {
+        id
+        provider
+    }
+
+    affiliate {
+        id
+    }
+}
+
+query FindAccount($input: AccountInput!) {
+    findAccount(input: $input){
+        errors {
+            message
+        }
+        account {
+            ...FindAccountAccountPayloadFragment
+
+        }
+    }
+}
+

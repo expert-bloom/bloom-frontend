@@ -116,7 +116,7 @@ const Review = () => {
               </IconButton>
             </header>
             <Typography variant="body1" className={s.value}>
-              {values.type.label ?? 'Not selected (required)'}
+              {values.jobType ?? 'Not selected (required)'}
             </Typography>
           </div>
 
@@ -231,7 +231,7 @@ const Review = () => {
               </IconButton>
             </header>
             <Typography variant="body1" className={s.value}>
-              {values.compensation.label ?? 'Not selected (required)'}
+              {values.salaryType ?? 'Not selected (required)'}
             </Typography>
           </div>
 

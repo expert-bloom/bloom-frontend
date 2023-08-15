@@ -16,10 +16,18 @@ import {
 import { Form, Formik } from 'formik';
 import { AnimatePresence, motion, transform } from 'framer-motion';
 import { useRouter } from 'next/router';
-import { useSelector } from 'react-redux';
+import { useSession } from 'next-auth/react';
+import { toast } from 'react-hot-toast';
 
 import { MoButton } from '@/components/MoButton';
-import { type CreateJobPostInput } from '@/graphql/client/gql/schema';
+import {
+  type CreateJobPostInput,
+  type EnglishLevel,
+  type JobSite,
+  type JobType,
+  type SalaryType,
+  useCreateJobPostMutation,
+} from '@/graphql/client/gql/schema';
 import InterviewQuestions, {
   schema as InterviewSchema,
 } from '@/scenes/CreateJobPost/InterviewQuestions';
@@ -81,52 +89,48 @@ const formSteps: FormStepType[] = [
 const initialValues = {
   title: 'Dawit' as string,
   description: 'jhlkjhlkjh' as string,
-  type: {
-    label: 'Internship',
-  } satisfies { label: string },
+  jobType: 'INTERNSHIP' as JobType,
   category: [
     {
       label: 'IT',
     },
   ] as Array<{ label: string }>,
   vacancy: 88 as number,
-  deadline: undefined,
-  compensation: {
-    label: 'Hourly',
-  },
+  deadline: new Date(),
+  salaryType: 'HOURLY' as SalaryType,
   salary: [30] as unknown as [number, number] | [number],
-  location: {
-    label: 'Remote',
-  },
+  jobSite: 'REMOTE' as JobSite,
   email: 'henokgetachew500@gmail.com',
 
   // requirements
   experience: 3,
+  skillLevel: 'Beginner',
   skill: [
     {
       label: 'Vue.js',
     },
   ],
-  englishLevel: '' as string,
+  englishLevel: 'FLUENT' as EnglishLevel,
   otherLanguages: [] as unknown as [{ language: string; level: string }],
-  qualifications: [] as string[],
-  interviewQuestions: [] as string[],
+  qualifications: ['ambitious and passionate'] as string[],
+  interviewQuestions: ['what is your name?', 'how old are you'] as string[],
+
+  companyId: '' as unknown as string,
 };
 
 export type FormValuesType = typeof initialValues;
 
 const PostJob = () => {
-  const router = useRouter();
-
-  const user = useSelector((state: any) => state.User.userData);
-
   const [dir, setDir] = useState<'RIGHT' | 'LEFT'>();
   const [activeStep, setActiveStep] = React.useState(0);
+  const { data: session } = useSession();
   const [currentStep, setCurrentStep] = useState<typeof formSteps[number]>({
     ...formSteps[activeStep],
   });
 
-  // const [createPost, response] = useCreateJobPostMutation();
+  const router = useRouter();
+
+  const [createPost, response] = useCreateJobPostMutation();
 
   const handleNext = () => {
     // setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -183,7 +187,7 @@ const PostJob = () => {
             validateOnBlur={true}
             enableReinitialize
             validationSchema={currentStep?.schema}
-            onSubmit={async (values: any, { setSubmitting }) => {
+            onSubmit={async (values, { setSubmitting }) => {
               console.log('onSubmit values :', values);
 
               switch (currentStep.name) {
@@ -197,27 +201,72 @@ const PostJob = () => {
                   handleNext();
                   break;
                 case stepNames.Post: {
-                  /* const job: CreateJobPostInput = {
+                  const job: CreateJobPostInput = {
                     title: values.title,
                     description: values.description,
+                    jobType: values.jobType,
+                    category: values.category.map((c: any) => c.label),
+                    vacancy: values.vacancy,
+                    applicationDeadline: values.deadline,
+                    salaryType: values.salaryType,
                     salary: values.salary,
-                    jobType: values.type.label,
-                    jobCategory: values.category.map((c: any) => c.label),
-                    jobExperience: values.experience,
-                    jobVacancy: values.vacancy,
-                    jobDeadline: values.deadline,
-                    compensation: values.compensation.label.toLowerCase(),
-                    jobSkills: values.skill.map((c: any) => c.label),
-                    isVisible: true,
-                    companyId: '-',
-                    company: '-',
-                    otherLanguages: [],
+                    jobSite: values.jobSite,
                     email: values.email,
-                  }; */
+
+                    jobExperience: values.experience,
+                    skills: values.skill.map((c: any) => c.label),
+                    englishLevel: values.englishLevel,
+                    otherLanguages: values.otherLanguages.map(
+                      (lang) => `${lang.language} - ${lang.level}`,
+                    ),
+                    qualifications: values.qualifications,
+                    interviewQuestions: values.interviewQuestions,
+
+                    isVisible: true,
+
+                    postedBy: session?.user?.id ?? '',
+                    affiliateId: session?.user?.affiliate?.id ?? null,
+                    companyId:
+                      session?.user?.accountType === 'COMPANY'
+                        ? (session.user.company?.id as string)
+                        : values.companyId,
+                  };
+
+                  const createPostPayload = await createPost({
+                    variables: {
+                      input: {
+                        ...job,
+                      },
+                    },
+                  });
+
+                  if (
+                    createPostPayload?.errors &&
+                    createPostPayload.errors?.length > 0
+                  ) {
+                    toast.success(createPostPayload.errors?.join(', '));
+                  }
+
+                  if (
+                    createPostPayload.data?.createJobPost &&
+                    createPostPayload.data?.createJobPost.errors.length > 0
+                  ) {
+                    toast.success(
+                      createPostPayload.data?.createJobPost.errors
+                        ?.map((err) => err.message)
+                        .join(', '),
+                    );
+                  }
+
+                  if (createPostPayload.data?.createJobPost.jobPost?.id) {
+                    toast.success('Successfully created your Job-post');
+                    void router.push('/dashboard');
+                  }
+
+                  console.log('response : ', createPostPayload);
 
                   return;
 
-                  handleNext();
                   break;
                 }
                 case 'Done':

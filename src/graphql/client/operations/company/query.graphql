@@ -1,0 +1,12 @@
+query GetCompanies {
+    getCompanies{
+        id
+        companyName
+        firstName
+        lastName
+        phone
+        email
+        logo
+        createdAt
+    }
+}

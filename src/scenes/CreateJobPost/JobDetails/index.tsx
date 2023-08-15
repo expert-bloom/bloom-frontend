@@ -3,34 +3,40 @@ import React, { useEffect, useState } from 'react';
 import { DateRangeSharp } from '@mui/icons-material';
 import {
   Autocomplete,
+  FormControl,
   FormControlLabel,
   FormLabel,
   InputAdornment,
-  type SliderProps,
+  InputLabel,
+  MenuItem,
+  Select,
   Stack,
   Switch,
   TextField,
   Typography,
 } from '@mui/material';
-import debounce from '@mui/utils/debounce';
 import { DatePicker } from '@mui/x-date-pickers';
 import { useFormikContext } from 'formik';
 import moment from 'moment/moment';
+import { useSession } from 'next-auth/react';
+import invariant from 'ts-invariant';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 
+import {
+  JobSite,
+  JobType,
+  SalaryType,
+  useGetCompaniesQuery,
+} from '@/graphql/client/gql/schema';
+import { capitalize } from '@/utils';
 import { type FormValuesType } from 'src/scenes/CreateJobPost';
 
 import s from './jobdetails.module.scss';
 
-const jobTypeOptions = [
-  { label: 'Full-time' },
-  {
-    label: 'Part-time',
-  },
-  { label: 'Internship' },
-  { label: 'Contract' },
-];
+const jobTypeOptions = Object.keys(JobType).map((key) => ({
+  label: key,
+}));
 
 const jobCategoryOptions = [
   { label: 'Sales' },
@@ -76,48 +82,13 @@ export const schema = toFormikValidationSchema(
 const JobDetails = () => {
   const formik = useFormikContext<FormValuesType>();
   const { values, handleChange } = formik;
-
-  const [priceRange, setPriceRange] = React.useState<number[]>([20, 37]);
-  const [labelDisplay, setValueLabelDisplay] =
-    useState<SliderProps['valueLabelDisplay']>('auto');
-
   const [isFixed, setIsFixed] = useState(true);
+  const { data: session } = useSession();
+  const { data: companies } = useGetCompaniesQuery();
 
   useEffect(() => {
-    // console.log('formik: ', formik);
+    // console.log('formik: ', formik.values);
   }, [values]);
-
-  const priceRangeOnChange = (
-    event: Event,
-    newValue: number | number[],
-    activeThumb: number,
-  ) => {
-    if (!Array.isArray(newValue)) {
-      return;
-    }
-
-    if (activeThumb === 0) {
-      void formik
-        .setFieldValue('salary', [
-          Math.min(newValue[0], priceRange[1] - minDistance),
-          priceRange[1],
-        ])
-        .then();
-    } else {
-      void formik
-        .setFieldValue('salary', [
-          priceRange[0],
-          Math.max(newValue[1], priceRange[0] + minDistance),
-        ])
-        .then();
-    }
-  };
-
-  // debounce the price range slider by 300ms
-  const debouncedPriceRangeOnChange = React.useCallback(
-    debounce(priceRangeOnChange, 300),
-    [],
-  );
 
   const inputProps = {
     InputProps: {
@@ -161,37 +132,50 @@ const JobDetails = () => {
         />
       </Stack>
 
+      {session?.user?.accountType === 'AFFILIATE' && (
+        <Stack spacing={0.5} flex="1">
+          <FormControl fullWidth>
+            <InputLabel id="company">Affiliate Company</InputLabel>
+
+            {/* todo: change this to async field */}
+            <Select
+              id="company"
+              value={formik.values.companyId}
+              onChange={formik.handleChange}
+              required
+              name="companyId"
+              placeholder="Select Your Affiliate Company"
+            >
+              {companies?.getCompanies.map((company, idx) => (
+                <MenuItem value={company.id} key={idx}>
+                  {company.firstName}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Stack>
+      )}
+
       <Stack spacing={3} direction="row">
         <Stack spacing={0.5} flex="1">
           <FormLabel>What type of Job is this?</FormLabel>
 
-          <Autocomplete
-            disablePortal
-            fullWidth
-            options={jobTypeOptions}
-            sx={{ width: 300 }}
-            value={values.type}
-            onChange={(event, newValue) => {
-              void formik.setFieldValue('type', newValue).then();
-            }}
-            isOptionEqualToValue={(option, value) =>
-              option.label === value.label
-            }
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                name="type"
-                label="Job Type"
-                fullWidth
-                required
-              />
-            )}
-          />
+          <Select
+            required
+            value={formik.values.jobType}
+            onChange={formik.handleChange}
+            name="jobType"
+          >
+            {Object.values(JobType).map((lang, idx) => (
+              <MenuItem value={lang} key={idx}>
+                {capitalize(lang.toLowerCase()).replace('_', '-')}
+              </MenuItem>
+            ))}
+          </Select>
         </Stack>
 
         <Stack spacing={0.5} flex="1" justifyContent="space-between">
           <FormLabel>Category</FormLabel>
-
           <Autocomplete
             disablePortal
             fullWidth
@@ -213,6 +197,7 @@ const JobDetails = () => {
                 name="category"
                 label="Job Category"
                 fullWidth
+                // value={values.category}
                 // required
               />
             )}
@@ -272,54 +257,35 @@ const JobDetails = () => {
 
       <Stack spacing={3} direction="row">
         <Stack spacing={0.5} flex="1" justifyContent="space-between">
-          <FormLabel>Salary compensation</FormLabel>
+          <FormLabel>Salary Type</FormLabel>
 
-          <Autocomplete
-            disablePortal
-            fullWidth
-            options={jobSalaryType}
-            sx={{ width: 300 }}
-            value={values.compensation}
-            onChange={(event, newValue) => {
-              void formik.setFieldValue('compensation', newValue).then();
-            }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                name="compensation"
-                label="Compensation"
-                fullWidth
-                required
-              />
-            )}
-          />
+          <Select
+            value={formik.values.salaryType}
+            onChange={formik.handleChange}
+            name="salaryType"
+          >
+            {Object.values(SalaryType).map((value, idx) => (
+              <MenuItem value={value} key={idx}>
+                {capitalize(value.toLowerCase()).replace('_', '-')}
+              </MenuItem>
+            ))}
+          </Select>
         </Stack>
 
         <Stack spacing={0.5} flex="1" justifyContent="space-between">
           <FormLabel>Work Location</FormLabel>
 
-          <Autocomplete
-            disablePortal
-            fullWidth
-            options={workLocation}
-            sx={{ width: 300 }}
-            value={values.location}
-            onChange={(event, newValue) => {
-              void formik.setFieldValue('location', newValue).then();
-            }}
-            isOptionEqualToValue={(option, value) =>
-              option.label === value.label
-            }
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                name="location"
-                label="Work Location"
-                fullWidth
-                required
-              />
-            )}
-          />
+          <Select
+            value={formik.values.jobSite}
+            onChange={formik.handleChange}
+            name="jobSite"
+          >
+            {Object.values(JobSite).map((value, idx) => (
+              <MenuItem value={value} key={idx}>
+                {capitalize(value.toLowerCase()).replace('_', '-')}
+              </MenuItem>
+            ))}
+          </Select>
         </Stack>
       </Stack>
 

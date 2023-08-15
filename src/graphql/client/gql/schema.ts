@@ -44,6 +44,12 @@ export type Account = IAccount & {
   phone?: Maybe<Scalars['String']['output']>;
 };
 
+export type AccountFilterInput = {
+  email?: InputMaybe<Scalars['String']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  phone?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type AccountInput = {
   email?: InputMaybe<Scalars['String']['input']>;
   id?: InputMaybe<Scalars['ID']['input']>;
@@ -146,8 +152,8 @@ export type CreateJobPostInput = {
   description: Scalars['String']['input'];
   email: Scalars['String']['input'];
   englishLevel: EnglishLevel;
+  interviewQuestions: Array<Scalars['String']['input']>;
   isVisible: Scalars['Boolean']['input'];
-  jobDeadline: Scalars['DateTime']['input'];
   jobExperience: Scalars['Int']['input'];
   jobSite: JobSite;
   jobType: JobType;
@@ -171,6 +177,28 @@ export enum EnglishLevel {
 export type Error = {
   __typename?: 'Error';
   message: Scalars['String']['output'];
+};
+
+export type FindOneAccountPayload = IAccount & {
+  __typename?: 'FindOneAccountPayload';
+  accountType: AccountType;
+  affiliate?: Maybe<AffiliateLight>;
+  applicant?: Maybe<ApplicantLight>;
+  company?: Maybe<CompanyLight>;
+  createdAt: Scalars['DateTime']['output'];
+  email: Scalars['String']['output'];
+  firstName: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  image?: Maybe<Scalars['String']['output']>;
+  lastName: Scalars['String']['output'];
+  oAuthClient: Array<Maybe<OAuth>>;
+  phone?: Maybe<Scalars['String']['output']>;
+};
+
+export type FindOnePayload = PayloadError & {
+  __typename?: 'FindOnePayload';
+  account?: Maybe<FindOneAccountPayload>;
+  errors: Array<Error>;
 };
 
 export enum Gender {
@@ -199,6 +227,7 @@ export type JobPost = {
   email: Scalars['String']['output'];
   englishLevel: EnglishLevel;
   id: Scalars['String']['output'];
+  interviewQuestions: Array<Scalars['String']['output']>;
   isVisible: Scalars['Boolean']['output'];
   jobExperience: Scalars['Int']['output'];
   jobSite: JobSite;
@@ -226,7 +255,7 @@ export enum JobSite {
 }
 
 export enum JobType {
-  Contract = 'CONTRACT',
+  Contractual = 'CONTRACTUAL',
   FullTime = 'FULL_TIME',
   Internship = 'INTERNSHIP',
   PartTime = 'PART_TIME',
@@ -271,6 +300,21 @@ export type MutationSignUpOAuthArgs = {
   input: OAuthSignUpInput;
 };
 
+export type OAuth = {
+  __typename?: 'OAuth';
+  accessToken: Scalars['String']['output'];
+  expires: Scalars['DateTime']['output'];
+  id: Scalars['String']['output'];
+  provider: Scalars['String']['output'];
+  providerAccountId: Scalars['String']['output'];
+  refreshToken?: Maybe<Scalars['String']['output']>;
+  tokenType: Scalars['String']['output'];
+};
+
+export type OAuthAccount = {
+  provider?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type OAuthAccountInput = {
   accountType: AccountType;
   email: Scalars['String']['input'];
@@ -305,7 +349,8 @@ export type PayloadError = {
 
 export type Query = {
   __typename?: 'Query';
-  findAccount?: Maybe<AuthPayload>;
+  findAccount?: Maybe<FindOnePayload>;
+  getCompanies: Array<Company>;
   me?: Maybe<Scalars['String']['output']>;
   sayHi?: Maybe<Scalars['String']['output']>;
 };
@@ -452,17 +497,28 @@ export type SignUpOAuthMutation = {
   };
 };
 
-export type CreateJobPostMutationVariables = Exact<{
-  input: CreateJobPostInput;
-}>;
-
-export type CreateJobPostMutation = {
-  __typename?: 'Mutation';
-  createJobPost: {
-    __typename?: 'JobPostPayload';
-    errors: Array<{ __typename?: 'Error'; message: string }>;
-    jobPost?: { __typename?: 'JobPost'; id: string } | null;
-  };
+export type FindAccountAccountPayloadFragmentFragment = {
+  __typename?: 'FindOneAccountPayload';
+  id: string;
+  email: string;
+  accountType: AccountType;
+  image?: string | null;
+  firstName: string;
+  lastName: string;
+  createdAt: any;
+  applicant?: { __typename?: 'ApplicantLight'; id: string } | null;
+  company?: {
+    __typename?: 'CompanyLight';
+    id: string;
+    companyName?: string | null;
+    logo?: string | null;
+  } | null;
+  oAuthClient: Array<{
+    __typename?: 'OAuth';
+    id: string;
+    provider: string;
+  } | null>;
+  affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
 };
 
 export type FindAccountQueryVariables = Exact<{
@@ -472,10 +528,10 @@ export type FindAccountQueryVariables = Exact<{
 export type FindAccountQuery = {
   __typename?: 'Query';
   findAccount?: {
-    __typename?: 'AuthPayload';
+    __typename?: 'FindOnePayload';
     errors: Array<{ __typename?: 'Error'; message: string }>;
     account?: {
-      __typename?: 'AuthAccountPayload';
+      __typename?: 'FindOneAccountPayload';
       id: string;
       email: string;
       accountType: AccountType;
@@ -490,9 +546,44 @@ export type FindAccountQuery = {
         companyName?: string | null;
         logo?: string | null;
       } | null;
+      oAuthClient: Array<{
+        __typename?: 'OAuth';
+        id: string;
+        provider: string;
+      } | null>;
       affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
     } | null;
   } | null;
+};
+
+export type GetCompaniesQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetCompaniesQuery = {
+  __typename?: 'Query';
+  getCompanies: Array<{
+    __typename?: 'Company';
+    id: string;
+    companyName?: string | null;
+    firstName: string;
+    lastName: string;
+    phone?: string | null;
+    email: string;
+    logo?: string | null;
+    createdAt: any;
+  }>;
+};
+
+export type CreateJobPostMutationVariables = Exact<{
+  input: CreateJobPostInput;
+}>;
+
+export type CreateJobPostMutation = {
+  __typename?: 'Mutation';
+  createJobPost: {
+    __typename?: 'JobPostPayload';
+    errors: Array<{ __typename?: 'Error'; message: string }>;
+    jobPost?: { __typename?: 'JobPost'; id: string } | null;
+  };
 };
 
 export const AccountFragmentFragmentDoc = gql`
@@ -522,6 +613,32 @@ export const AuthAccountPayloadFragmentDoc = gql`
       id
       companyName
       logo
+    }
+    affiliate {
+      id
+    }
+  }
+`;
+export const FindAccountAccountPayloadFragmentFragmentDoc = gql`
+  fragment FindAccountAccountPayloadFragment on FindOneAccountPayload {
+    id
+    email
+    accountType
+    image
+    firstName
+    lastName
+    createdAt
+    applicant {
+      id
+    }
+    company {
+      id
+      companyName
+      logo
+    }
+    oAuthClient {
+      id
+      provider
     }
     affiliate {
       id
@@ -690,6 +807,132 @@ export type SignUpOAuthMutationOptions = Apollo.BaseMutationOptions<
   SignUpOAuthMutation,
   SignUpOAuthMutationVariables
 >;
+export const FindAccountDocument = gql`
+  query FindAccount($input: AccountInput!) {
+    findAccount(input: $input) {
+      errors {
+        message
+      }
+      account {
+        ...FindAccountAccountPayloadFragment
+      }
+    }
+  }
+  ${FindAccountAccountPayloadFragmentFragmentDoc}
+`;
+
+/**
+ * __useFindAccountQuery__
+ *
+ * To run a query within a React component, call `useFindAccountQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindAccountQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindAccountQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useFindAccountQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    FindAccountQuery,
+    FindAccountQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<FindAccountQuery, FindAccountQueryVariables>(
+    FindAccountDocument,
+    options,
+  );
+}
+export function useFindAccountLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    FindAccountQuery,
+    FindAccountQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<FindAccountQuery, FindAccountQueryVariables>(
+    FindAccountDocument,
+    options,
+  );
+}
+export type FindAccountQueryHookResult = ReturnType<typeof useFindAccountQuery>;
+export type FindAccountLazyQueryHookResult = ReturnType<
+  typeof useFindAccountLazyQuery
+>;
+export type FindAccountQueryResult = Apollo.QueryResult<
+  FindAccountQuery,
+  FindAccountQueryVariables
+>;
+export const GetCompaniesDocument = gql`
+  query GetCompanies {
+    getCompanies {
+      id
+      companyName
+      firstName
+      lastName
+      phone
+      email
+      logo
+      createdAt
+    }
+  }
+`;
+
+/**
+ * __useGetCompaniesQuery__
+ *
+ * To run a query within a React component, call `useGetCompaniesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCompaniesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCompaniesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetCompaniesQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetCompaniesQuery,
+    GetCompaniesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetCompaniesQuery, GetCompaniesQueryVariables>(
+    GetCompaniesDocument,
+    options,
+  );
+}
+export function useGetCompaniesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetCompaniesQuery,
+    GetCompaniesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetCompaniesQuery, GetCompaniesQueryVariables>(
+    GetCompaniesDocument,
+    options,
+  );
+}
+export type GetCompaniesQueryHookResult = ReturnType<
+  typeof useGetCompaniesQuery
+>;
+export type GetCompaniesLazyQueryHookResult = ReturnType<
+  typeof useGetCompaniesLazyQuery
+>;
+export type GetCompaniesQueryResult = Apollo.QueryResult<
+  GetCompaniesQuery,
+  GetCompaniesQueryVariables
+>;
 export const CreateJobPostDocument = gql`
   mutation CreateJobPost($input: CreateJobPostInput!) {
     createJobPost(input: $input) {
@@ -744,66 +987,4 @@ export type CreateJobPostMutationResult =
 export type CreateJobPostMutationOptions = Apollo.BaseMutationOptions<
   CreateJobPostMutation,
   CreateJobPostMutationVariables
->;
-export const FindAccountDocument = gql`
-  query FindAccount($input: AccountInput!) {
-    findAccount(input: $input) {
-      errors {
-        message
-      }
-      account {
-        ...AuthAccountPayload
-      }
-    }
-  }
-  ${AuthAccountPayloadFragmentDoc}
-`;
-
-/**
- * __useFindAccountQuery__
- *
- * To run a query within a React component, call `useFindAccountQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindAccountQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFindAccountQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useFindAccountQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    FindAccountQuery,
-    FindAccountQueryVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<FindAccountQuery, FindAccountQueryVariables>(
-    FindAccountDocument,
-    options,
-  );
-}
-export function useFindAccountLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    FindAccountQuery,
-    FindAccountQueryVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<FindAccountQuery, FindAccountQueryVariables>(
-    FindAccountDocument,
-    options,
-  );
-}
-export type FindAccountQueryHookResult = ReturnType<typeof useFindAccountQuery>;
-export type FindAccountLazyQueryHookResult = ReturnType<
-  typeof useFindAccountLazyQuery
->;
-export type FindAccountQueryResult = Apollo.QueryResult<
-  FindAccountQuery,
-  FindAccountQueryVariables
 >;

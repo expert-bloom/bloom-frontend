@@ -109,6 +109,26 @@ type Error {
     message: String!
 }
 
+type FindOneAccountPayload implements IAccount {
+    accountType: AccountType!
+    affiliate: AffiliateLight
+    applicant: ApplicantLight
+    company: CompanyLight
+    createdAt: DateTime!
+    email: String!
+    firstName: String!
+    id: String!
+    image: String
+    lastName: String!
+    oAuthClient: [OAuth]!
+    phone: String
+}
+
+type FindOnePayload implements PayloadError {
+    account: FindOneAccountPayload
+    errors: [Error!]!
+}
+
 type JobPost {
     applicationDeadline: DateTime!
     category: [String!]!
@@ -117,6 +137,7 @@ type JobPost {
     email: String!
     englishLevel: EnglishLevel!
     id: String!
+    interviewQuestions: [String!]!
     isVisible: Boolean!
     jobExperience: Int!
     jobSite: JobSite!
@@ -145,8 +166,19 @@ type Mutation {
     signUpOAuth(input: OAuthSignUpInput!): AuthPayload!
 }
 
+type OAuth {
+    accessToken: String!
+    expires: DateTime!
+    id: String!
+    provider: String!
+    providerAccountId: String!
+    refreshToken: String
+    tokenType: String!
+}
+
 type Query {
-    findAccount(input: AccountInput!): AuthPayload
+    findAccount(input: AccountInput!): FindOnePayload
+    getCompanies: [Company!]!
     me: String
     sayHi: String
 }
@@ -177,7 +209,7 @@ enum JobSite {
 }
 
 enum JobType {
-    CONTRACT
+    CONTRACTUAL
     FULL_TIME
     INTERNSHIP
     PART_TIME
@@ -193,6 +225,12 @@ enum SalaryType {
 "A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar."
 scalar DateTime
 
+input AccountFilterInput {
+    email: String
+    id: ID
+    phone: String
+}
+
 input AccountInput {
     email: String
     id: ID
@@ -207,8 +245,8 @@ input CreateJobPostInput {
     description: String!
     email: String!
     englishLevel: EnglishLevel!
+    interviewQuestions: [String!]!
     isVisible: Boolean!
-    jobDeadline: DateTime!
     jobExperience: Int!
     jobSite: JobSite!
     jobType: JobType!
@@ -229,6 +267,10 @@ input JopPostFilterInput {
 input LoginInput {
     email: String!
     password: String!
+}
+
+input OAuthAccount {
+    provider: String
 }
 
 input OAuthAccountInput {

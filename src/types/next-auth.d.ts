@@ -1,15 +1,26 @@
 import { type DefaultSession } from 'next-auth';
-import type { DiscriminatorType } from '@/models/User/discriminators';
-import { type ICompany } from '@/models/Company';
+
+import { type AccountType } from '@/graphql/client/gql/schema';
 
 declare module 'next-auth' {
   interface Session extends DefaultSession {
     user?: {
+      id: string;
       image?: string;
       name: string;
       email: string;
-      role: DiscriminatorType;
-      company: ICompany | string;
+      accountType: AccountType;
+      company:
+        | ({
+            id: string;
+          } & Record<string, any>)
+        | null;
+      applicant: object | null;
+      affiliate:
+        | ({
+            id: string;
+          } & Record<string, any>)
+        | null;
     };
   }
 }

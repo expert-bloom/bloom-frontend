@@ -54,15 +54,15 @@ const getOptions: (req: NextApiRequest) => NextAuthOptions = (req) => ({
 
       /*
       *
-      *  provider: 'github',
-    type: 'oauth',
-    providerAccountId: '54037700',
-    access_token: 'ghu_h6QQzmqKh7MJjHxjYPotiX0S60g4Cb15eDdu',
-    expires_at: 1691559679,
-    refresh_token: 'ghr_V2MUizsOPUZEgNr1wAtermaqNb6MitXFbjp4m9cVTHGDdOvBxR8XxKFZcbwWGhgkeS7Ygs4YheN5',
-    refresh_token_expires_in: 15897599,
-    token_type: 'bearer',
-    scope: ''
+          provider: 'github',
+          type: 'oauth',
+          providerAccountId: '54037700',
+          access_token: 'ghu_h6QQzmqKh7MJjHxjYPotiX0S60g4Cb15eDdu',
+          expires_at: 1691559679,
+          refresh_token: 'ghr_V2MUizsOPUZEgNr1wAtermaqNb6MitXFbjp4m9cVTHGDdOvBxR8XxKFZcbwWGhgkeS7Ygs4YheN5',
+          refresh_token_expires_in: 15897599,
+          token_type: 'bearer',
+          scope: ''
 
       *
       *
@@ -103,6 +103,16 @@ const getOptions: (req: NextApiRequest) => NextAuthOptions = (req) => ({
           ) {
             return `${redirectUrl}/?error=Account Not Found!`;
           }
+
+          // todo : check if account created with social link
+          /* if (
+            findAccountPayload.data?.findAccount?.account?.oAuthClient
+              ?.length &&
+            findAccountPayload.data?.findAccount?.account?.oAuthClient?.length >
+              0
+          ) {
+
+          } */
 
           // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
           if (findAccountPayload.data.findAccount?.account?.id) {
