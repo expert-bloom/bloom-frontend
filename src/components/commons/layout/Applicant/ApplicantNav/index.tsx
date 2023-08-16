@@ -1,18 +1,9 @@
 import React from 'react';
 
-import {
-  CreateNewFolderRounded,
-  Dashboard,
-  Handshake,
-  Logout,
-} from '@mui/icons-material';
+import { Dashboard, Handshake } from '@mui/icons-material';
 import {
   Avatar,
   Button,
-  Divider,
-  ListItemIcon,
-  Menu,
-  MenuItem,
   Slide,
   Stack,
   Tooltip,
@@ -24,14 +15,14 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { signOut, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 
 import AccountAlert from '@/components/AccountAlert';
 import { usePopover } from '@/hooks/use-popover';
 import Logo from '@/public/logo.png';
 
 import { AccountPopover } from './AccountPopover';
-import s from './companynav.module.scss';
+import s from './applicant_nav.module.scss';
 
 interface Props {
   window?: () => Window;
@@ -74,22 +65,17 @@ const navTransition = {
 const links = [
   {
     name: 'Dashboard',
-    href: '/dashboard/company',
+    href: '/dashboard/applicant',
     Icon: Dashboard,
   },
   {
-    name: 'Marketplace',
-    href: '/company/marketplace',
+    name: 'Explore Jobs',
+    href: '/search',
     Icon: Handshake,
-  },
-  {
-    name: 'Create Post',
-    href: '/post',
-    Icon: CreateNewFolderRounded,
   },
 ];
 
-export default function CompanyNav({ pageProps }: any) {
+export default function Applicant({ pageProps }: any) {
   // console.log('data: ', session, isTalent);
   const router = useRouter();
   const accountPopover = usePopover();

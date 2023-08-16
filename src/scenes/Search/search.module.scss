@@ -3,7 +3,8 @@
 .container {
   position: relative;
   width: 100%;
-  padding: 10vmax 0;
+  padding: 7vmax 0;
+  min-height: 100vh;
 
 
   // @include s.margin(top, 10rem);
@@ -48,68 +49,34 @@
 
     .content {
       display: flex;
-      gap: 3rem;
+      //gap: 3rem;
       margin-top: 5rem;
 
       & > * {
         //boxshadow
-        box-shadow: 0 .7rem 1rem 0 rgba(0, 0, 0, .05), 0 -.06rem 1rem 0 rgba(0, 0, 0, .05);
+        //box-shadow: 0 .7rem 1rem 0 rgba(0, 0, 0, .05), 0 -.06rem 1rem 0 rgba(0, 0, 0, .05);
         //height: 100%;
       }
 
     }
 
-    .left {
-      position: sticky;
-      top: 20%;
-      align-self: flex-start;
-      padding: 2rem;
-      flex: .27;
-      border-radius: 1rem;
-      backdrop-filter: blur(4px);
-
-
-      header{
-        width: calc(100% + 4rem);
-        //border-bottom: thin solid gray;
-        //border: 1px solid red;
-
-        p{
-          font-size: 1.5rem;
-          color: gray;
-        }
-      }
-
-      .filters{
-        margin-top: 2rem;
-
-        & > :not(:first-child) {
-          margin-top: 1rem;
-        }
-      }
-    }
 
     .right {
-      padding: 0 3rem 3rem;
+      //padding: 0 3rem 3rem;
+      $border-clr: #d7d7d7;
+
       flex: .75;
       box-shadow: none;
-      //border: 1px solid gray;
+      border-radius: 1rem;
+      border: 1px solid $border-clr;
 
       & > :not(:first-child) {
-        margin-top: 4rem;
+        //margin-top: 4rem;
+        border-top: 1px solid $border-clr;
       }
 
       .job_card {
         padding: 3rem 4rem;
-
-        //border-radius: 1.5rem;
-        //box-shadow: 0 .7rem 1rem 0 rgba(0, 0, 0, .05), 0 -.06rem 1rem 0 rgba(0, 0, 0, .05);
-        // make the card look like a paper and add shadow and rounded corners
-        //background-color: white;
-
-        border-radius: 1.5rem;
-        box-shadow: 0 .7rem 1rem 0 rgba(0, 0, 0, .05), 0 -.06rem 1rem 0 rgba(0, 0, 0, .05);
-
 
         display: flex;
         flex-flow: column;
@@ -124,13 +91,14 @@
 
         .title {
           //font-size: 1.2rem;
+          font-weight: 600 !important;
         }
 
         .detail {
           color: gray;
           font-weight: 300;
           letter-spacing: 0.04vmax;
-          font-size: 1rem;
+          font-size: .85rem;
         }
 
         .tags {

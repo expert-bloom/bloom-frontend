@@ -59,7 +59,7 @@ export function createComponents(config: { palette: PaletteOptions }) {
       styleOverrides: {
         filledError: {},
         standardWarning: {
-          border: '2px solid #06AED4',
+          border: '2px solid #F79009',
         },
       },
     },

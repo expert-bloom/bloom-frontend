@@ -1,0 +1,30 @@
+query GetJobPosts($input: JopPostFilterInput ){
+    getJobPosts(input: $input){
+        id
+        title
+        applicationDeadline
+        description
+        location
+        salary
+        salaryType
+        jobType
+        category
+        vacancy
+        email
+        jobSite
+        isVisible
+        jobExperience
+        experienceLevel
+        englishLevel
+        otherLanguages
+        skills
+        qualifications
+        interviewQuestions
+
+        createdAt
+        updatedAt
+
+
+
+    }
+}

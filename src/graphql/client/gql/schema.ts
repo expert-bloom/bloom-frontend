@@ -56,6 +56,23 @@ export type AccountInput = {
   phone?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type AccountPayload = IAccount & {
+  __typename?: 'AccountPayload';
+  accountType: AccountType;
+  affiliate?: Maybe<AffiliateLight>;
+  applicant?: Maybe<ApplicantLight>;
+  company?: Maybe<CompanyLight>;
+  createdAt: Scalars['DateTime']['output'];
+  email: Scalars['String']['output'];
+  emailVerified?: Maybe<Scalars['DateTime']['output']>;
+  firstName: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  image?: Maybe<Scalars['String']['output']>;
+  lastName: Scalars['String']['output'];
+  oAuthClient: Array<OAuth>;
+  phone?: Maybe<Scalars['String']['output']>;
+};
+
 export enum AccountType {
   Affiliate = 'AFFILIATE',
   Applicant = 'APPLICANT',
@@ -102,24 +119,9 @@ export type ApplicantLight = {
   resume?: Maybe<Scalars['String']['output']>;
 };
 
-export type AuthAccountPayload = IAccount & {
-  __typename?: 'AuthAccountPayload';
-  accountType: AccountType;
-  affiliate?: Maybe<AffiliateLight>;
-  applicant?: Maybe<ApplicantLight>;
-  company?: Maybe<CompanyLight>;
-  createdAt: Scalars['DateTime']['output'];
-  email: Scalars['String']['output'];
-  firstName: Scalars['String']['output'];
-  id: Scalars['String']['output'];
-  image?: Maybe<Scalars['String']['output']>;
-  lastName: Scalars['String']['output'];
-  phone?: Maybe<Scalars['String']['output']>;
-};
-
 export type AuthPayload = PayloadError & {
   __typename?: 'AuthPayload';
-  account?: Maybe<AuthAccountPayload>;
+  account?: Maybe<AccountPayload>;
   errors: Array<Error>;
 };
 
@@ -152,11 +154,13 @@ export type CreateJobPostInput = {
   description: Scalars['String']['input'];
   email: Scalars['String']['input'];
   englishLevel: EnglishLevel;
+  experienceLevel: ExperienceLevel;
   interviewQuestions: Array<Scalars['String']['input']>;
   isVisible: Scalars['Boolean']['input'];
   jobExperience: Scalars['Int']['input'];
   jobSite: JobSite;
   jobType: JobType;
+  location: Scalars['String']['input'];
   otherLanguages: Array<Scalars['String']['input']>;
   postedBy: Scalars['String']['input'];
   qualifications: Array<Scalars['String']['input']>;
@@ -179,25 +183,17 @@ export type Error = {
   message: Scalars['String']['output'];
 };
 
-export type FindOneAccountPayload = IAccount & {
-  __typename?: 'FindOneAccountPayload';
-  accountType: AccountType;
-  affiliate?: Maybe<AffiliateLight>;
-  applicant?: Maybe<ApplicantLight>;
-  company?: Maybe<CompanyLight>;
-  createdAt: Scalars['DateTime']['output'];
-  email: Scalars['String']['output'];
-  firstName: Scalars['String']['output'];
-  id: Scalars['String']['output'];
-  image?: Maybe<Scalars['String']['output']>;
-  lastName: Scalars['String']['output'];
-  oAuthClient: Array<Maybe<OAuth>>;
-  phone?: Maybe<Scalars['String']['output']>;
-};
+export enum ExperienceLevel {
+  Beginner = 'Beginner',
+  Expert = 'Expert',
+  Intermediate = 'Intermediate',
+  Junior = 'Junior',
+  Senior = 'Senior',
+}
 
 export type FindOnePayload = PayloadError & {
   __typename?: 'FindOnePayload';
-  account?: Maybe<FindOneAccountPayload>;
+  account?: Maybe<AccountPayload>;
   errors: Array<Error>;
 };
 
@@ -226,12 +222,14 @@ export type JobPost = {
   description: Scalars['String']['output'];
   email: Scalars['String']['output'];
   englishLevel: EnglishLevel;
+  experienceLevel: ExperienceLevel;
   id: Scalars['String']['output'];
   interviewQuestions: Array<Scalars['String']['output']>;
   isVisible: Scalars['Boolean']['output'];
   jobExperience: Scalars['Int']['output'];
   jobSite: JobSite;
   jobType: JobType;
+  location: Scalars['String']['output'];
   otherLanguages: Array<Scalars['String']['output']>;
   qualifications: Array<Scalars['String']['output']>;
   salary: Array<Scalars['Int']['output']>;
@@ -262,12 +260,16 @@ export enum JobType {
 }
 
 export type JopPostFilterInput = {
-  company?: InputMaybe<Scalars['String']['input']>;
+  companyId?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type LoginInput = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
+};
+
+export type MeInput = {
+  accountId: Scalars['String']['input'];
 };
 
 export type Mutation = {
@@ -351,12 +353,21 @@ export type Query = {
   __typename?: 'Query';
   findAccount?: Maybe<FindOnePayload>;
   getCompanies: Array<Company>;
-  me?: Maybe<Scalars['String']['output']>;
+  getJobPosts: Array<JobPost>;
+  me?: Maybe<AccountPayload>;
   sayHi?: Maybe<Scalars['String']['output']>;
 };
 
 export type QueryFindAccountArgs = {
   input: AccountInput;
+};
+
+export type QueryGetJobPostsArgs = {
+  input?: InputMaybe<JopPostFilterInput>;
+};
+
+export type QueryMeArgs = {
+  input: MeInput;
 };
 
 export enum SalaryType {
@@ -388,25 +399,6 @@ export type AccountFragmentFragment = {
   createdAt: any;
 };
 
-export type AuthAccountPayloadFragment = {
-  __typename?: 'AuthAccountPayload';
-  id: string;
-  email: string;
-  accountType: AccountType;
-  image?: string | null;
-  firstName: string;
-  lastName: string;
-  createdAt: any;
-  applicant?: { __typename?: 'ApplicantLight'; id: string } | null;
-  company?: {
-    __typename?: 'CompanyLight';
-    id: string;
-    companyName?: string | null;
-    logo?: string | null;
-  } | null;
-  affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
-};
-
 export type LoginMutationVariables = Exact<{
   input: LoginInput;
 }>;
@@ -417,123 +409,10 @@ export type LoginMutation = {
     __typename?: 'AuthPayload';
     errors: Array<{ __typename?: 'Error'; message: string }>;
     account?: {
-      __typename?: 'AuthAccountPayload';
+      __typename?: 'AccountPayload';
       id: string;
       email: string;
-      accountType: AccountType;
-      image?: string | null;
-      firstName: string;
-      lastName: string;
-      createdAt: any;
-      applicant?: { __typename?: 'ApplicantLight'; id: string } | null;
-      company?: {
-        __typename?: 'CompanyLight';
-        id: string;
-        companyName?: string | null;
-        logo?: string | null;
-      } | null;
-      affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
-    } | null;
-  };
-};
-
-export type SignUpMutationVariables = Exact<{
-  input: SignUpInput;
-}>;
-
-export type SignUpMutation = {
-  __typename?: 'Mutation';
-  signUp: {
-    __typename?: 'AuthPayload';
-    errors: Array<{ __typename?: 'Error'; message: string }>;
-    account?: {
-      __typename?: 'AuthAccountPayload';
-      id: string;
-      email: string;
-      accountType: AccountType;
-      image?: string | null;
-      firstName: string;
-      lastName: string;
-      createdAt: any;
-      applicant?: { __typename?: 'ApplicantLight'; id: string } | null;
-      company?: {
-        __typename?: 'CompanyLight';
-        id: string;
-        companyName?: string | null;
-        logo?: string | null;
-      } | null;
-      affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
-    } | null;
-  };
-};
-
-export type SignUpOAuthMutationVariables = Exact<{
-  input: OAuthSignUpInput;
-}>;
-
-export type SignUpOAuthMutation = {
-  __typename?: 'Mutation';
-  signUpOAuth: {
-    __typename?: 'AuthPayload';
-    errors: Array<{ __typename?: 'Error'; message: string }>;
-    account?: {
-      __typename?: 'AuthAccountPayload';
-      id: string;
-      email: string;
-      accountType: AccountType;
-      image?: string | null;
-      firstName: string;
-      lastName: string;
-      createdAt: any;
-      applicant?: { __typename?: 'ApplicantLight'; id: string } | null;
-      company?: {
-        __typename?: 'CompanyLight';
-        id: string;
-        companyName?: string | null;
-        logo?: string | null;
-      } | null;
-      affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
-    } | null;
-  };
-};
-
-export type FindAccountAccountPayloadFragmentFragment = {
-  __typename?: 'FindOneAccountPayload';
-  id: string;
-  email: string;
-  accountType: AccountType;
-  image?: string | null;
-  firstName: string;
-  lastName: string;
-  createdAt: any;
-  applicant?: { __typename?: 'ApplicantLight'; id: string } | null;
-  company?: {
-    __typename?: 'CompanyLight';
-    id: string;
-    companyName?: string | null;
-    logo?: string | null;
-  } | null;
-  oAuthClient: Array<{
-    __typename?: 'OAuth';
-    id: string;
-    provider: string;
-  } | null>;
-  affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
-};
-
-export type FindAccountQueryVariables = Exact<{
-  input: AccountInput;
-}>;
-
-export type FindAccountQuery = {
-  __typename?: 'Query';
-  findAccount?: {
-    __typename?: 'FindOnePayload';
-    errors: Array<{ __typename?: 'Error'; message: string }>;
-    account?: {
-      __typename?: 'FindOneAccountPayload';
-      id: string;
-      email: string;
+      emailVerified?: any | null;
       accountType: AccountType;
       image?: string | null;
       firstName: string;
@@ -550,9 +429,166 @@ export type FindAccountQuery = {
         __typename?: 'OAuth';
         id: string;
         provider: string;
-      } | null>;
+      }>;
       affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
     } | null;
+  };
+};
+
+export type SignUpMutationVariables = Exact<{
+  input: SignUpInput;
+}>;
+
+export type SignUpMutation = {
+  __typename?: 'Mutation';
+  signUp: {
+    __typename?: 'AuthPayload';
+    errors: Array<{ __typename?: 'Error'; message: string }>;
+    account?: {
+      __typename?: 'AccountPayload';
+      id: string;
+      email: string;
+      emailVerified?: any | null;
+      accountType: AccountType;
+      image?: string | null;
+      firstName: string;
+      lastName: string;
+      createdAt: any;
+      applicant?: { __typename?: 'ApplicantLight'; id: string } | null;
+      company?: {
+        __typename?: 'CompanyLight';
+        id: string;
+        companyName?: string | null;
+        logo?: string | null;
+      } | null;
+      oAuthClient: Array<{
+        __typename?: 'OAuth';
+        id: string;
+        provider: string;
+      }>;
+      affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
+    } | null;
+  };
+};
+
+export type SignUpOAuthMutationVariables = Exact<{
+  input: OAuthSignUpInput;
+}>;
+
+export type SignUpOAuthMutation = {
+  __typename?: 'Mutation';
+  signUpOAuth: {
+    __typename?: 'AuthPayload';
+    errors: Array<{ __typename?: 'Error'; message: string }>;
+    account?: {
+      __typename?: 'AccountPayload';
+      id: string;
+      email: string;
+      emailVerified?: any | null;
+      accountType: AccountType;
+      image?: string | null;
+      firstName: string;
+      lastName: string;
+      createdAt: any;
+      applicant?: { __typename?: 'ApplicantLight'; id: string } | null;
+      company?: {
+        __typename?: 'CompanyLight';
+        id: string;
+        companyName?: string | null;
+        logo?: string | null;
+      } | null;
+      oAuthClient: Array<{
+        __typename?: 'OAuth';
+        id: string;
+        provider: string;
+      }>;
+      affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
+    } | null;
+  };
+};
+
+export type AccountPayloadFragmentFragment = {
+  __typename?: 'AccountPayload';
+  id: string;
+  email: string;
+  emailVerified?: any | null;
+  accountType: AccountType;
+  image?: string | null;
+  firstName: string;
+  lastName: string;
+  createdAt: any;
+  applicant?: { __typename?: 'ApplicantLight'; id: string } | null;
+  company?: {
+    __typename?: 'CompanyLight';
+    id: string;
+    companyName?: string | null;
+    logo?: string | null;
+  } | null;
+  oAuthClient: Array<{ __typename?: 'OAuth'; id: string; provider: string }>;
+  affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
+};
+
+export type FindAccountQueryVariables = Exact<{
+  input: AccountInput;
+}>;
+
+export type FindAccountQuery = {
+  __typename?: 'Query';
+  findAccount?: {
+    __typename?: 'FindOnePayload';
+    errors: Array<{ __typename?: 'Error'; message: string }>;
+    account?: {
+      __typename?: 'AccountPayload';
+      id: string;
+      email: string;
+      emailVerified?: any | null;
+      accountType: AccountType;
+      image?: string | null;
+      firstName: string;
+      lastName: string;
+      createdAt: any;
+      applicant?: { __typename?: 'ApplicantLight'; id: string } | null;
+      company?: {
+        __typename?: 'CompanyLight';
+        id: string;
+        companyName?: string | null;
+        logo?: string | null;
+      } | null;
+      oAuthClient: Array<{
+        __typename?: 'OAuth';
+        id: string;
+        provider: string;
+      }>;
+      affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
+    } | null;
+  } | null;
+};
+
+export type MeQueryVariables = Exact<{
+  input: MeInput;
+}>;
+
+export type MeQuery = {
+  __typename?: 'Query';
+  me?: {
+    __typename?: 'AccountPayload';
+    id: string;
+    email: string;
+    emailVerified?: any | null;
+    accountType: AccountType;
+    image?: string | null;
+    firstName: string;
+    lastName: string;
+    createdAt: any;
+    applicant?: { __typename?: 'ApplicantLight'; id: string } | null;
+    company?: {
+      __typename?: 'CompanyLight';
+      id: string;
+      companyName?: string | null;
+      logo?: string | null;
+    } | null;
+    oAuthClient: Array<{ __typename?: 'OAuth'; id: string; provider: string }>;
+    affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
   } | null;
 };
 
@@ -586,6 +622,39 @@ export type CreateJobPostMutation = {
   };
 };
 
+export type GetJobPostsQueryVariables = Exact<{
+  input?: InputMaybe<JopPostFilterInput>;
+}>;
+
+export type GetJobPostsQuery = {
+  __typename?: 'Query';
+  getJobPosts: Array<{
+    __typename?: 'JobPost';
+    id: string;
+    title: string;
+    applicationDeadline: any;
+    description: string;
+    location: string;
+    salary: Array<number>;
+    salaryType: SalaryType;
+    jobType: JobType;
+    category: Array<string>;
+    vacancy: number;
+    email: string;
+    jobSite: JobSite;
+    isVisible: boolean;
+    jobExperience: number;
+    experienceLevel: ExperienceLevel;
+    englishLevel: EnglishLevel;
+    otherLanguages: Array<string>;
+    skills: Array<string>;
+    qualifications: Array<string>;
+    interviewQuestions: Array<string>;
+    createdAt: any;
+    updatedAt: any;
+  }>;
+};
+
 export const AccountFragmentFragmentDoc = gql`
   fragment AccountFragment on Account {
     id
@@ -597,32 +666,11 @@ export const AccountFragmentFragmentDoc = gql`
     createdAt
   }
 `;
-export const AuthAccountPayloadFragmentDoc = gql`
-  fragment AuthAccountPayload on AuthAccountPayload {
+export const AccountPayloadFragmentFragmentDoc = gql`
+  fragment AccountPayloadFragment on AccountPayload {
     id
     email
-    accountType
-    image
-    firstName
-    lastName
-    createdAt
-    applicant {
-      id
-    }
-    company {
-      id
-      companyName
-      logo
-    }
-    affiliate {
-      id
-    }
-  }
-`;
-export const FindAccountAccountPayloadFragmentFragmentDoc = gql`
-  fragment FindAccountAccountPayloadFragment on FindOneAccountPayload {
-    id
-    email
+    emailVerified
     accountType
     image
     firstName
@@ -652,11 +700,11 @@ export const LoginDocument = gql`
         message
       }
       account {
-        ...AuthAccountPayload
+        ...AccountPayloadFragment
       }
     }
   }
-  ${AuthAccountPayloadFragmentDoc}
+  ${AccountPayloadFragmentFragmentDoc}
 `;
 export type LoginMutationFn = Apollo.MutationFunction<
   LoginMutation,
@@ -705,11 +753,11 @@ export const SignUpDocument = gql`
         message
       }
       account {
-        ...AuthAccountPayload
+        ...AccountPayloadFragment
       }
     }
   }
-  ${AuthAccountPayloadFragmentDoc}
+  ${AccountPayloadFragmentFragmentDoc}
 `;
 export type SignUpMutationFn = Apollo.MutationFunction<
   SignUpMutation,
@@ -758,11 +806,11 @@ export const SignUpOAuthDocument = gql`
         message
       }
       account {
-        ...AuthAccountPayload
+        ...AccountPayloadFragment
       }
     }
   }
-  ${AuthAccountPayloadFragmentDoc}
+  ${AccountPayloadFragmentFragmentDoc}
 `;
 export type SignUpOAuthMutationFn = Apollo.MutationFunction<
   SignUpOAuthMutation,
@@ -814,11 +862,11 @@ export const FindAccountDocument = gql`
         message
       }
       account {
-        ...FindAccountAccountPayloadFragment
+        ...AccountPayloadFragment
       }
     }
   }
-  ${FindAccountAccountPayloadFragmentFragmentDoc}
+  ${AccountPayloadFragmentFragmentDoc}
 `;
 
 /**
@@ -869,6 +917,46 @@ export type FindAccountQueryResult = Apollo.QueryResult<
   FindAccountQuery,
   FindAccountQueryVariables
 >;
+export const MeDocument = gql`
+  query Me($input: MeInput!) {
+    me(input: $input) {
+      ...AccountPayloadFragment
+    }
+  }
+  ${AccountPayloadFragmentFragmentDoc}
+`;
+
+/**
+ * __useMeQuery__
+ *
+ * To run a query within a React component, call `useMeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMeQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useMeQuery(
+  baseOptions: Apollo.QueryHookOptions<MeQuery, MeQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, options);
+}
+export function useMeLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, options);
+}
+export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
+export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
+export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const GetCompaniesDocument = gql`
   query GetCompanies {
     getCompanies {
@@ -987,4 +1075,81 @@ export type CreateJobPostMutationResult =
 export type CreateJobPostMutationOptions = Apollo.BaseMutationOptions<
   CreateJobPostMutation,
   CreateJobPostMutationVariables
+>;
+export const GetJobPostsDocument = gql`
+  query GetJobPosts($input: JopPostFilterInput) {
+    getJobPosts(input: $input) {
+      id
+      title
+      applicationDeadline
+      description
+      location
+      salary
+      salaryType
+      jobType
+      category
+      vacancy
+      email
+      jobSite
+      isVisible
+      jobExperience
+      experienceLevel
+      englishLevel
+      otherLanguages
+      skills
+      qualifications
+      interviewQuestions
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+/**
+ * __useGetJobPostsQuery__
+ *
+ * To run a query within a React component, call `useGetJobPostsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetJobPostsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetJobPostsQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetJobPostsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetJobPostsQuery,
+    GetJobPostsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetJobPostsQuery, GetJobPostsQueryVariables>(
+    GetJobPostsDocument,
+    options,
+  );
+}
+export function useGetJobPostsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetJobPostsQuery,
+    GetJobPostsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetJobPostsQuery, GetJobPostsQueryVariables>(
+    GetJobPostsDocument,
+    options,
+  );
+}
+export type GetJobPostsQueryHookResult = ReturnType<typeof useGetJobPostsQuery>;
+export type GetJobPostsLazyQueryHookResult = ReturnType<
+  typeof useGetJobPostsLazyQuery
+>;
+export type GetJobPostsQueryResult = Apollo.QueryResult<
+  GetJobPostsQuery,
+  GetJobPostsQueryVariables
 >;

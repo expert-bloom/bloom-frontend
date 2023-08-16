@@ -8,28 +8,6 @@ fragment AccountFragment on Account{
     createdAt
 }
 
-fragment AuthAccountPayload on AuthAccountPayload{
-    id
-    email
-    accountType
-    image
-    firstName
-    lastName
-    createdAt
-
-    applicant{
-        id
-    }
-    company {
-        id
-        companyName
-        logo
-    }
-
-    affiliate {
-        id
-    }
-}
 
 
 mutation Login($input: LoginInput!) {
@@ -38,7 +16,7 @@ mutation Login($input: LoginInput!) {
             message
         }
         account {
-            ...AuthAccountPayload
+            ...AccountPayloadFragment
         }
     }
 }
@@ -51,7 +29,7 @@ mutation SignUp($input: SignUpInput!) {
         }
 
         account {
-            ...AuthAccountPayload
+            ...AccountPayloadFragment
         }
     }
 }
@@ -63,7 +41,7 @@ mutation SignUpOAuth($input: OAuthSignUpInput!) {
         }
 
         account {
-            ...AuthAccountPayload
+            ...AccountPayloadFragment
         }
     }
 }

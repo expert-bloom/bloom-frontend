@@ -1,11 +1,6 @@
 import React from 'react';
 
-import {
-  CreateNewFolderRounded,
-  Dashboard,
-  Handshake,
-  Logout,
-} from '@mui/icons-material';
+import { Dashboard, Handshake, Logout } from '@mui/icons-material';
 import {
   Avatar,
   Button,
@@ -26,7 +21,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { signOut, useSession } from 'next-auth/react';
 
-import AccountAlert from '@/components/AccountAlert';
 import { usePopover } from '@/hooks/use-popover';
 import Logo from '@/public/logo.png';
 
@@ -79,14 +73,13 @@ const links = [
   },
   {
     name: 'Marketplace',
-    href: '/company/marketplace',
+    href: '/dashboard/company/marketplace',
     Icon: Handshake,
-  },
-  {
-    name: 'Create Post',
-    href: '/post',
-    Icon: CreateNewFolderRounded,
-  },
+  } /* {
+    name: 'Following',
+    href: '/following',
+    Icon: FollowTheSigns,
+  }, */,
 ];
 
 export default function CompanyNav({ pageProps }: any) {
@@ -141,8 +134,6 @@ export default function CompanyNav({ pageProps }: any) {
               </Link>
             ))}
           </div>
-
-          <AccountAlert />
 
           <Tooltip title="Profile">
             <Avatar

@@ -1,3 +1,11 @@
+import React from 'react';
+
+import {
+  AccountCircleTwoTone,
+  FollowTheSigns,
+  Logout,
+  Reorder,
+} from '@mui/icons-material';
 import {
   Avatar,
   Button,
@@ -11,24 +19,18 @@ import {
   Typography,
   useScrollTrigger,
 } from '@mui/material';
-
-import Link from 'next/link';
-import React from 'react';
-import s from './topnav.module.scss';
-import {
-  AccountCircleTwoTone,
-  FollowTheSigns,
-  Logout,
-  Reorder,
-} from '@mui/icons-material';
-import { signOut, useSession } from 'next-auth/react';
-import { motion } from 'framer-motion';
-import Logo from '@/public/logo.png';
-import Image from 'next/image';
 import clsx from 'clsx';
+import { motion } from 'framer-motion';
+import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { usePopover } from '@/hooks/use-popover';
+import { signOut, useSession } from 'next-auth/react';
+
 import { AccountPopover } from '@/components/commons/layout/DBCompany/CompanyNav/AccountPopover';
+import { usePopover } from '@/hooks/use-popover';
+import Logo from '@/public/logo.png';
+
+import s from './topnav.module.scss';
 
 interface Props {
   window?: () => Window;
@@ -137,7 +139,7 @@ export default function TopNavBar({ pageProps }: any) {
             </Link>
 
             <Link
-              href="/job-posts"
+              href="/src/pages/search"
               className={clsx([
                 s.link,
                 router.pathname === '/job-posts' && s.active,

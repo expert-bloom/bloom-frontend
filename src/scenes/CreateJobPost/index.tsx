@@ -23,6 +23,7 @@ import { MoButton } from '@/components/MoButton';
 import {
   type CreateJobPostInput,
   type EnglishLevel,
+  type ExperienceLevel,
   type JobSite,
   type JobType,
   type SalaryType,
@@ -101,10 +102,11 @@ const initialValues = {
   salary: [30] as unknown as [number, number] | [number],
   jobSite: 'REMOTE' as JobSite,
   email: 'henokgetachew500@gmail.com',
+  location: 'Ethiopia' as string,
 
   // requirements
   experience: 3,
-  skillLevel: 'Beginner',
+  skillLevel: 'Beginner' as ExperienceLevel,
   skill: [
     {
       label: 'Vue.js',
@@ -212,6 +214,7 @@ const PostJob = () => {
                     salary: values.salary,
                     jobSite: values.jobSite,
                     email: values.email,
+                    location: values.location,
 
                     jobExperience: values.experience,
                     skills: values.skill.map((c: any) => c.label),
@@ -221,6 +224,7 @@ const PostJob = () => {
                     ),
                     qualifications: values.qualifications,
                     interviewQuestions: values.interviewQuestions,
+                    experienceLevel: values.skillLevel,
 
                     isVisible: true,
 
@@ -264,9 +268,6 @@ const PostJob = () => {
                   }
 
                   console.log('response : ', createPostPayload);
-
-                  return;
-
                   break;
                 }
                 case 'Done':
@@ -322,6 +323,7 @@ const PostJob = () => {
 
                       <MoButton
                         // onClick={handleNext}
+                        loading={props.isSubmitting}
                         type="submit"
                         endIcon={<ArrowCircleRightTwoTone />}
                       >

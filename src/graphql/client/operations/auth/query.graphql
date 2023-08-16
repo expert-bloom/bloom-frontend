@@ -1,6 +1,7 @@
-fragment FindAccountAccountPayloadFragment on FindOneAccountPayload{
+fragment AccountPayloadFragment on AccountPayload{
     id
     email
+    emailVerified
     accountType
     image
     firstName
@@ -32,9 +33,15 @@ query FindAccount($input: AccountInput!) {
             message
         }
         account {
-            ...FindAccountAccountPayloadFragment
+            ...AccountPayloadFragment
 
         }
+    }
+}
+
+query Me($input: MeInput!) {
+    me(input: $input){
+        ...AccountPayloadFragment
     }
 }
 

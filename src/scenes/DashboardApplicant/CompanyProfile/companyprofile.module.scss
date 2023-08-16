@@ -1,0 +1,43 @@
+@use '@/styles/index.scss' as s;
+
+.container {
+  width: 100%;
+
+  & :local {
+
+    .content {
+      display: flex;
+      flex-flow: column;
+      gap: 1.5rem;
+      align-items: center;
+      place-items: center;
+
+      .icon {
+        color: #a7b2c3;
+        background-color: #eaeef5;
+        display: grid;
+        place-items: center;
+        padding: 2rem;
+        border-radius: 1.5rem;
+        //max-width: 10rem;
+        width: max-content;
+        // box-shadow as border
+        box-shadow: 0 0 0 6px #fff, 0 0 0 9px #a7b2c3;
+
+        svg {
+          width: 5rem;
+          //width: 100%;
+        }
+      }
+
+      .title {
+        margin-top: .5rem;
+      }
+
+      .desc {
+        font-weight: 300;
+      }
+
+    }
+  }
+}

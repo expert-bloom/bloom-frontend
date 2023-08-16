@@ -1,7 +1,8 @@
 import React, { Suspense } from 'react';
-import JobPostsPage from '@/scenes/JobPosts';
 
-const JobPosts = () => {
+import JobPostsPage from 'src/scenes/Search';
+
+const Search = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <JobPostsPage />
@@ -9,4 +10,4 @@ const JobPosts = () => {
   );
 };
 
-export default JobPosts;
+export default Search;

@@ -31,6 +31,22 @@ type Account implements IAccount {
     phone: String
 }
 
+type AccountPayload implements IAccount {
+    accountType: AccountType!
+    affiliate: AffiliateLight
+    applicant: ApplicantLight
+    company: CompanyLight
+    createdAt: DateTime!
+    email: String!
+    emailVerified: DateTime
+    firstName: String!
+    id: String!
+    image: String
+    lastName: String!
+    oAuthClient: [OAuth!]!
+    phone: String
+}
+
 type Affiliate implements IAccount {
     accountType: AccountType!
     createdAt: DateTime!
@@ -67,22 +83,8 @@ type ApplicantLight {
     resume: String
 }
 
-type AuthAccountPayload implements IAccount {
-    accountType: AccountType!
-    affiliate: AffiliateLight
-    applicant: ApplicantLight
-    company: CompanyLight
-    createdAt: DateTime!
-    email: String!
-    firstName: String!
-    id: String!
-    image: String
-    lastName: String!
-    phone: String
-}
-
 type AuthPayload implements PayloadError {
-    account: AuthAccountPayload
+    account: AccountPayload
     errors: [Error!]!
 }
 
@@ -109,23 +111,8 @@ type Error {
     message: String!
 }
 
-type FindOneAccountPayload implements IAccount {
-    accountType: AccountType!
-    affiliate: AffiliateLight
-    applicant: ApplicantLight
-    company: CompanyLight
-    createdAt: DateTime!
-    email: String!
-    firstName: String!
-    id: String!
-    image: String
-    lastName: String!
-    oAuthClient: [OAuth]!
-    phone: String
-}
-
 type FindOnePayload implements PayloadError {
-    account: FindOneAccountPayload
+    account: AccountPayload
     errors: [Error!]!
 }
 
@@ -136,12 +123,14 @@ type JobPost {
     description: String!
     email: String!
     englishLevel: EnglishLevel!
+    experienceLevel: ExperienceLevel!
     id: String!
     interviewQuestions: [String!]!
     isVisible: Boolean!
     jobExperience: Int!
     jobSite: JobSite!
     jobType: JobType!
+    location: String!
     otherLanguages: [String!]!
     qualifications: [String!]!
     salary: [Int!]!
@@ -179,7 +168,8 @@ type OAuth {
 type Query {
     findAccount(input: AccountInput!): FindOnePayload
     getCompanies: [Company!]!
-    me: String
+    getJobPosts(input: JopPostFilterInput): [JobPost!]!
+    me(input: MeInput!): AccountPayload
     sayHi: String
 }
 
@@ -194,6 +184,14 @@ enum EnglishLevel {
     CONVERSATIONAL
     FLUENT
     NATIVE
+}
+
+enum ExperienceLevel {
+    Beginner
+    Expert
+    Intermediate
+    Junior
+    Senior
 }
 
 enum Gender {
@@ -245,11 +243,13 @@ input CreateJobPostInput {
     description: String!
     email: String!
     englishLevel: EnglishLevel!
+    experienceLevel: ExperienceLevel!
     interviewQuestions: [String!]!
     isVisible: Boolean!
     jobExperience: Int!
     jobSite: JobSite!
     jobType: JobType!
+    location: String!
     otherLanguages: [String!]!
     postedBy: String!
     qualifications: [String!]!
@@ -261,12 +261,16 @@ input CreateJobPostInput {
 }
 
 input JopPostFilterInput {
-    company: String
+    companyId: String
 }
 
 input LoginInput {
     email: String!
     password: String!
+}
+
+input MeInput {
+    accountId: String!
 }
 
 input OAuthAccount {

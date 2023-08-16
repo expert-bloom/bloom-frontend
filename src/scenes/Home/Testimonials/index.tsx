@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import s from './testimonials.module.scss';
-import { Avatar, IconButton, Typography } from '@mui/material';
+
 import { ArrowDownward, ArrowUpward } from '@mui/icons-material';
+import { Avatar, IconButton, Typography } from '@mui/material';
 import { useScroll, useSpring, useTransform, useVelocity } from 'framer-motion';
+
 import { wrap } from 'src/utils';
+
+import s from './testimonials.module.scss';
 
 const testimonials = [
   {
@@ -48,7 +51,7 @@ const Testimonials = () => {
 
   // useTransform(velocityFactor, v => console.log('scrollY: ', v))
 
-  console.log('wrap: ', wrap(0, 3, 6.5));
+  // console.log('wrap: ', wrap(0, 3, 6.5));
 
   return (
     <div className={s.container}>
