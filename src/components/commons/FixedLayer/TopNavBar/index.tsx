@@ -37,23 +37,6 @@ interface Props {
   children: React.ReactElement;
 }
 
-const userDropdown = [
-  {
-    name: 'Account', // href: '/settings',
-    Icon: AccountCircleTwoTone,
-  },
-  {
-    name: 'Orders',
-    href: '/inbox',
-    Icon: Reorder,
-  },
-  {
-    name: 'Following',
-    href: '/following',
-    Icon: FollowTheSigns,
-  },
-];
-
 export function HideOnScroll(props: Props) {
   const { children, window } = props;
   // Note that you normally won't need to set the window ref as useScrollTrigger
@@ -139,7 +122,7 @@ export default function TopNavBar({ pageProps }: any) {
             </Link>
 
             <Link
-              href="/src/pages/search"
+              href="/search"
               className={clsx([
                 s.link,
                 router.pathname === '/job-posts' && s.active,

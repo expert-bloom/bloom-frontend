@@ -17,8 +17,6 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
-  FormControlLabel,
-  FormGroup,
   FormLabel,
   IconButton,
   InputLabel,
@@ -27,10 +25,7 @@ import {
   ListItemText,
   MenuItem,
   OutlinedInput,
-  Radio,
-  RadioGroup,
   Select,
-  SelectChangeEvent,
   Stack,
   TextField,
   Typography,
@@ -39,7 +34,7 @@ import { useFormikContext } from 'formik';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 
-import { EnglishLevel, SalaryType } from '@/graphql/client/gql/schema';
+import { EnglishLevel } from '@/graphql/client/gql/schema';
 import { capitalize } from '@/utils';
 import { type FormValuesType } from 'src/scenes/CreateJobPost';
 

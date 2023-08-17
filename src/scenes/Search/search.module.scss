@@ -3,7 +3,7 @@
 .container {
   position: relative;
   width: 100%;
-  padding: 7vmax 0;
+  padding: 7vmax 2rem;
   min-height: 100vh;
 
 
@@ -21,9 +21,17 @@
     .wrapper {
       display: flex;
       flex-flow: column;
-      max-width: 1500px;
+      max-width: 80rem;
       margin: 0 auto;
       z-index: 1;
+
+      @include s.media-breakpoint-up(lg){
+       //max-width: 80%;
+      }
+
+      @include s.media-breakpoint-up(xxl){
+        max-width: 1300px;
+      }
 
 
       header {
@@ -49,7 +57,7 @@
 
     .content {
       display: flex;
-      //gap: 3rem;
+      //gap: 5rem;
       margin-top: 5rem;
 
       & > * {
