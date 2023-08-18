@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+
+import { Logout } from '@mui/icons-material';
 import {
   Box,
   Divider,
@@ -9,9 +10,10 @@ import {
   Popover,
   Typography,
 } from '@mui/material';
+import { useRouter } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
-import { Logout } from '@mui/icons-material';
 import { toast } from 'react-hot-toast';
+
 import s from './companynav.module.scss';
 
 export const AccountPopover = (props: any) => {

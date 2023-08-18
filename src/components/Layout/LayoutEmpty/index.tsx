@@ -1,8 +1,11 @@
 import React from 'react';
-import s from './layout.module.scss';
-import FixedLayer from '@/components/commons/FixedLayer';
-import { motion } from 'framer-motion';
+
+import { AnimatePresence, motion } from 'framer-motion';
+
 import Footer from '@/components/commons/Footer';
+import TopNavBar from 'src/components/Layout/LayoutEmpty/TopNavBar';
+
+import s from './layout.module.scss';
 
 interface Props {
   children: React.ReactNode;
@@ -11,7 +14,8 @@ interface Props {
 const LayoutEmpty: React.FC<Props> = ({ children }) => {
   return (
     <>
-      <FixedLayer />
+      <TopNavBar key="top-nav-bar" />
+
       <motion.div className={s.root}>
         <div className={s.wrapper}>
           <main>{children}</main>

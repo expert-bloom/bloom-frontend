@@ -1,18 +1,21 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import React, { useEffect, useState } from 'react';
-import { Form, Formik, type FormikProps } from 'formik';
-import { MoButton } from '@/components/MoButton';
+
 import { GitHub, Login } from '@mui/icons-material';
 import { Alert, Button, Stack, Typography } from '@mui/material';
-import { signIn, useSession } from 'next-auth/react';
-import SignInDetails from '@/scenes/Auth/SignIn/component/SignInDetails';
-import s from './signin.module.scss';
-import GoogleIcon from '@/components/Icons/Google';
+import { Form, Formik, type FormikProps } from 'formik';
 import Link from 'next/link';
-import { AuthTypeKeys } from '@/constants';
-import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/router';
+import { signIn, useSession } from 'next-auth/react';
+import { toast } from 'react-hot-toast';
+
+import GoogleIcon from '@/components/Icons/Google';
+import { MoButton } from '@/components/MoButton';
+import { AuthTypeKeys } from '@/constants';
+import SignInDetails from '@/scenes/Auth/SignIn/component/SignInDetails';
 import useSocialAuth from '@/scenes/Auth/useSocialAuth';
+
+import s from './signin.module.scss';
 
 const initialValues = {
   email: '',
@@ -102,6 +105,8 @@ const SignIn = () => {
     setCurrentStep({ ...formSteps[activeStep] });
   }, [activeStep]);
 
+  let lToast = '';
+
   return (
     <div className={s.container}>
       <div className={s.wrapper}>
@@ -120,6 +125,7 @@ const SignIn = () => {
             switch (currentStep.name) {
               case 'Sign In':
                 console.log('onSubmit values :', values);
+                lToast = toast.loading('Signing in...');
 
                 // return;
 
@@ -136,11 +142,13 @@ const SignIn = () => {
                       !res?.ok &&
                       res?.error !== undefined
                     ) {
+                      toast.dismiss(lToast);
                       toast.error(res.error ?? 'something went wrong');
                       setErrorMsg(res.error ?? 'something went wrong');
                       return;
                     }
 
+                    toast.dismiss(lToast);
                     toast.success('successfully logged in');
                     void router.push('/');
                   })

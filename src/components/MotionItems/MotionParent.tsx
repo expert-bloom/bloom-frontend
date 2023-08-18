@@ -4,7 +4,7 @@ import { motion, type MotionProps, type Transition } from 'framer-motion';
 
 type MotionParentPropsType = MotionProps & {
   children: React.ReactNode;
-  // className: any;
+  className?: any;
 };
 
 const basicVariants = {

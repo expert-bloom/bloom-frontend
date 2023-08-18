@@ -1,8 +1,11 @@
 import React from 'react';
-import s from './db-company.module.scss';
+
 import { AnimatePresence, motion } from 'framer-motion';
+
 import Footer from '@/components/commons/Footer';
-import CompanyNav from './CompanyNav';
+
+import CompanyTopNavBar from './CompanyNav';
+import s from './layout_company.module.scss';
 
 interface Props {
   children: React.ReactNode;
@@ -13,7 +16,7 @@ const DBCompany: React.FC<Props> = ({ children }) => {
     <>
       <motion.div className={s.nav_bar} initial="initial" animate="animate">
         <AnimatePresence>
-          <CompanyNav key="top-nav-bar" />
+          <CompanyTopNavBar key="top-nav-bar" />
         </AnimatePresence>
       </motion.div>
 

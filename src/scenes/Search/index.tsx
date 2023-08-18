@@ -1,20 +1,21 @@
 import React from 'react';
 
-import { AltRoute, Bookmark, LocationOn } from '@mui/icons-material';
+import { Bookmark, LocationOn, Search } from '@mui/icons-material';
 import {
+  Button,
   Chip,
   CircularProgress,
   IconButton,
   Stack,
+  TextField,
   Typography,
 } from '@mui/material';
-import { TimeClock } from '@mui/x-date-pickers';
 import moment from 'moment/moment';
 import { BsClock } from 'react-icons/bs';
-import { CiLock } from 'react-icons/ci';
-import { FaSearchLocation } from 'react-icons/fa';
 
+import { MoButton } from '@/components/MoButton';
 import { useGetJobPostsQuery } from '@/graphql/client/gql/schema';
+import { useAppStore } from '@/lib/store';
 import { capitalize } from '@/utils';
 import SearchFilter from 'src/scenes/Search/SearchFilter';
 
@@ -29,6 +30,9 @@ const JobPosts = () => {
 
   const { data: posts, loading } = jopPostsPayload;
 
+  // access the store
+  const selectedDayOfWeek = useAppStore((state) => state.setJobPostDetailId);
+
   return (
     <div className={s.container}>
       <div className={s.wrapper}>
@@ -42,45 +46,88 @@ const JobPosts = () => {
               </div>
             )}
 
-            {posts?.getJobPosts &&
-              posts.getJobPosts.map((data, idx) => (
-                <div key={idx} className={s.job_card}>
-                  <div className={s.hor}>
-                    <Typography className={s.title} variant="h5">
-                      {data.title}
-                    </Typography>
+            <div className={s.search}>
+              <TextField
+                fullWidth
+                variant="outlined"
+                label="Search for jobs"
+                placeholder="type ... "
+              />
+              <MoButton
+                startIcon={<Search />}
+                motionProps={{
+                  whileTap: {
+                    scale: 0.99,
+                  },
+                }}
+              >
+                Search
+              </MoButton>
+            </div>
 
-                    <IconButton>
-                      <Bookmark />
-                    </IconButton>
-                  </div>
-
-                  <Typography className={s.detail}>
-                    {capitalize(data.salaryType)}: <b>${data.salary[0]}</b> -{' '}
-                    {data.experienceLevel} - <BsClock /> Posted{' '}
-                    {moment(data.createdAt).calendar()}
-                  </Typography>
-
-                  <Typography variant="body1" className={s.desc}>
-                    {data.description}
-                    <b>more</b>
-                  </Typography>
-
-                  <div className={s.tags}>
-                    {data.category.map((category) => (
-                      <Chip label={category} key={category} />
-                    ))}
-                  </div>
-
-                  <Typography className={s.detail}>Proposals: 0</Typography>
-                  <Stack direction="row" gap=".3rem">
-                    <LocationOn fontSize="small" />
-                    <Typography className={s.detail}>
-                      {data.location}
-                    </Typography>
-                  </Stack>
-                </div>
+            <div className={s.search_tags}>
+              {['React', 'Art & Design'].map((label, idx) => (
+                <Chip
+                  key={label}
+                  label={label}
+                  size="small"
+                  color="primary"
+                  onDelete={() => null}
+                />
               ))}
+
+              <Button variant="text">Clear Filters</Button>
+            </div>
+
+            <div className={s.list}>
+              {posts?.getJobPosts &&
+                posts.getJobPosts.map((post, idx) => (
+                  <div
+                    key={idx}
+                    className={s.job_card}
+                    onClick={() => {
+                      selectedDayOfWeek({
+                        jobPostId: post.id,
+                      });
+                    }}
+                  >
+                    <div className={s.title_div}>
+                      <Typography className={s.title} variant="h6">
+                        {post.title}
+                      </Typography>
+
+                      <IconButton className={s.bookmark}>
+                        <Bookmark />
+                      </IconButton>
+                    </div>
+
+                    <Typography className={s.detail}>
+                      {capitalize(post.salaryType)}: <b>${post.salary[0]}</b> -{' '}
+                      {post.experienceLevel} - <BsClock /> Posted{' '}
+                      {moment(post.createdAt).calendar()}
+                    </Typography>
+
+                    <Typography variant="body1" className={s.desc}>
+                      {post.description}
+                      <b>more</b>
+                    </Typography>
+
+                    <div className={s.tags}>
+                      {post.category.map((category) => (
+                        <Chip label={category} key={category} />
+                      ))}
+                    </div>
+
+                    <Typography className={s.detail}>Proposals: 0</Typography>
+                    <Stack direction="row" gap=".3rem">
+                      <LocationOn fontSize="small" />
+                      <Typography className={s.detail}>
+                        {post.location}
+                      </Typography>
+                    </Stack>
+                  </div>
+                ))}
+            </div>
           </div>
         </div>
       </div>

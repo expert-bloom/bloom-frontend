@@ -16,12 +16,12 @@ import { type Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
 import { Provider } from 'react-redux';
 
-import Layout from '@/components/commons/layout';
 import { useNProgress } from '@/hooks/use-nprogress';
 import apollo from '@/lib/apollo';
 import { store } from '@/Store/store';
 import { createTheme } from '@/theme/admin-theme';
 import createEmotionCache from '@/utils/createEmotoinCache';
+import Layout from 'src/components/Layout';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();

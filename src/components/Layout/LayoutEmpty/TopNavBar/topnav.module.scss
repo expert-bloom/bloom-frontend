@@ -1,7 +1,9 @@
-@use "@/styles/index.scss" as s;
+@use "@/styles/index" as s;
 
 
 .container {
+  //position: fixed;
+  //top: 0;
   width: 100%;
   //max-width: 70rem;
   padding: 1rem 4rem;
@@ -12,12 +14,12 @@
   align-items: center;
   gap: 1.5rem;
 
-  pointer-events: none;
+  //pointer-events: none;
   backdrop-filter: blur(8px);
 
-  //box-shadow: 0 .7rem 1rem 0 rgba(0, 0, 0, .02), 0 -.06rem 1rem 0 rgba(0, 0, 0, .01);
+  z-index: 1110;
+
   box-shadow: 0 .7rem 1rem 0 rgba(0, 0, 0, .02);
-  //border-radius: 500000px;
 
 
   & > * {

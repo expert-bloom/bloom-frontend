@@ -1,0 +1,173 @@
+@use '@/styles/index' as s;
+
+.container {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  //z-index: 20;
+  pointer-events: auto;
+  //background: rgba(52, 103, 102, 0.22);
+  //background: rgba(253, 170, 113, 0.17);
+
+  // @include s.margin(top, 10rem);
+  // @include s.padding(bottom, 8rem);
+
+  & :local {
+
+    .menu_wrapper {
+      position: absolute;
+      background-color: white;
+      height: 100%;
+      right: 0;
+      width: 75%;
+      display: flex;
+      flex-flow: column;
+      //padding: 1.5rem;
+      z-index: 1;
+      overflow: hidden;
+
+      // larger boxshadow to ther left
+        box-shadow: 0 0 1.5rem 0.1rem rgba(0, 0, 0, 0.1);
+
+      @include s.media-breakpoint-up(sm) {
+        //white-space: nowrap;
+        width: 65rem;
+      }
+    }
+
+
+    .blur_bg {
+      backdrop-filter: blur(1.5px);
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      background-color: rgba(139, 140, 248, 0.08);
+
+    }
+
+    .content{
+      $p: 1.5rem;
+      position: relative;
+      display: flex;
+      flex-flow: column;
+      height: 100%;
+      padding: $p;
+      //border: 1px solid red;
+
+      header{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        //border: 1px solid #000;
+
+        & :global{
+          .MuiIconButton-root{
+            border: thin solid lightsteelblue;
+          }
+        }
+      }
+
+      .detail{
+        display: flex;
+        border: 1px solid #d5d5d5;
+        border-radius: 1rem;
+        margin-top: 3rem;
+      }
+
+      .job_info{
+        flex: .7;
+
+         .title_div{
+           display: flex;
+           flex-flow: column;
+           gap: 1.5rem;
+           padding: $p;
+
+           border-bottom: 1px solid #d5d5d5;
+
+         }
+
+        .desc{
+          padding: $p;
+          border-bottom: 1px solid #d5d5d5;
+          p{
+            font-weight: 300;
+          }
+        }
+
+        .stat{
+          display: grid;
+          flex-wrap: wrap;
+          gap: 3rem;
+          padding: $p $p 2rem;
+          border-bottom: 1px solid #d5d5d5;
+
+          @include s.media-breakpoint-up(sm){
+            grid-template-columns: repeat(3, 1fr);
+          }
+
+          svg{
+            fill: gray;
+
+          }
+        }
+
+        .skills{
+          padding: $p $p 2rem;
+          display: flex;
+          flex-flow: column;
+          gap: 2rem;
+
+          .chips{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: flex-start;
+          }
+        }
+      }
+
+
+      .job_action{
+        flex: .3;
+        border-left: 1px solid #d5d5d5;
+
+        .apply{
+          width: 100%;
+          display: flex;
+          flex-flow: column;
+          gap: 1rem;
+
+          padding: $p;
+          border-bottom: 1px solid #d5d5d5;
+
+          & > :last-child{
+            margin-top: 1.5rem;
+            font-size: .8rem;
+            font-weight: 300;
+            margin-left: auto;
+            padding-bottom: 0;
+          }
+
+        }
+
+        .about_client{
+          display: flex;
+          flex-flow: column;
+          gap: 1rem;
+
+          padding: $p;
+          border-bottom: 1px solid #d5d5d5;
+
+        }
+
+      }
+
+
+    }
+
+  }
+
+
+}

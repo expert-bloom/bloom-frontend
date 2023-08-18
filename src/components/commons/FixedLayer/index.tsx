@@ -1,15 +1,21 @@
 import React from 'react';
-import s from './fixed.module.scss';
-import TopNavBar from './TopNavBar';
-import { AnimatePresence, motion } from 'framer-motion';
 
-const FixedLayer: React.FC<any> = ({}) => {
+import { AnimatePresence } from 'framer-motion';
+
+import { useAppStore } from '@/lib/store';
+import JobDetail from 'src/components/commons/FixedLayer/JobDetailSlider';
+
+import s from './fixed.module.scss';
+
+const FixedLayer: React.FC<any> = () => {
+  const showDetail = useAppStore((state) => state.jobPostDetailState);
+
   return (
-    <motion.div className={s.container} initial="initial" animate="animate">
+    <div className={s.container}>
       <AnimatePresence>
-        <TopNavBar key="top-nav-bar" />
+        {showDetail.jobPostId !== null && <JobDetail />}
       </AnimatePresence>
-    </motion.div>
+    </div>
   );
 };
 
