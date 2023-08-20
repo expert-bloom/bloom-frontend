@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 import Footer from '@/components/commons/Footer';
 
-import CompanyNav from './CompanyNav';
+import CompanyNav from './AffiliateNav';
 import s from './db-company.module.scss';
 
 interface Props {

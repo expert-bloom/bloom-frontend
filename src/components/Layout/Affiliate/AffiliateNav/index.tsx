@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { AccountCircle, Dashboard, Handshake } from '@mui/icons-material';
+import { Dashboard, Handshake } from '@mui/icons-material';
 import {
   Avatar,
   Button,
@@ -17,12 +17,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 
-import AccountAlert from '@/components/AccountAlert';
 import { usePopover } from '@/hooks/use-popover';
 import Logo from '@/public/logo.png';
 
 import { AccountPopover } from './AccountPopover';
-import s from './applicant_nav.module.scss';
+import s from './affiliate_nav.module.scss';
 
 interface Props {
   window?: () => Window;
@@ -65,22 +64,21 @@ const navTransition = {
 const links = [
   {
     name: 'Dashboard',
-    href: '/applicant/dashboard',
+    href: '/dashboard/company',
     Icon: Dashboard,
   },
   {
-    name: 'Explore Jobs',
-    href: '/search',
+    name: 'Marketplace',
+    href: '/dashboard/company/marketplace',
     Icon: Handshake,
-  },
-  {
-    name: 'Profile',
-    href: '/applicant/profile',
-    Icon: AccountCircle,
-  },
+  } /* {
+    name: 'Following',
+    href: '/following',
+    Icon: FollowTheSigns,
+  }, */,
 ];
 
-export default function Applicant({ pageProps }: any) {
+export default function CompanyNav({ pageProps }: any) {
   // console.log('data: ', session, isTalent);
   const router = useRouter();
   const accountPopover = usePopover();
@@ -103,7 +101,6 @@ export default function Applicant({ pageProps }: any) {
           className={clsx([s.container])}
           variants={navVariants}
           transition={navTransition}
-          id="applicant-nav"
         >
           <Stack
             direction="row"

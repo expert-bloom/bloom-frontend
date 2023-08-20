@@ -1,6 +1,15 @@
 import { alpha } from '@mui/material/styles';
-import { error, indigo, info, neutral, success, warning } from './colors';
 import { type PaletteOptions } from '@mui/material/styles/createPalette';
+
+import {
+  error,
+  indigo,
+  info,
+  neutral,
+  secondary,
+  success,
+  warning,
+} from './colors';
 
 export function createPalette() {
   const palette: PaletteOptions & { neutral: typeof neutral } = {
@@ -20,8 +29,9 @@ export function createPalette() {
     error,
     info,
     mode: 'light',
-    neutral: neutral,
+    neutral,
     primary: indigo,
+    secondary,
     success,
     text: {
       primary: neutral[900],

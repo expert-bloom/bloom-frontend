@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 import Footer from '@/components/commons/Footer';
 import TopNavBar from 'src/components/Layout/LayoutEmpty/TopNavBar';

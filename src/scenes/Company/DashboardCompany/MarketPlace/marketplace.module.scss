@@ -1,0 +1,61 @@
+@use '@/styles/index' as s;
+
+.container{
+  width: 100%;
+
+  & :global{
+    .MuiCardHeader-root{
+      border-bottom: solid 1px #e1e1e1;
+    }
+  }
+
+
+  & :local{
+
+
+    .alert{
+      button{
+        margin-top: 2rem;
+      }
+    }
+
+    .loading{
+      padding: 4rem;
+      display: grid;
+      place-items: center;
+      width: 100%;
+    }
+
+    .posts{
+      display: flex;
+      flex-flow: column;
+      //border: 1px solid #000;
+      //padding: .5rem;
+      //gap: 1rem;
+
+      .post{
+        display: flex;
+        flex-flow: column;
+        align-items: flex-start;
+        gap: .5rem;
+        padding: 1rem;
+        text-align: left;
+
+        .stat{
+          display: flex;
+          flex-wrap: wrap;
+          width: 100%;
+          gap: 1rem;
+          margin-top: 1rem;
+        }
+
+
+        &:not(:last-child){
+          border-bottom: 1px solid #d5d5d5;
+        }
+      }
+
+
+    }
+  }
+}

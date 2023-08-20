@@ -1,5 +1,6 @@
 import { alpha } from '@mui/material/styles';
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 const withAlphas = (color) => {
   return {
     ...color,
@@ -30,6 +31,15 @@ export const indigo = withAlphas({
   main: '#6366F1',
   dark: '#4338CA',
   darkest: '#312E81',
+  contrastText: '#FFFFFF',
+});
+export const secondary = withAlphas({
+  // use neutral color
+  lightest: '#9DA4AE',
+  light: '#4D5761',
+  main: '#2F3746',
+  dark: '#1C2536',
+  darkest: '#111927',
   contrastText: '#FFFFFF',
 });
 

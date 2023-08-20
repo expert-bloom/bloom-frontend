@@ -15,12 +15,8 @@
   pointer-events: none;
   backdrop-filter: blur(8px);
 
-  //box-shadow: 0 .7rem 1rem 0 rgba(0, 0, 0, .02), 0 -.06rem 1rem 0 rgba(0, 0, 0, .01);
   box-shadow: 0 .7rem 1rem 0 rgba(0, 0, 0, .02);
-  //border-radius: 500000px;
   border-bottom: 1px solid #e0e0e0;
-
-
 
 
   & > * {
@@ -129,7 +125,6 @@
 
   }
 }
-
 
 .menu_item {
   margin: 1rem 0;

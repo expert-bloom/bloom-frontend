@@ -1,0 +1,21 @@
+@use '@/styles/index.scss' as s;
+
+
+.pp {
+  width: 100%;
+  max-width: 8rem;
+  height: 8rem;
+  background-color: #eaeef5;
+  //padding: 1.2rem;
+  border-radius: 50%;
+  aspect-ratio: 1/1;
+  // give it a boarder using box-shadow
+  box-shadow: 0 0 0 .53rem white, 0 0 0 .7rem #d3dde9;
+
+  //border: 1px solid #000;
+
+  & :local{
+
+  }
+}
+

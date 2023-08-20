@@ -1,8 +1,7 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React from 'react';
 
-import { Alert } from '@mui/material';
-import { AnimatePresence, motion } from 'framer-motion';
-import Router, { useRouter } from 'next/router';
+import { AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { Toaster } from 'react-hot-toast';
 
@@ -10,8 +9,6 @@ import FixedLayer from '@/components/commons/FixedLayer';
 import Applicant from '@/components/Layout/Applicant';
 import LayoutEmpty from '@/components/Layout/LayoutEmpty';
 import { MotionParent } from '@/components/MotionItems';
-import { useAppStore } from '@/lib/store';
-import JobDetail from 'src/components/commons/FixedLayer/JobDetailSlider';
 import LayoutCompany from 'src/components/Layout/Company';
 
 const useRoleLayout = (pathname: string) => {

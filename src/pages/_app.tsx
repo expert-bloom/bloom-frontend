@@ -7,7 +7,7 @@ import '@/lib/filePong/doka/doka.min.css';
 import { ApolloProvider } from '@apollo/client';
 import { CacheProvider, type EmotionCache } from '@emotion/react';
 import { Alert, CssBaseline } from '@mui/material';
-import { ThemeProvider } from '@mui/system';
+import { ThemeProvider } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { type NextPage } from 'next';

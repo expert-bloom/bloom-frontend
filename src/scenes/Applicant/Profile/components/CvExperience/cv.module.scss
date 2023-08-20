@@ -1,0 +1,56 @@
+@use '@/styles/index.scss' as s;
+
+.container {
+  width: 100%;
+  margin-top: 2rem;
+
+  & :local {
+
+    .wrapper {
+      display: flex;
+      flex-flow: column;
+      gap: 1.5rem;
+      //max-width: 40rem;
+      margin: 0 auto;
+
+      & > * {
+        width: 100%;
+      }
+
+      fieldset.wrap {
+        padding: 3rem;
+        border-radius: 1rem;
+        background-color: rgba(139, 140, 248, 0.08);
+        border: 1px solid rgba(139, 140, 248, 0.28);
+        margin-top: .5rem;
+        display: flex;
+        flex-flow: column;
+        gap: .8rem;
+      }
+
+      legend {
+        padding: 0 .5rem;
+        //margin-right: 2rem;
+      }
+
+      .file_pond_wrap {
+        border-radius: .5rem;
+        border: 1px dashed #cbcbcb;
+        overflow: hidden;
+
+
+        & :global {
+          .filepond--drop-label {
+            //background-color: #EFF7FF;
+          }
+
+          .filepond--panel-root {
+            //background-color: #e2f1ff;
+          }
+        }
+
+      }
+
+    }
+  }
+}
