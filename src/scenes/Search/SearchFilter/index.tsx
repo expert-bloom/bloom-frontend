@@ -1,11 +1,6 @@
 import React from 'react';
 
-import {
-  FilterAltOutlined,
-  LocationOn,
-  SettingsApplications,
-  Work,
-} from '@mui/icons-material';
+import { FilterAltOutlined } from '@mui/icons-material';
 import {
   Autocomplete,
   Card,
@@ -21,7 +16,8 @@ import {
 } from '@mui/material';
 import { darken, lighten, styled } from '@mui/material/styles';
 
-import { JobType } from '@/graphql/client/gql/schema';
+import { ExperienceLevel, JobType } from '@/graphql/client/gql/schema';
+import { useFilterContext } from '@/scenes/Search';
 import { useCountriesWithRegion } from '@/scenes/Search/SearchFilter/country-list';
 import { useIndustry } from '@/scenes/Search/SearchFilter/industry-list';
 import { capitalize } from '@/utils';
@@ -47,21 +43,7 @@ const Filter = () => {
   const industry = useIndustry();
   const countryListOptions = useCountriesWithRegion();
 
-  const [state, setState] = React.useState({
-    gilad: true,
-    jason: false,
-    antoine: false,
-  });
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setState({
-      ...state,
-      [event.target.name]: event.target.checked,
-    });
-  };
-
-  const { gilad, jason, antoine } = state;
-  const error = [gilad, jason, antoine].filter((v) => v).length !== 2;
+  const { filter } = useFilterContext();
 
   return (
     <Card elevation={0} className={s.left}>
@@ -79,9 +61,9 @@ const Filter = () => {
 
       <div className={s.filters}>
         <FormControl>
-          <FormLabel htmlFor="indestry">Industry ( category )</FormLabel>
+          <FormLabel htmlFor="industry">Industry ( category )</FormLabel>
           <Autocomplete
-            id="indestry"
+            id="industry"
             disablePortal
             fullWidth
             multiple
@@ -89,8 +71,18 @@ const Filter = () => {
             options={industry}
             getOptionLabel={(option) => option.label}
             groupBy={(option) => option.title}
+            value={filter.values.industry.map((v) => ({
+              label: v,
+              title: v,
+            }))}
+            isOptionEqualToValue={(option, value) => {
+              return option.label === value.label;
+            }}
             onChange={(event, newValue) => {
-              // formik.setFieldValue('type', newValue).then();
+              void filter.setFieldValue(
+                'industry',
+                newValue.map((v) => v.label),
+              );
             }}
             renderGroup={(params) => (
               <li key={params.key}>
@@ -101,7 +93,7 @@ const Filter = () => {
             renderInput={(params) => (
               <TextField
                 {...params}
-                name="type"
+                name="industry"
                 label="Search industry"
                 placeholder="type ..."
                 fullWidth
@@ -113,18 +105,20 @@ const Filter = () => {
 
         <FormControl>
           <FormLabel>Experience level</FormLabel>
-          <FormGroup>
-            {['Beginner', 'Intermediate', 'Expert'].map((label, idx) => (
+          <FormGroup row>
+            {Object.values(ExperienceLevel).map((label, idx) => (
               <FormControlLabel
                 key={idx}
+                name="experienceLevel"
+                value={label}
+                label={label}
                 control={
                   <Checkbox
-                    checked={gilad}
-                    onChange={handleChange}
-                    name={label.toLowerCase()}
+                    checked={filter.values.experienceLevel.includes(label)}
+                    onChange={filter.handleChange}
+                    name="experienceLevel"
                   />
                 }
-                label={label}
               />
             ))}
           </FormGroup>
@@ -145,13 +139,22 @@ const Filter = () => {
             getOptionLabel={(option) =>
               capitalize(option.label.toLowerCase()).replace('_', '-')
             }
+            value={filter.values.jobType.map((v) => ({
+              label: v,
+            }))}
+            isOptionEqualToValue={(option, value) => {
+              return option.label === value.label;
+            }}
             onChange={(event, newValue) => {
-              // formik.setFieldValue('type', newValue).then();
+              void filter.setFieldValue(
+                'jobType',
+                newValue.map((j) => j.label),
+              );
             }}
             renderInput={(params) => (
               <TextField
                 {...params}
-                name="type"
+                name="jobType"
                 placeholder="type ..."
                 fullWidth
                 required
@@ -167,18 +170,29 @@ const Filter = () => {
             id="location"
             disablePortal
             fullWidth
+            multiple
             options={countryListOptions}
             getOptionLabel={(option) => option.label}
             groupBy={(option) => option.type}
-            // sx={{ width: 300 }}
-            // value={values.type}
+            disableCloseOnSelect
+            value={filter.values.location.map((v) => ({
+              label: v,
+              type: v,
+              value: v,
+            }))}
+            isOptionEqualToValue={(option, value) => {
+              return option.label === value.label;
+            }}
             onChange={(event, newValue) => {
-              // formik.setFieldValue('type', newValue).then();
+              void filter.setFieldValue(
+                'location',
+                newValue.map((j) => j.label),
+              );
             }}
             renderInput={(params) => (
               <TextField
                 {...params}
-                name="type"
+                name="location"
                 label="Location"
                 fullWidth
                 required

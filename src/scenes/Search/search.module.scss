@@ -27,11 +27,16 @@
       z-index: 1;
 
       @include s.media-breakpoint-up(lg) {
-        //max-width: 80%;
+        max-width: 91%;
+      }
+
+      @include s.media-breakpoint-up(xl) {
+        //max-width: 85%;
       }
 
       @include s.media-breakpoint-up(xxl) {
-        max-width: 1300px;
+        max-width: 1400px;
+
       }
 
 
@@ -58,62 +63,9 @@
 
     .content {
       display: flex;
-      gap: 2rem;
+      gap: 3rem;
       margin-top: 2.5rem;
     }
 
-
-    .right {
-      $border-clr: #d7d7d7;
-      display: flex;
-      flex-flow: column;
-      gap: 2rem;
-
-      flex: .75;
-
-      .search {
-        display: flex;
-
-        // select material ui TextField
-        & :global {
-          .MuiTextField-root {
-            // select the border element
-            .MuiOutlinedInput-root {
-              border-radius: .5rem 0 0 .5rem;
-              border-right: none;
-            }
-          }
-        }
-
-        button {
-          border-radius: 0 .5rem .5rem 0;
-          height: 100%;
-        }
-
-        //gap: 1rem;
-      }
-
-      .search_tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: .5rem;
-        align-items: center;
-        padding: 0 1rem;
-      }
-
-      .list {
-        border: 1px solid $border-clr;
-        border-radius: 1rem;
-        overflow: hidden;
-
-
-        & > :not(:first-child) {
-          //margin-top: 4rem;
-          border-top: 1px solid $border-clr;
-        }
-
-      }
-
-    }
   }
 }

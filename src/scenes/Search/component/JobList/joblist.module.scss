@@ -1,0 +1,58 @@
+@use '@/styles/index.scss' as s;
+
+.container {
+  $border-clr: #d7d7d7;
+  display: flex;
+  flex-flow: column;
+  gap: 2rem;
+
+  flex: .7;
+
+  & :local {
+
+    .search {
+      display: flex;
+
+      // select material ui TextField
+      & :global {
+        .MuiTextField-root {
+          // select the border element
+          .MuiOutlinedInput-root {
+            border-radius: .5rem 0 0 .5rem;
+            border-right: none;
+          }
+        }
+      }
+
+      button {
+        border-radius: 0 .5rem .5rem 0;
+        height: 100%;
+      }
+
+      //gap: 1rem;
+    }
+
+    .search_tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      align-items: center;
+      padding: 0 1rem;
+    }
+
+    .list {
+      border: 1px solid $border-clr;
+      border-radius: 1rem;
+      overflow: hidden;
+
+
+      & > :not(:first-child) {
+        //margin-top: 4rem;
+        border-top: 1px solid $border-clr;
+      }
+
+    }
+
+  }
+
+}
