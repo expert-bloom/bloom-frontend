@@ -26,6 +26,7 @@
       margin: 0 auto;
       z-index: 1;
 
+
       @include s.media-breakpoint-up(lg) {
         //max-width: 80%;
       }
@@ -37,6 +38,7 @@
 
       header {
         max-width: 100%;
+        margin-top: 2rem;
 
         .divider {
           margin-top: 1rem;
@@ -58,8 +60,11 @@
 
     .content {
       display: flex;
+      align-items: center;
+      justify-content: center;
       gap: 2rem;
       margin-top: 2.5rem;
+
     }
 
 
@@ -68,43 +73,11 @@
       display: flex;
       flex-flow: column;
       gap: 2rem;
-
       flex: .75;
-
-      .search {
-        display: flex;
-
-        // select material ui TextField
-        & :global {
-          .MuiTextField-root {
-            // select the border element
-            .MuiOutlinedInput-root {
-              border-radius: .5rem 0 0 .5rem;
-              border-right: none;
-            }
-          }
-        }
-
-        button {
-          border-radius: 0 .5rem .5rem 0;
-          height: 100%;
-        }
-
-        //gap: 1rem;
-      }
-
-      .search_tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: .5rem;
-        align-items: center;
-        padding: 0 1rem;
-      }
 
       .list {
         border: 1px solid $border-clr;
         border-radius: 1rem;
-
 
 
         & > :not(:first-child) {

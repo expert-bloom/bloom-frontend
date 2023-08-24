@@ -8,3 +8,9 @@ mutation CreateJobPost($input: CreateJobPostInput!) {
         }
     }
 }
+
+mutation SaveJobPost($input: SaveJobPostInput!) {
+    saveJobPost(input: $input) {
+        ...JopPost
+    }
+}

@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { Bookmark, LocationOn, Search } from '@mui/icons-material';
 import {
+  Alert,
+  AlertTitle,
   Button,
   Chip,
   CircularProgress,
@@ -11,27 +13,33 @@ import {
   Typography,
 } from '@mui/material';
 import moment from 'moment/moment';
+import { toast } from 'react-hot-toast';
 import { BsClock } from 'react-icons/bs';
 
 import { MoButton } from '@/components/MoButton';
 import { useGetJobPostsQuery } from '@/graphql/client/gql/schema';
 import { useAppStore } from '@/lib/store';
+import JobPostCard from '@/scenes/Search/component/JobPostCard';
 import { capitalize } from '@/utils';
 import SearchFilter from 'src/scenes/Search/SearchFilter';
 
 import s from './search.module.scss';
-
-const jobPosts = {
-  title: 'Revive Ad Server Customization',
-};
 
 const JobPosts = () => {
   const jopPostsPayload = useGetJobPostsQuery();
 
   const { data: posts, loading } = jopPostsPayload;
 
+  console.log('posts : ', jopPostsPayload);
+
   // access the store
   const selectedDayOfWeek = useAppStore((state) => state.setJobPostDetailId);
+
+  useEffect(() => {
+    if (jopPostsPayload.error) {
+      toast.error('Something wrong showing job-posts');
+    }
+  }, [jopPostsPayload]);
 
   return (
     <div className={s.container}>
@@ -79,55 +87,20 @@ const JobPosts = () => {
               <Button variant="text">Clear Filters</Button>
             </div>
 
-            <div className={s.list}>
-              {posts?.getJobPosts &&
-                posts.getJobPosts.map((post, idx) => (
-                  <div
-                    key={idx}
-                    className={s.job_card}
-                    onClick={() => {
-                      selectedDayOfWeek({
-                        jobPostId: post.id,
-                      });
-                    }}
-                  >
-                    <div className={s.title_div}>
-                      <Typography className={s.title} variant="h6">
-                        {post.title}
-                      </Typography>
+            {posts?.getJobPosts && posts.getJobPosts.length === 0 && (
+              <Alert>
+                <AlertTitle>No Job-Posts</AlertTitle>
+                There is no active Job-posts currently!
+              </Alert>
+            )}
 
-                      <IconButton className={s.bookmark}>
-                        <Bookmark />
-                      </IconButton>
-                    </div>
-
-                    <Typography className={s.detail}>
-                      {capitalize(post.salaryType)}: <b>${post.salary[0]}</b> -{' '}
-                      {post.experienceLevel} - <BsClock /> Posted{' '}
-                      {moment(post.createdAt).calendar()}
-                    </Typography>
-
-                    <Typography variant="body1" className={s.desc}>
-                      {post.description}
-                      <b>more</b>
-                    </Typography>
-
-                    <div className={s.tags}>
-                      {post.category.map((category) => (
-                        <Chip label={category} key={category} />
-                      ))}
-                    </div>
-
-                    <Typography className={s.detail}>Proposals: 0</Typography>
-                    <Stack direction="row" gap=".3rem">
-                      <LocationOn fontSize="small" />
-                      <Typography className={s.detail}>
-                        {post.location}
-                      </Typography>
-                    </Stack>
-                  </div>
+            {posts?.getJobPosts && posts.getJobPosts.length > 0 && (
+              <div className={s.list}>
+                {posts.getJobPosts.map((post, idx) => (
+                  <JobPostCard post={post} key={idx} />
                 ))}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

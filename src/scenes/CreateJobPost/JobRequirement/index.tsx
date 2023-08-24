@@ -107,7 +107,7 @@ const JobRequirement = () => {
 
           <Autocomplete
             id="skills"
-            emultiple
+            multiple
             limitTags={10}
             options={skillOption}
             disableCloseOnSelect

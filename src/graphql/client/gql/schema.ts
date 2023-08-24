@@ -155,6 +155,7 @@ export type ApplicantLight = {
   portfolio?: Maybe<Scalars['String']['output']>;
   resume?: Maybe<Scalars['String']['output']>;
   salaryExpectation?: Maybe<Scalars['Int']['output']>;
+  savedJobs: Array<JobPost>;
   skillLevel?: Maybe<ExperienceLevel>;
   skills?: Maybe<Array<Scalars['String']['output']>>;
 };
@@ -322,7 +323,7 @@ export enum JobType {
 }
 
 export type JopPostFilterInput = {
-  companyId?: InputMaybe<Scalars['String']['input']>;
+  companyId: Scalars['String']['input'];
 };
 
 export type LoginInput = {
@@ -339,6 +340,7 @@ export type Mutation = {
   createJobPost: JobPostPayload;
   logIn: AuthPayload;
   logInOAuth: AuthPayload;
+  saveJobPost?: Maybe<JobPost>;
   sayHi: Scalars['String']['output'];
   signUp: AuthPayload;
   signUpOAuth: AuthPayload;
@@ -355,6 +357,10 @@ export type MutationLogInArgs = {
 
 export type MutationLogInOAuthArgs = {
   input: LoginInput;
+};
+
+export type MutationSaveJobPostArgs = {
+  input: SaveJobPostInput;
 };
 
 export type MutationSignUpArgs = {
@@ -421,6 +427,7 @@ export type Query = {
   findAccount?: Maybe<FindOnePayload>;
   getCompanies: Array<Company>;
   getJobPosts: Array<JobPost>;
+  getSavedJobPosts: Array<JobPost>;
   me?: Maybe<AccountPayload>;
   sayHi?: Maybe<Scalars['String']['output']>;
 };
@@ -433,6 +440,10 @@ export type QueryGetJobPostsArgs = {
   input?: InputMaybe<JopPostFilterInput>;
 };
 
+export type QueryGetSavedJobPostsArgs = {
+  input: SavedJobPostsInput;
+};
+
 export type QueryMeArgs = {
   input: MeInput;
 };
@@ -443,6 +454,16 @@ export enum SalaryType {
   OneTime = 'ONE_TIME',
   Yearly = 'YEARLY',
 }
+
+export type SaveJobPostInput = {
+  accountId: Scalars['String']['input'];
+  jobPostId: Scalars['String']['input'];
+  save: Scalars['Boolean']['input'];
+};
+
+export type SavedJobPostsInput = {
+  accountId: Scalars['String']['input'];
+};
 
 export type SignUpInput = {
   accountType: AccountType;
@@ -500,6 +521,31 @@ export type UpdateProfileMutation = {
         github?: string | null;
         linkedin?: string | null;
         portfolio?: string | null;
+        savedJobs: Array<{
+          __typename?: 'JobPost';
+          id: string;
+          title: string;
+          applicationDeadline: any;
+          description: string;
+          location: string;
+          salary: Array<number>;
+          salaryType: SalaryType;
+          jobType: JobType;
+          category: Array<string>;
+          vacancy: number;
+          email: string;
+          jobSite: JobSite;
+          isVisible: boolean;
+          jobExperience: number;
+          experienceLevel: ExperienceLevel;
+          englishLevel: EnglishLevel;
+          otherLanguages: Array<string>;
+          skills: Array<string>;
+          qualifications: Array<string>;
+          interviewQuestions: Array<string>;
+          createdAt: any;
+          updatedAt: any;
+        }>;
       } | null;
       company?: {
         __typename?: 'CompanyLight';
@@ -547,6 +593,31 @@ export type AccountPayloadFragmentFragment = {
     github?: string | null;
     linkedin?: string | null;
     portfolio?: string | null;
+    savedJobs: Array<{
+      __typename?: 'JobPost';
+      id: string;
+      title: string;
+      applicationDeadline: any;
+      description: string;
+      location: string;
+      salary: Array<number>;
+      salaryType: SalaryType;
+      jobType: JobType;
+      category: Array<string>;
+      vacancy: number;
+      email: string;
+      jobSite: JobSite;
+      isVisible: boolean;
+      jobExperience: number;
+      experienceLevel: ExperienceLevel;
+      englishLevel: EnglishLevel;
+      otherLanguages: Array<string>;
+      skills: Array<string>;
+      qualifications: Array<string>;
+      interviewQuestions: Array<string>;
+      createdAt: any;
+      updatedAt: any;
+    }>;
   } | null;
   company?: {
     __typename?: 'CompanyLight';
@@ -597,6 +668,31 @@ export type FindAccountQuery = {
         github?: string | null;
         linkedin?: string | null;
         portfolio?: string | null;
+        savedJobs: Array<{
+          __typename?: 'JobPost';
+          id: string;
+          title: string;
+          applicationDeadline: any;
+          description: string;
+          location: string;
+          salary: Array<number>;
+          salaryType: SalaryType;
+          jobType: JobType;
+          category: Array<string>;
+          vacancy: number;
+          email: string;
+          jobSite: JobSite;
+          isVisible: boolean;
+          jobExperience: number;
+          experienceLevel: ExperienceLevel;
+          englishLevel: EnglishLevel;
+          otherLanguages: Array<string>;
+          skills: Array<string>;
+          qualifications: Array<string>;
+          interviewQuestions: Array<string>;
+          createdAt: any;
+          updatedAt: any;
+        }>;
       } | null;
       company?: {
         __typename?: 'CompanyLight';
@@ -650,6 +746,31 @@ export type MeQuery = {
       github?: string | null;
       linkedin?: string | null;
       portfolio?: string | null;
+      savedJobs: Array<{
+        __typename?: 'JobPost';
+        id: string;
+        title: string;
+        applicationDeadline: any;
+        description: string;
+        location: string;
+        salary: Array<number>;
+        salaryType: SalaryType;
+        jobType: JobType;
+        category: Array<string>;
+        vacancy: number;
+        email: string;
+        jobSite: JobSite;
+        isVisible: boolean;
+        jobExperience: number;
+        experienceLevel: ExperienceLevel;
+        englishLevel: EnglishLevel;
+        otherLanguages: Array<string>;
+        skills: Array<string>;
+        qualifications: Array<string>;
+        interviewQuestions: Array<string>;
+        createdAt: any;
+        updatedAt: any;
+      }>;
     } | null;
     company?: {
       __typename?: 'CompanyLight';
@@ -712,6 +833,31 @@ export type LoginMutation = {
         github?: string | null;
         linkedin?: string | null;
         portfolio?: string | null;
+        savedJobs: Array<{
+          __typename?: 'JobPost';
+          id: string;
+          title: string;
+          applicationDeadline: any;
+          description: string;
+          location: string;
+          salary: Array<number>;
+          salaryType: SalaryType;
+          jobType: JobType;
+          category: Array<string>;
+          vacancy: number;
+          email: string;
+          jobSite: JobSite;
+          isVisible: boolean;
+          jobExperience: number;
+          experienceLevel: ExperienceLevel;
+          englishLevel: EnglishLevel;
+          otherLanguages: Array<string>;
+          skills: Array<string>;
+          qualifications: Array<string>;
+          interviewQuestions: Array<string>;
+          createdAt: any;
+          updatedAt: any;
+        }>;
       } | null;
       company?: {
         __typename?: 'CompanyLight';
@@ -768,6 +914,31 @@ export type SignUpMutation = {
         github?: string | null;
         linkedin?: string | null;
         portfolio?: string | null;
+        savedJobs: Array<{
+          __typename?: 'JobPost';
+          id: string;
+          title: string;
+          applicationDeadline: any;
+          description: string;
+          location: string;
+          salary: Array<number>;
+          salaryType: SalaryType;
+          jobType: JobType;
+          category: Array<string>;
+          vacancy: number;
+          email: string;
+          jobSite: JobSite;
+          isVisible: boolean;
+          jobExperience: number;
+          experienceLevel: ExperienceLevel;
+          englishLevel: EnglishLevel;
+          otherLanguages: Array<string>;
+          skills: Array<string>;
+          qualifications: Array<string>;
+          interviewQuestions: Array<string>;
+          createdAt: any;
+          updatedAt: any;
+        }>;
       } | null;
       company?: {
         __typename?: 'CompanyLight';
@@ -824,6 +995,31 @@ export type SignUpOAuthMutation = {
         github?: string | null;
         linkedin?: string | null;
         portfolio?: string | null;
+        savedJobs: Array<{
+          __typename?: 'JobPost';
+          id: string;
+          title: string;
+          applicationDeadline: any;
+          description: string;
+          location: string;
+          salary: Array<number>;
+          salaryType: SalaryType;
+          jobType: JobType;
+          category: Array<string>;
+          vacancy: number;
+          email: string;
+          jobSite: JobSite;
+          isVisible: boolean;
+          jobExperience: number;
+          experienceLevel: ExperienceLevel;
+          englishLevel: EnglishLevel;
+          otherLanguages: Array<string>;
+          skills: Array<string>;
+          qualifications: Array<string>;
+          interviewQuestions: Array<string>;
+          createdAt: any;
+          updatedAt: any;
+        }>;
       } | null;
       company?: {
         __typename?: 'CompanyLight';
@@ -871,6 +1067,65 @@ export type CreateJobPostMutation = {
   };
 };
 
+export type SaveJobPostMutationVariables = Exact<{
+  input: SaveJobPostInput;
+}>;
+
+export type SaveJobPostMutation = {
+  __typename?: 'Mutation';
+  saveJobPost?: {
+    __typename?: 'JobPost';
+    id: string;
+    title: string;
+    applicationDeadline: any;
+    description: string;
+    location: string;
+    salary: Array<number>;
+    salaryType: SalaryType;
+    jobType: JobType;
+    category: Array<string>;
+    vacancy: number;
+    email: string;
+    jobSite: JobSite;
+    isVisible: boolean;
+    jobExperience: number;
+    experienceLevel: ExperienceLevel;
+    englishLevel: EnglishLevel;
+    otherLanguages: Array<string>;
+    skills: Array<string>;
+    qualifications: Array<string>;
+    interviewQuestions: Array<string>;
+    createdAt: any;
+    updatedAt: any;
+  } | null;
+};
+
+export type JopPostFragment = {
+  __typename?: 'JobPost';
+  id: string;
+  title: string;
+  applicationDeadline: any;
+  description: string;
+  location: string;
+  salary: Array<number>;
+  salaryType: SalaryType;
+  jobType: JobType;
+  category: Array<string>;
+  vacancy: number;
+  email: string;
+  jobSite: JobSite;
+  isVisible: boolean;
+  jobExperience: number;
+  experienceLevel: ExperienceLevel;
+  englishLevel: EnglishLevel;
+  otherLanguages: Array<string>;
+  skills: Array<string>;
+  qualifications: Array<string>;
+  interviewQuestions: Array<string>;
+  createdAt: any;
+  updatedAt: any;
+};
+
 export type GetJobPostsQueryVariables = Exact<{
   input?: InputMaybe<JopPostFilterInput>;
 }>;
@@ -904,6 +1159,32 @@ export type GetJobPostsQuery = {
   }>;
 };
 
+export const JopPostFragmentDoc = gql`
+  fragment JopPost on JobPost {
+    id
+    title
+    applicationDeadline
+    description
+    location
+    salary
+    salaryType
+    jobType
+    category
+    vacancy
+    email
+    jobSite
+    isVisible
+    jobExperience
+    experienceLevel
+    englishLevel
+    otherLanguages
+    skills
+    qualifications
+    interviewQuestions
+    createdAt
+    updatedAt
+  }
+`;
 export const AccountPayloadFragmentFragmentDoc = gql`
   fragment AccountPayloadFragment on AccountPayload {
     id
@@ -933,6 +1214,9 @@ export const AccountPayloadFragmentFragmentDoc = gql`
       github
       linkedin
       portfolio
+      savedJobs {
+        ...JopPost
+      }
     }
     company {
       id
@@ -947,6 +1231,7 @@ export const AccountPayloadFragmentFragmentDoc = gql`
       id
     }
   }
+  ${JopPostFragmentDoc}
 `;
 export const AccountFragmentFragmentDoc = gql`
   fragment AccountFragment on Account {
@@ -1398,33 +1683,64 @@ export type CreateJobPostMutationOptions = Apollo.BaseMutationOptions<
   CreateJobPostMutation,
   CreateJobPostMutationVariables
 >;
+export const SaveJobPostDocument = gql`
+  mutation SaveJobPost($input: SaveJobPostInput!) {
+    saveJobPost(input: $input) {
+      ...JopPost
+    }
+  }
+  ${JopPostFragmentDoc}
+`;
+export type SaveJobPostMutationFn = Apollo.MutationFunction<
+  SaveJobPostMutation,
+  SaveJobPostMutationVariables
+>;
+
+/**
+ * __useSaveJobPostMutation__
+ *
+ * To run a mutation, you first call `useSaveJobPostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSaveJobPostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [saveJobPostMutation, { data, loading, error }] = useSaveJobPostMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSaveJobPostMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SaveJobPostMutation,
+    SaveJobPostMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<SaveJobPostMutation, SaveJobPostMutationVariables>(
+    SaveJobPostDocument,
+    options,
+  );
+}
+export type SaveJobPostMutationHookResult = ReturnType<
+  typeof useSaveJobPostMutation
+>;
+export type SaveJobPostMutationResult =
+  Apollo.MutationResult<SaveJobPostMutation>;
+export type SaveJobPostMutationOptions = Apollo.BaseMutationOptions<
+  SaveJobPostMutation,
+  SaveJobPostMutationVariables
+>;
 export const GetJobPostsDocument = gql`
   query GetJobPosts($input: JopPostFilterInput) {
     getJobPosts(input: $input) {
-      id
-      title
-      applicationDeadline
-      description
-      location
-      salary
-      salaryType
-      jobType
-      category
-      vacancy
-      email
-      jobSite
-      isVisible
-      jobExperience
-      experienceLevel
-      englishLevel
-      otherLanguages
-      skills
-      qualifications
-      interviewQuestions
-      createdAt
-      updatedAt
+      ...JopPost
     }
   }
+  ${JopPostFragmentDoc}
 `;
 
 /**

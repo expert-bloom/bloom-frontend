@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import { Edit } from '@mui/icons-material';
 import {
@@ -20,49 +20,6 @@ import s from './review.module.scss';
 const Review = () => {
   const formik = useFormikContext<FormValuesType>();
   const { values, handleChange } = formik;
-
-  // console.log('values: ', values);
-
-  useEffect(() => {
-    // convert values to array
-    const row: any = [];
-
-    const row1: any = [];
-
-    /*
-            * title: '',
-          description: '',
-          type: null,
-          category: [],
-          vacancy: '',
-          deadline: '',
-          email: '',
-          salary: [20, 37],
-
-          // requirements
-          location: null,
-          compensation: null,
-          experience: null,
-          skill: [],
-            * */
-
-    const r = [
-      'title',
-      'description',
-      'type',
-      'category',
-      'vacancy',
-      'deadline',
-      'email',
-    ];
-    const r2 = ['salary', 'location', 'compensation', 'experience', 'skill'];
-
-    const item = {};
-  }, []);
-
-  const getStep = () => {
-    return 2;
-  };
 
   return (
     <div className={s.container}>

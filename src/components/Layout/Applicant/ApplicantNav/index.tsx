@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { AccountCircle, Dashboard, Handshake } from '@mui/icons-material';
+import { AccountCircle, Dashboard, Handshake, Save } from '@mui/icons-material';
 import {
   Avatar,
   Button,
@@ -77,6 +77,11 @@ const links = [
     name: 'Profile',
     href: '/applicant/profile',
     Icon: AccountCircle,
+  },
+  {
+    name: 'Saved',
+    href: '/applicant/saved-jobs',
+    Icon: Save,
   },
 ];
 

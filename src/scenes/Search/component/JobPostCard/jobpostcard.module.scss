@@ -1,0 +1,64 @@
+@use '@/styles/index.scss' as s;
+
+.job_card {
+  position: relative;
+  padding: 3rem;
+  text-align: left;
+  display: flex;
+  flex-flow: column;
+  gap: 1rem;
+  cursor: pointer;
+  transition: background-color .2s ease-in-out;
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1px solid #dadada;
+
+
+  // hover
+  &:hover {
+    //background-color: rgba(139, 140, 248, 0.08);
+    background-color: lighten(s.$clrs-accent, 22.08);
+    transition: background-color .2s ease-in-out;
+  }
+
+
+  & :local {
+    .title_div {
+      display: flex;
+
+      gap: 3rem;
+      align-items: flex-start;
+      justify-content: space-between;
+
+      .bookmark {
+        position: absolute;
+        right: 1.5rem;
+        top: 1.5rem;
+        z-index: 999;
+      }
+    }
+
+    .title {
+      //font-size: 1.2rem;
+      //font-weight: 600 !important;
+    }
+
+    .desc {
+      font-weight: 300;
+    }
+
+    .detail {
+      color: gray;
+      font-weight: 300;
+      letter-spacing: 0.04vmax;
+      font-size: .85rem;
+    }
+
+    .tags {
+      display: flex;
+      align-items: center;
+      gap: .3rem;
+    }
+  }
+
+}

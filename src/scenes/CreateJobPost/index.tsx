@@ -264,7 +264,7 @@ const PostJob = () => {
 
                   if (createPostPayload.data?.createJobPost.jobPost?.id) {
                     toast.success('Successfully created your Job-post');
-                    void router.push('/dashboard');
+                    void router.push('/company/dashboard');
                   }
 
                   console.log('response : ', createPostPayload);

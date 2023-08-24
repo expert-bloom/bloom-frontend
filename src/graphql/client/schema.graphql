@@ -110,6 +110,7 @@ type ApplicantLight {
     portfolio: String
     resume: String
     salaryExpectation: Int
+    savedJobs: [JobPost!]!
     skillLevel: ExperienceLevel
     skills: [String!]
 }
@@ -181,6 +182,7 @@ type Mutation {
     createJobPost(input: CreateJobPostInput!): JobPostPayload!
     logIn(input: LoginInput!): AuthPayload!
     logInOAuth(input: LoginInput!): AuthPayload!
+    saveJobPost(input: SaveJobPostInput!): JobPost
     sayHi: String!
     signUp(input: SignUpInput!): AuthPayload!
     signUpOAuth(input: OAuthSignUpInput!): AuthPayload!
@@ -201,6 +203,7 @@ type Query {
     findAccount(input: AccountInput!): FindOnePayload
     getCompanies: [Company!]!
     getJobPosts(input: JopPostFilterInput): [JobPost!]!
+    getSavedJobPosts(input: SavedJobPostsInput!): [JobPost!]!
     me(input: MeInput!): AccountPayload
     sayHi: String
 }
@@ -323,7 +326,7 @@ input CreateJobPostInput {
 }
 
 input JopPostFilterInput {
-    companyId: String
+    companyId: String!
 }
 
 input LoginInput {
@@ -365,6 +368,16 @@ input OAuthLoginInput {
 input OAuthSignUpInput {
     OAuth: OAuthInput!
     account: OAuthAccountInput!
+}
+
+input SaveJobPostInput {
+    accountId: String!
+    jobPostId: String!
+    save: Boolean!
+}
+
+input SavedJobPostsInput {
+    accountId: String!
 }
 
 input SignUpInput {

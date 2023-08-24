@@ -17,10 +17,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/auth/login', request.url));
   }
 
-  if (request.nextUrl.pathname === '/dashboard') {
+  if (request.nextUrl.pathname === '/company') {
     // todo : check if user is client or freelancer
     if (token.accountType === 'COMPANY')
-      return NextResponse.redirect(new URL('/dashboard/company', request.url));
+      return NextResponse.redirect(new URL('/company/dashboard', request.url));
   }
 
   return NextResponse.next();

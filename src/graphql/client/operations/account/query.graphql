@@ -32,6 +32,10 @@ fragment AccountPayloadFragment on AccountPayload{
         github
         linkedin
         portfolio
+
+        savedJobs {
+            ...JopPost
+        }
     }
     company {
         id
