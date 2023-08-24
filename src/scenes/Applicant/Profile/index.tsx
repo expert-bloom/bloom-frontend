@@ -138,11 +138,17 @@ const Profile = () => {
       values = nestedSubmits;
 
       const accountInput = pickBy(values.account, (value, key) => {
-        return Boolean(value) && formik.initialValues.account[key] !== value;
+        return (
+          Boolean(value) &&
+          (formik.initialValues.account as Record<string, any>)[key] !== value
+        );
       });
 
       const applicant = pickBy(values.applicant, (value, key) => {
-        return Boolean(value) && formik.initialValues.applicant[key] !== value;
+        return (
+          Boolean(value) &&
+          (formik.initialValues.applicant as Record<string, any>)[key] !== value
+        );
       });
 
       console.log('accountInput : ', accountInput, 'app', applicant);
@@ -163,7 +169,7 @@ const Profile = () => {
           refetchQueries: [MeDocument],
         });
 
-        if (profilePayload.errors?.length > 0) {
+        if (profilePayload.errors && profilePayload.errors?.length > 0) {
           toast.error(profilePayload.errors.map((e) => e.message).join(', '));
         }
 
@@ -185,7 +191,7 @@ const Profile = () => {
         console.log('profile payload : ', profilePayload);
       } catch (err) {
         console.log('error ---->  : ', err);
-        toast.error(err?.message ?? 'Error updating profile');
+        toast.error('Error updating profile');
       }
     },
   });

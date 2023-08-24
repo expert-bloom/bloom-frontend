@@ -1,12 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import { Alert, AlertTitle, CircularProgress, Typography } from '@mui/material';
 import Link from 'next/link';
-import { toast } from 'react-hot-toast';
 
-import { useGetJobPostsQuery } from '@/graphql/client/gql/schema';
 import useMe from '@/hooks/useMe';
-import { useAppStore } from '@/lib/store';
 import JobPostCard from '@/scenes/Search/component/JobPostCard';
 
 import s from './savedjobs.module.scss';
@@ -46,7 +43,7 @@ const SavedJobs = () => {
             )}
 
             {applicant.savedJobs && (
-              <div className={<s className="list"></s>}>
+              <div className={s.list}>
                 {applicant.savedJobs.map((post, idx) => (
                   <JobPostCard post={post} key={idx} />
                 ))}

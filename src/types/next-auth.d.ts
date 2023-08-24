@@ -10,13 +10,7 @@ declare module 'next-auth' {
       name: string;
       email: string;
       accountType: AccountType;
-      company:
-        | ({
-            id: string;
-          } & Record<string, any>)
-        | null;
-      applicant: object | null;
-      affiliate:
+      oAuthClient:
         | ({
             id: string;
           } & Record<string, any>)

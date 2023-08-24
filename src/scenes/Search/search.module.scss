@@ -104,7 +104,7 @@
       .list {
         border: 1px solid $border-clr;
         border-radius: 1rem;
-
+        overflow: hidden;
 
 
         & > :not(:first-child) {

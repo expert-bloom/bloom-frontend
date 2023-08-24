@@ -29,6 +29,7 @@ import {
   type SalaryType,
   useCreateJobPostMutation,
 } from '@/graphql/client/gql/schema';
+import useMe from '@/hooks/useMe';
 import InterviewQuestions, {
   schema as InterviewSchema,
 } from '@/scenes/CreateJobPost/InterviewQuestions';
@@ -126,6 +127,8 @@ const PostJob = () => {
   const [dir, setDir] = useState<'RIGHT' | 'LEFT'>();
   const [activeStep, setActiveStep] = React.useState(0);
   const { data: session } = useSession();
+  const { me } = useMe();
+
   const [currentStep, setCurrentStep] = useState<typeof formSteps[number]>({
     ...formSteps[activeStep],
   });
@@ -229,10 +232,10 @@ const PostJob = () => {
                     isVisible: true,
 
                     postedBy: session?.user?.id ?? '',
-                    affiliateId: session?.user?.affiliate?.id ?? null,
+                    affiliateId: me?.affiliate?.id ?? null,
                     companyId:
                       session?.user?.accountType === 'COMPANY'
-                        ? (session.user.company?.id as string)
+                        ? (me?.company?.id as string)
                         : values.companyId,
                   };
 

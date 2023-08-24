@@ -1,4 +1,13 @@
 import React, { useEffect, useState } from 'react';
+
+import {
+  ArrowCircleLeft,
+  CheckCircleTwoTone,
+  GitHub,
+  Person,
+  Visibility,
+  VisibilityOff,
+} from '@mui/icons-material';
 import {
   Autocomplete,
   Checkbox,
@@ -9,25 +18,19 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useFormikContext } from 'formik';
-import { type RegisterFormValuesType } from '@/scenes/Auth/SignUp';
-import GoogleIcon from '@/components/Icons/Google';
-import {
-  ArrowCircleLeft,
-  CheckCircleTwoTone,
-  GitHub,
-  Person,
-  Visibility,
-  VisibilityOff,
-} from '@mui/icons-material';
-import s from '../signup.module.scss';
 import { countries } from 'countries-list';
-import useSocialAuth from '@/scenes/Auth/useSocialAuth';
-import { AccountType } from '@/graphql/client/gql/schema';
-import { MoButton } from '@/components/MoButton';
-import { toast } from 'react-hot-toast';
-import { useSession } from 'next-auth/react';
+import { useFormikContext } from 'formik';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
+import { toast } from 'react-hot-toast';
+
+import GoogleIcon from '@/components/Icons/Google';
+import { MoButton } from '@/components/MoButton';
+import { AccountType } from '@/graphql/client/gql/schema';
+import { type RegisterFormValuesType } from '@/scenes/Auth/SignUp';
+import useSocialAuth from '@/scenes/Auth/useSocialAuth';
+
+import s from '../signup.module.scss';
 
 const AuthDetails = ({ onReturn }: any) => {
   const { data: session } = useSession();

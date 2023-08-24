@@ -115,8 +115,28 @@ type ApplicantLight {
     skills: [String!]
 }
 
+type AuthAccountPayload {
+    accountType: AccountType!
+    createdAt: DateTime!
+    email: String!
+    emailVerified: DateTime
+    firstName: String!
+    id: String!
+    image: String
+    lastName: String!
+    oAuthClient: [OAuth!]!
+    phone: String
+}
+
+type AuthApplicant {
+    experienceYear: Int
+    gender: String
+    id: String!
+    resume: String
+}
+
 type AuthPayload implements PayloadError {
-    account: AccountPayload
+    account: AuthAccountPayload
     errors: [Error!]!
 }
 
@@ -181,7 +201,6 @@ type JobPostPayload {
 type Mutation {
     createJobPost(input: CreateJobPostInput!): JobPostPayload!
     logIn(input: LoginInput!): AuthPayload!
-    logInOAuth(input: LoginInput!): AuthPayload!
     saveJobPost(input: SaveJobPostInput!): JobPost
     sayHi: String!
     signUp(input: SignUpInput!): AuthPayload!

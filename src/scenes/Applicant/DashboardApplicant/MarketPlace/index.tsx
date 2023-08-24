@@ -22,18 +22,19 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 
 import { useGetJobPostsQuery } from '@/graphql/client/gql/schema';
+import useMe from '@/hooks/useMe';
 
 import s from './marketplace.module.scss';
 
 const MarketPlace = () => {
-  const { data: session } = useSession();
+  const { me } = useMe();
 
   const jobPostPayload = useGetJobPostsQuery({
-    skip: !session?.user?.company?.id,
+    skip: !me?.company?.id,
     fetchPolicy: 'cache-and-network',
     variables: {
       input: {
-        companyId: session?.user?.company?.id,
+        companyId: me?.company?.id ?? '',
       },
     },
   });

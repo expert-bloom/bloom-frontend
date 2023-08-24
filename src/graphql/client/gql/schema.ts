@@ -182,9 +182,31 @@ export type ApplicantUpdateInput = {
   skills?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
+export type AuthAccountPayload = {
+  __typename?: 'AuthAccountPayload';
+  accountType: AccountType;
+  createdAt: Scalars['DateTime']['output'];
+  email: Scalars['String']['output'];
+  emailVerified?: Maybe<Scalars['DateTime']['output']>;
+  firstName: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  image?: Maybe<Scalars['String']['output']>;
+  lastName: Scalars['String']['output'];
+  oAuthClient: Array<OAuth>;
+  phone?: Maybe<Scalars['String']['output']>;
+};
+
+export type AuthApplicant = {
+  __typename?: 'AuthApplicant';
+  experienceYear?: Maybe<Scalars['Int']['output']>;
+  gender?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  resume?: Maybe<Scalars['String']['output']>;
+};
+
 export type AuthPayload = PayloadError & {
   __typename?: 'AuthPayload';
-  account?: Maybe<AccountPayload>;
+  account?: Maybe<AuthAccountPayload>;
   errors: Array<Error>;
 };
 
@@ -339,7 +361,6 @@ export type Mutation = {
   __typename?: 'Mutation';
   createJobPost: JobPostPayload;
   logIn: AuthPayload;
-  logInOAuth: AuthPayload;
   saveJobPost?: Maybe<JobPost>;
   sayHi: Scalars['String']['output'];
   signUp: AuthPayload;
@@ -352,10 +373,6 @@ export type MutationCreateJobPostArgs = {
 };
 
 export type MutationLogInArgs = {
-  input: LoginInput;
-};
-
-export type MutationLogInOAuthArgs = {
   input: LoginInput;
 };
 
@@ -794,6 +811,26 @@ export type AccountFragmentFragment = {
   createdAt: any;
 };
 
+export type AuthAccountFragmentFragment = {
+  __typename?: 'AuthAccountPayload';
+  id: string;
+  email: string;
+  accountType: AccountType;
+  image?: string | null;
+  firstName: string;
+  lastName: string;
+  createdAt: any;
+  oAuthClient: Array<{
+    __typename?: 'OAuth';
+    id: string;
+    provider: string;
+    accessToken: string;
+    expires: any;
+    providerAccountId: string;
+    tokenType: string;
+  }>;
+};
+
 export type LoginMutationVariables = Exact<{
   input: LoginInput;
 }>;
@@ -804,73 +841,23 @@ export type LoginMutation = {
     __typename?: 'AuthPayload';
     errors: Array<{ __typename?: 'Error'; message: string }>;
     account?: {
-      __typename?: 'AccountPayload';
+      __typename?: 'AuthAccountPayload';
       id: string;
       email: string;
-      emailVerified?: any | null;
       accountType: AccountType;
       image?: string | null;
       firstName: string;
       lastName: string;
       createdAt: any;
-      phone?: string | null;
-      applicant?: {
-        __typename?: 'ApplicantLight';
-        id: string;
-        about?: string | null;
-        jobPosition?: string | null;
-        salaryExpectation?: number | null;
-        WorkExperienceYears?: number | null;
-        location?: string | null;
-        experience?: number | null;
-        englishLevel?: EnglishLevel | null;
-        otherLanguages?: Array<string | null> | null;
-        accomplishment?: string | null;
-        skillLevel?: ExperienceLevel | null;
-        skills?: Array<string> | null;
-        experienceYear?: number | null;
-        resume?: string | null;
-        github?: string | null;
-        linkedin?: string | null;
-        portfolio?: string | null;
-        savedJobs: Array<{
-          __typename?: 'JobPost';
-          id: string;
-          title: string;
-          applicationDeadline: any;
-          description: string;
-          location: string;
-          salary: Array<number>;
-          salaryType: SalaryType;
-          jobType: JobType;
-          category: Array<string>;
-          vacancy: number;
-          email: string;
-          jobSite: JobSite;
-          isVisible: boolean;
-          jobExperience: number;
-          experienceLevel: ExperienceLevel;
-          englishLevel: EnglishLevel;
-          otherLanguages: Array<string>;
-          skills: Array<string>;
-          qualifications: Array<string>;
-          interviewQuestions: Array<string>;
-          createdAt: any;
-          updatedAt: any;
-        }>;
-      } | null;
-      company?: {
-        __typename?: 'CompanyLight';
-        id: string;
-        companyName?: string | null;
-        logo?: string | null;
-      } | null;
       oAuthClient: Array<{
         __typename?: 'OAuth';
         id: string;
         provider: string;
+        accessToken: string;
+        expires: any;
+        providerAccountId: string;
+        tokenType: string;
       }>;
-      affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
     } | null;
   };
 };
@@ -885,73 +872,23 @@ export type SignUpMutation = {
     __typename?: 'AuthPayload';
     errors: Array<{ __typename?: 'Error'; message: string }>;
     account?: {
-      __typename?: 'AccountPayload';
+      __typename?: 'AuthAccountPayload';
       id: string;
       email: string;
-      emailVerified?: any | null;
       accountType: AccountType;
       image?: string | null;
       firstName: string;
       lastName: string;
       createdAt: any;
-      phone?: string | null;
-      applicant?: {
-        __typename?: 'ApplicantLight';
-        id: string;
-        about?: string | null;
-        jobPosition?: string | null;
-        salaryExpectation?: number | null;
-        WorkExperienceYears?: number | null;
-        location?: string | null;
-        experience?: number | null;
-        englishLevel?: EnglishLevel | null;
-        otherLanguages?: Array<string | null> | null;
-        accomplishment?: string | null;
-        skillLevel?: ExperienceLevel | null;
-        skills?: Array<string> | null;
-        experienceYear?: number | null;
-        resume?: string | null;
-        github?: string | null;
-        linkedin?: string | null;
-        portfolio?: string | null;
-        savedJobs: Array<{
-          __typename?: 'JobPost';
-          id: string;
-          title: string;
-          applicationDeadline: any;
-          description: string;
-          location: string;
-          salary: Array<number>;
-          salaryType: SalaryType;
-          jobType: JobType;
-          category: Array<string>;
-          vacancy: number;
-          email: string;
-          jobSite: JobSite;
-          isVisible: boolean;
-          jobExperience: number;
-          experienceLevel: ExperienceLevel;
-          englishLevel: EnglishLevel;
-          otherLanguages: Array<string>;
-          skills: Array<string>;
-          qualifications: Array<string>;
-          interviewQuestions: Array<string>;
-          createdAt: any;
-          updatedAt: any;
-        }>;
-      } | null;
-      company?: {
-        __typename?: 'CompanyLight';
-        id: string;
-        companyName?: string | null;
-        logo?: string | null;
-      } | null;
       oAuthClient: Array<{
         __typename?: 'OAuth';
         id: string;
         provider: string;
+        accessToken: string;
+        expires: any;
+        providerAccountId: string;
+        tokenType: string;
       }>;
-      affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
     } | null;
   };
 };
@@ -966,73 +903,23 @@ export type SignUpOAuthMutation = {
     __typename?: 'AuthPayload';
     errors: Array<{ __typename?: 'Error'; message: string }>;
     account?: {
-      __typename?: 'AccountPayload';
+      __typename?: 'AuthAccountPayload';
       id: string;
       email: string;
-      emailVerified?: any | null;
       accountType: AccountType;
       image?: string | null;
       firstName: string;
       lastName: string;
       createdAt: any;
-      phone?: string | null;
-      applicant?: {
-        __typename?: 'ApplicantLight';
-        id: string;
-        about?: string | null;
-        jobPosition?: string | null;
-        salaryExpectation?: number | null;
-        WorkExperienceYears?: number | null;
-        location?: string | null;
-        experience?: number | null;
-        englishLevel?: EnglishLevel | null;
-        otherLanguages?: Array<string | null> | null;
-        accomplishment?: string | null;
-        skillLevel?: ExperienceLevel | null;
-        skills?: Array<string> | null;
-        experienceYear?: number | null;
-        resume?: string | null;
-        github?: string | null;
-        linkedin?: string | null;
-        portfolio?: string | null;
-        savedJobs: Array<{
-          __typename?: 'JobPost';
-          id: string;
-          title: string;
-          applicationDeadline: any;
-          description: string;
-          location: string;
-          salary: Array<number>;
-          salaryType: SalaryType;
-          jobType: JobType;
-          category: Array<string>;
-          vacancy: number;
-          email: string;
-          jobSite: JobSite;
-          isVisible: boolean;
-          jobExperience: number;
-          experienceLevel: ExperienceLevel;
-          englishLevel: EnglishLevel;
-          otherLanguages: Array<string>;
-          skills: Array<string>;
-          qualifications: Array<string>;
-          interviewQuestions: Array<string>;
-          createdAt: any;
-          updatedAt: any;
-        }>;
-      } | null;
-      company?: {
-        __typename?: 'CompanyLight';
-        id: string;
-        companyName?: string | null;
-        logo?: string | null;
-      } | null;
       oAuthClient: Array<{
         __typename?: 'OAuth';
         id: string;
         provider: string;
+        accessToken: string;
+        expires: any;
+        providerAccountId: string;
+        tokenType: string;
       }>;
-      affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
     } | null;
   };
 };
@@ -1244,6 +1131,25 @@ export const AccountFragmentFragmentDoc = gql`
     createdAt
   }
 `;
+export const AuthAccountFragmentFragmentDoc = gql`
+  fragment AuthAccountFragment on AuthAccountPayload {
+    id
+    email
+    accountType
+    image
+    firstName
+    lastName
+    createdAt
+    oAuthClient {
+      id
+      provider
+      accessToken
+      expires
+      providerAccountId
+      tokenType
+    }
+  }
+`;
 export const UpdateProfileDocument = gql`
   mutation UpdateProfile($input: UpdateProfileInput!) {
     updateProfile(input: $input) {
@@ -1409,11 +1315,11 @@ export const LoginDocument = gql`
         message
       }
       account {
-        ...AccountPayloadFragment
+        ...AuthAccountFragment
       }
     }
   }
-  ${AccountPayloadFragmentFragmentDoc}
+  ${AuthAccountFragmentFragmentDoc}
 `;
 export type LoginMutationFn = Apollo.MutationFunction<
   LoginMutation,
@@ -1462,11 +1368,11 @@ export const SignUpDocument = gql`
         message
       }
       account {
-        ...AccountPayloadFragment
+        ...AuthAccountFragment
       }
     }
   }
-  ${AccountPayloadFragmentFragmentDoc}
+  ${AuthAccountFragmentFragmentDoc}
 `;
 export type SignUpMutationFn = Apollo.MutationFunction<
   SignUpMutation,
@@ -1515,11 +1421,11 @@ export const SignUpOAuthDocument = gql`
         message
       }
       account {
-        ...AccountPayloadFragment
+        ...AuthAccountFragment
       }
     }
   }
-  ${AccountPayloadFragmentFragmentDoc}
+  ${AuthAccountFragmentFragmentDoc}
 `;
 export type SignUpOAuthMutationFn = Apollo.MutationFunction<
   SignUpOAuthMutation,

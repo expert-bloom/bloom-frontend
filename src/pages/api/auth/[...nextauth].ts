@@ -95,7 +95,7 @@ const getOptions: (req: NextApiRequest) => NextAuthOptions = (req) => ({
             },
           });
 
-          console.log('find accoutn payload :  ', findAccountPayload);
+          // console.log('find accoutn payload :  ', findAccountPayload);
 
           if (
             !Boolean(findAccountPayload.data.findAccount?.account?.id) &&

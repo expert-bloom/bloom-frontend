@@ -1,12 +1,13 @@
 import CredentialsProvider from 'next-auth/providers/credentials';
+
 import { AuthTypeKeys } from '@/constants';
-import apollo from '@/lib/apollo';
-import {
-  type AuthAccountPayload,
-  LoginDocument,
-  type LoginMutation,
-  type LoginMutationVariables,
+import type {
+  AuthAccountPayload,
+  LoginMutation,
+  LoginMutationVariables,
 } from '@/graphql/client/gql/schema';
+import { LoginDocument } from '@/graphql/client/gql/schema';
+import apollo from '@/lib/apollo';
 
 export default CredentialsProvider({
   id: AuthTypeKeys.LOGIN,
