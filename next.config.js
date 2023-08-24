@@ -1,4 +1,4 @@
-/** @type {import('next').NextConfig} */
+/** @type {import("next").NextConfig} */
 
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -7,7 +7,11 @@ const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
   images: {
-    domains: ['api.dicebear.com', 'xsgames.co'],
+    domains: [
+      'api.dicebear.com',
+      'xsgames.co',
+      'd1lmgnqw69ga6t.cloudfront.net',
+    ],
   },
   modularizeImports: {
     '@mui/material': {

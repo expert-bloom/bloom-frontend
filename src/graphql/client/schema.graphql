@@ -31,7 +31,7 @@ type Account implements IAccount {
     phone: String
 }
 
-type AccountPayload implements IAccount {
+type AccountPayload {
     accountType: AccountType!
     affiliate: AffiliateLight
     applicant: ApplicantLight
@@ -45,6 +45,11 @@ type AccountPayload implements IAccount {
     lastName: String!
     oAuthClient: [OAuth!]!
     phone: String
+}
+
+type AccountUpdatePayload implements PayloadError {
+    account: AccountPayload
+    errors: [Error!]!
 }
 
 type Affiliate implements IAccount {
@@ -63,24 +68,50 @@ type AffiliateLight {
 }
 
 type Applicant implements IAccount {
+    WorkExperienceYears: Int
+    about: String
+    accomplishment: String
     accountType: AccountType!
     createdAt: DateTime!
     email: String!
+    englishLevel: EnglishLevel
+    experience: Int
     experienceYear: Int
     firstName: String!
     gender: String
     id: String!
     image: String
+    jobPosition: String
     lastName: String!
+    location: String
+    otherLanguages: [String]
     phone: String
     resume: String
+    salaryExpectation: Int
+    skillLevel: ExperienceLevel
 }
 
 type ApplicantLight {
+    WorkExperienceYears: Int
+    about: String
+    accomplishment: String
+    education: String
+    englishLevel: EnglishLevel
+    experience: Int
     experienceYear: Int
     gender: String
+    github: String
     id: String!
+    jobPosition: String
+    languages: [String]
+    linkedin: String
+    location: String
+    otherLanguages: [String]
+    portfolio: String
     resume: String
+    salaryExpectation: Int
+    skillLevel: ExperienceLevel
+    skills: [String!]
 }
 
 type AuthPayload implements PayloadError {
@@ -153,6 +184,7 @@ type Mutation {
     sayHi: String!
     signUp(input: SignUpInput!): AuthPayload!
     signUpOAuth(input: OAuthSignUpInput!): AuthPayload!
+    updateProfile(input: UpdateProfileInput!): AccountUpdatePayload!
 }
 
 type OAuth {
@@ -235,6 +267,36 @@ input AccountInput {
     phone: String
 }
 
+input AccountUpdateInput {
+    email: String
+    firstName: String
+    image: String
+    lastName: String
+    phone: String
+}
+
+input ApplicantUpdateInput {
+    WorkExperienceYears: Int
+    about: String
+    accomplishment: String
+    education: String
+    englishLevel: EnglishLevel
+    experience: Int
+    experienceYear: Int
+    gender: String
+    github: String
+    jobPosition: String
+    languages: [String]
+    linkedin: String
+    location: String
+    otherLanguages: [String]
+    portfolio: String
+    resume: String
+    salaryExpectation: Int
+    skillLevel: ExperienceLevel
+    skills: [String!]
+}
+
 input CreateJobPostInput {
     affiliateId: String
     applicationDeadline: DateTime!
@@ -314,4 +376,10 @@ input SignUpInput {
     lastName: String!
     name: String
     password: String!
+}
+
+input UpdateProfileInput {
+    account: AccountUpdateInput
+    accountId: String!
+    applicant: ApplicantUpdateInput
 }

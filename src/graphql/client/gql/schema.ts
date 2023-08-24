@@ -56,7 +56,7 @@ export type AccountInput = {
   phone?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type AccountPayload = IAccount & {
+export type AccountPayload = {
   __typename?: 'AccountPayload';
   accountType: AccountType;
   affiliate?: Maybe<AffiliateLight>;
@@ -79,6 +79,20 @@ export enum AccountType {
   Company = 'COMPANY',
 }
 
+export type AccountUpdateInput = {
+  email?: InputMaybe<Scalars['String']['input']>;
+  firstName?: InputMaybe<Scalars['String']['input']>;
+  image?: InputMaybe<Scalars['String']['input']>;
+  lastName?: InputMaybe<Scalars['String']['input']>;
+  phone?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type AccountUpdatePayload = PayloadError & {
+  __typename?: 'AccountUpdatePayload';
+  account?: Maybe<AccountPayload>;
+  errors: Array<Error>;
+};
+
 export type Affiliate = IAccount & {
   __typename?: 'Affiliate';
   accountType: AccountType;
@@ -98,25 +112,73 @@ export type AffiliateLight = {
 
 export type Applicant = IAccount & {
   __typename?: 'Applicant';
+  WorkExperienceYears?: Maybe<Scalars['Int']['output']>;
+  about?: Maybe<Scalars['String']['output']>;
+  accomplishment?: Maybe<Scalars['String']['output']>;
   accountType: AccountType;
   createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
+  englishLevel?: Maybe<EnglishLevel>;
+  experience?: Maybe<Scalars['Int']['output']>;
   experienceYear?: Maybe<Scalars['Int']['output']>;
   firstName: Scalars['String']['output'];
   gender?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   image?: Maybe<Scalars['String']['output']>;
+  jobPosition?: Maybe<Scalars['String']['output']>;
   lastName: Scalars['String']['output'];
+  location?: Maybe<Scalars['String']['output']>;
+  otherLanguages?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   phone?: Maybe<Scalars['String']['output']>;
   resume?: Maybe<Scalars['String']['output']>;
+  salaryExpectation?: Maybe<Scalars['Int']['output']>;
+  skillLevel?: Maybe<ExperienceLevel>;
 };
 
 export type ApplicantLight = {
   __typename?: 'ApplicantLight';
+  WorkExperienceYears?: Maybe<Scalars['Int']['output']>;
+  about?: Maybe<Scalars['String']['output']>;
+  accomplishment?: Maybe<Scalars['String']['output']>;
+  education?: Maybe<Scalars['String']['output']>;
+  englishLevel?: Maybe<EnglishLevel>;
+  experience?: Maybe<Scalars['Int']['output']>;
   experienceYear?: Maybe<Scalars['Int']['output']>;
   gender?: Maybe<Scalars['String']['output']>;
+  github?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
+  jobPosition?: Maybe<Scalars['String']['output']>;
+  languages?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  linkedin?: Maybe<Scalars['String']['output']>;
+  location?: Maybe<Scalars['String']['output']>;
+  otherLanguages?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  portfolio?: Maybe<Scalars['String']['output']>;
   resume?: Maybe<Scalars['String']['output']>;
+  salaryExpectation?: Maybe<Scalars['Int']['output']>;
+  skillLevel?: Maybe<ExperienceLevel>;
+  skills?: Maybe<Array<Scalars['String']['output']>>;
+};
+
+export type ApplicantUpdateInput = {
+  WorkExperienceYears?: InputMaybe<Scalars['Int']['input']>;
+  about?: InputMaybe<Scalars['String']['input']>;
+  accomplishment?: InputMaybe<Scalars['String']['input']>;
+  education?: InputMaybe<Scalars['String']['input']>;
+  englishLevel?: InputMaybe<EnglishLevel>;
+  experience?: InputMaybe<Scalars['Int']['input']>;
+  experienceYear?: InputMaybe<Scalars['Int']['input']>;
+  gender?: InputMaybe<Scalars['String']['input']>;
+  github?: InputMaybe<Scalars['String']['input']>;
+  jobPosition?: InputMaybe<Scalars['String']['input']>;
+  languages?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  linkedin?: InputMaybe<Scalars['String']['input']>;
+  location?: InputMaybe<Scalars['String']['input']>;
+  otherLanguages?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
+  portfolio?: InputMaybe<Scalars['String']['input']>;
+  resume?: InputMaybe<Scalars['String']['input']>;
+  salaryExpectation?: InputMaybe<Scalars['Int']['input']>;
+  skillLevel?: InputMaybe<ExperienceLevel>;
+  skills?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 export type AuthPayload = PayloadError & {
@@ -280,6 +342,7 @@ export type Mutation = {
   sayHi: Scalars['String']['output'];
   signUp: AuthPayload;
   signUpOAuth: AuthPayload;
+  updateProfile: AccountUpdatePayload;
 };
 
 export type MutationCreateJobPostArgs = {
@@ -300,6 +363,10 @@ export type MutationSignUpArgs = {
 
 export type MutationSignUpOAuthArgs = {
   input: OAuthSignUpInput;
+};
+
+export type MutationUpdateProfileArgs = {
+  input: UpdateProfileInput;
 };
 
 export type OAuth = {
@@ -388,6 +455,213 @@ export type SignUpInput = {
   password: Scalars['String']['input'];
 };
 
+export type UpdateProfileInput = {
+  account?: InputMaybe<AccountUpdateInput>;
+  accountId: Scalars['String']['input'];
+  applicant?: InputMaybe<ApplicantUpdateInput>;
+};
+
+export type UpdateProfileMutationVariables = Exact<{
+  input: UpdateProfileInput;
+}>;
+
+export type UpdateProfileMutation = {
+  __typename?: 'Mutation';
+  updateProfile: {
+    __typename?: 'AccountUpdatePayload';
+    errors: Array<{ __typename?: 'Error'; message: string }>;
+    account?: {
+      __typename?: 'AccountPayload';
+      id: string;
+      email: string;
+      emailVerified?: any | null;
+      accountType: AccountType;
+      image?: string | null;
+      firstName: string;
+      lastName: string;
+      createdAt: any;
+      phone?: string | null;
+      applicant?: {
+        __typename?: 'ApplicantLight';
+        id: string;
+        about?: string | null;
+        jobPosition?: string | null;
+        salaryExpectation?: number | null;
+        WorkExperienceYears?: number | null;
+        location?: string | null;
+        experience?: number | null;
+        englishLevel?: EnglishLevel | null;
+        otherLanguages?: Array<string | null> | null;
+        accomplishment?: string | null;
+        skillLevel?: ExperienceLevel | null;
+        skills?: Array<string> | null;
+        experienceYear?: number | null;
+        resume?: string | null;
+        github?: string | null;
+        linkedin?: string | null;
+        portfolio?: string | null;
+      } | null;
+      company?: {
+        __typename?: 'CompanyLight';
+        id: string;
+        companyName?: string | null;
+        logo?: string | null;
+      } | null;
+      oAuthClient: Array<{
+        __typename?: 'OAuth';
+        id: string;
+        provider: string;
+      }>;
+      affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
+    } | null;
+  };
+};
+
+export type AccountPayloadFragmentFragment = {
+  __typename?: 'AccountPayload';
+  id: string;
+  email: string;
+  emailVerified?: any | null;
+  accountType: AccountType;
+  image?: string | null;
+  firstName: string;
+  lastName: string;
+  createdAt: any;
+  phone?: string | null;
+  applicant?: {
+    __typename?: 'ApplicantLight';
+    id: string;
+    about?: string | null;
+    jobPosition?: string | null;
+    salaryExpectation?: number | null;
+    WorkExperienceYears?: number | null;
+    location?: string | null;
+    experience?: number | null;
+    englishLevel?: EnglishLevel | null;
+    otherLanguages?: Array<string | null> | null;
+    accomplishment?: string | null;
+    skillLevel?: ExperienceLevel | null;
+    skills?: Array<string> | null;
+    experienceYear?: number | null;
+    resume?: string | null;
+    github?: string | null;
+    linkedin?: string | null;
+    portfolio?: string | null;
+  } | null;
+  company?: {
+    __typename?: 'CompanyLight';
+    id: string;
+    companyName?: string | null;
+    logo?: string | null;
+  } | null;
+  oAuthClient: Array<{ __typename?: 'OAuth'; id: string; provider: string }>;
+  affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
+};
+
+export type FindAccountQueryVariables = Exact<{
+  input: AccountInput;
+}>;
+
+export type FindAccountQuery = {
+  __typename?: 'Query';
+  findAccount?: {
+    __typename?: 'FindOnePayload';
+    errors: Array<{ __typename?: 'Error'; message: string }>;
+    account?: {
+      __typename?: 'AccountPayload';
+      id: string;
+      email: string;
+      emailVerified?: any | null;
+      accountType: AccountType;
+      image?: string | null;
+      firstName: string;
+      lastName: string;
+      createdAt: any;
+      phone?: string | null;
+      applicant?: {
+        __typename?: 'ApplicantLight';
+        id: string;
+        about?: string | null;
+        jobPosition?: string | null;
+        salaryExpectation?: number | null;
+        WorkExperienceYears?: number | null;
+        location?: string | null;
+        experience?: number | null;
+        englishLevel?: EnglishLevel | null;
+        otherLanguages?: Array<string | null> | null;
+        accomplishment?: string | null;
+        skillLevel?: ExperienceLevel | null;
+        skills?: Array<string> | null;
+        experienceYear?: number | null;
+        resume?: string | null;
+        github?: string | null;
+        linkedin?: string | null;
+        portfolio?: string | null;
+      } | null;
+      company?: {
+        __typename?: 'CompanyLight';
+        id: string;
+        companyName?: string | null;
+        logo?: string | null;
+      } | null;
+      oAuthClient: Array<{
+        __typename?: 'OAuth';
+        id: string;
+        provider: string;
+      }>;
+      affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
+    } | null;
+  } | null;
+};
+
+export type MeQueryVariables = Exact<{
+  input: MeInput;
+}>;
+
+export type MeQuery = {
+  __typename?: 'Query';
+  me?: {
+    __typename?: 'AccountPayload';
+    id: string;
+    email: string;
+    emailVerified?: any | null;
+    accountType: AccountType;
+    image?: string | null;
+    firstName: string;
+    lastName: string;
+    createdAt: any;
+    phone?: string | null;
+    applicant?: {
+      __typename?: 'ApplicantLight';
+      id: string;
+      about?: string | null;
+      jobPosition?: string | null;
+      salaryExpectation?: number | null;
+      WorkExperienceYears?: number | null;
+      location?: string | null;
+      experience?: number | null;
+      englishLevel?: EnglishLevel | null;
+      otherLanguages?: Array<string | null> | null;
+      accomplishment?: string | null;
+      skillLevel?: ExperienceLevel | null;
+      skills?: Array<string> | null;
+      experienceYear?: number | null;
+      resume?: string | null;
+      github?: string | null;
+      linkedin?: string | null;
+      portfolio?: string | null;
+    } | null;
+    company?: {
+      __typename?: 'CompanyLight';
+      id: string;
+      companyName?: string | null;
+      logo?: string | null;
+    } | null;
+    oAuthClient: Array<{ __typename?: 'OAuth'; id: string; provider: string }>;
+    affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
+  } | null;
+};
+
 export type AccountFragmentFragment = {
   __typename?: 'Account';
   id: string;
@@ -418,7 +692,27 @@ export type LoginMutation = {
       firstName: string;
       lastName: string;
       createdAt: any;
-      applicant?: { __typename?: 'ApplicantLight'; id: string } | null;
+      phone?: string | null;
+      applicant?: {
+        __typename?: 'ApplicantLight';
+        id: string;
+        about?: string | null;
+        jobPosition?: string | null;
+        salaryExpectation?: number | null;
+        WorkExperienceYears?: number | null;
+        location?: string | null;
+        experience?: number | null;
+        englishLevel?: EnglishLevel | null;
+        otherLanguages?: Array<string | null> | null;
+        accomplishment?: string | null;
+        skillLevel?: ExperienceLevel | null;
+        skills?: Array<string> | null;
+        experienceYear?: number | null;
+        resume?: string | null;
+        github?: string | null;
+        linkedin?: string | null;
+        portfolio?: string | null;
+      } | null;
       company?: {
         __typename?: 'CompanyLight';
         id: string;
@@ -454,7 +748,27 @@ export type SignUpMutation = {
       firstName: string;
       lastName: string;
       createdAt: any;
-      applicant?: { __typename?: 'ApplicantLight'; id: string } | null;
+      phone?: string | null;
+      applicant?: {
+        __typename?: 'ApplicantLight';
+        id: string;
+        about?: string | null;
+        jobPosition?: string | null;
+        salaryExpectation?: number | null;
+        WorkExperienceYears?: number | null;
+        location?: string | null;
+        experience?: number | null;
+        englishLevel?: EnglishLevel | null;
+        otherLanguages?: Array<string | null> | null;
+        accomplishment?: string | null;
+        skillLevel?: ExperienceLevel | null;
+        skills?: Array<string> | null;
+        experienceYear?: number | null;
+        resume?: string | null;
+        github?: string | null;
+        linkedin?: string | null;
+        portfolio?: string | null;
+      } | null;
       company?: {
         __typename?: 'CompanyLight';
         id: string;
@@ -490,7 +804,27 @@ export type SignUpOAuthMutation = {
       firstName: string;
       lastName: string;
       createdAt: any;
-      applicant?: { __typename?: 'ApplicantLight'; id: string } | null;
+      phone?: string | null;
+      applicant?: {
+        __typename?: 'ApplicantLight';
+        id: string;
+        about?: string | null;
+        jobPosition?: string | null;
+        salaryExpectation?: number | null;
+        WorkExperienceYears?: number | null;
+        location?: string | null;
+        experience?: number | null;
+        englishLevel?: EnglishLevel | null;
+        otherLanguages?: Array<string | null> | null;
+        accomplishment?: string | null;
+        skillLevel?: ExperienceLevel | null;
+        skills?: Array<string> | null;
+        experienceYear?: number | null;
+        resume?: string | null;
+        github?: string | null;
+        linkedin?: string | null;
+        portfolio?: string | null;
+      } | null;
       company?: {
         __typename?: 'CompanyLight';
         id: string;
@@ -505,91 +839,6 @@ export type SignUpOAuthMutation = {
       affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
     } | null;
   };
-};
-
-export type AccountPayloadFragmentFragment = {
-  __typename?: 'AccountPayload';
-  id: string;
-  email: string;
-  emailVerified?: any | null;
-  accountType: AccountType;
-  image?: string | null;
-  firstName: string;
-  lastName: string;
-  createdAt: any;
-  applicant?: { __typename?: 'ApplicantLight'; id: string } | null;
-  company?: {
-    __typename?: 'CompanyLight';
-    id: string;
-    companyName?: string | null;
-    logo?: string | null;
-  } | null;
-  oAuthClient: Array<{ __typename?: 'OAuth'; id: string; provider: string }>;
-  affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
-};
-
-export type FindAccountQueryVariables = Exact<{
-  input: AccountInput;
-}>;
-
-export type FindAccountQuery = {
-  __typename?: 'Query';
-  findAccount?: {
-    __typename?: 'FindOnePayload';
-    errors: Array<{ __typename?: 'Error'; message: string }>;
-    account?: {
-      __typename?: 'AccountPayload';
-      id: string;
-      email: string;
-      emailVerified?: any | null;
-      accountType: AccountType;
-      image?: string | null;
-      firstName: string;
-      lastName: string;
-      createdAt: any;
-      applicant?: { __typename?: 'ApplicantLight'; id: string } | null;
-      company?: {
-        __typename?: 'CompanyLight';
-        id: string;
-        companyName?: string | null;
-        logo?: string | null;
-      } | null;
-      oAuthClient: Array<{
-        __typename?: 'OAuth';
-        id: string;
-        provider: string;
-      }>;
-      affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
-    } | null;
-  } | null;
-};
-
-export type MeQueryVariables = Exact<{
-  input: MeInput;
-}>;
-
-export type MeQuery = {
-  __typename?: 'Query';
-  me?: {
-    __typename?: 'AccountPayload';
-    id: string;
-    email: string;
-    emailVerified?: any | null;
-    accountType: AccountType;
-    image?: string | null;
-    firstName: string;
-    lastName: string;
-    createdAt: any;
-    applicant?: { __typename?: 'ApplicantLight'; id: string } | null;
-    company?: {
-      __typename?: 'CompanyLight';
-      id: string;
-      companyName?: string | null;
-      logo?: string | null;
-    } | null;
-    oAuthClient: Array<{ __typename?: 'OAuth'; id: string; provider: string }>;
-    affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
-  } | null;
 };
 
 export type GetCompaniesQueryVariables = Exact<{ [key: string]: never }>;
@@ -655,17 +904,6 @@ export type GetJobPostsQuery = {
   }>;
 };
 
-export const AccountFragmentFragmentDoc = gql`
-  fragment AccountFragment on Account {
-    id
-    email
-    accountType
-    image
-    firstName
-    lastName
-    createdAt
-  }
-`;
 export const AccountPayloadFragmentFragmentDoc = gql`
   fragment AccountPayloadFragment on AccountPayload {
     id
@@ -676,8 +914,25 @@ export const AccountPayloadFragmentFragmentDoc = gql`
     firstName
     lastName
     createdAt
+    phone
     applicant {
       id
+      about
+      jobPosition
+      salaryExpectation
+      WorkExperienceYears
+      location
+      experience
+      englishLevel
+      otherLanguages
+      accomplishment
+      skillLevel
+      skills
+      experienceYear
+      resume
+      github
+      linkedin
+      portfolio
     }
     company {
       id
@@ -693,6 +948,175 @@ export const AccountPayloadFragmentFragmentDoc = gql`
     }
   }
 `;
+export const AccountFragmentFragmentDoc = gql`
+  fragment AccountFragment on Account {
+    id
+    email
+    accountType
+    image
+    firstName
+    lastName
+    createdAt
+  }
+`;
+export const UpdateProfileDocument = gql`
+  mutation UpdateProfile($input: UpdateProfileInput!) {
+    updateProfile(input: $input) {
+      errors {
+        message
+      }
+      account {
+        ...AccountPayloadFragment
+      }
+    }
+  }
+  ${AccountPayloadFragmentFragmentDoc}
+`;
+export type UpdateProfileMutationFn = Apollo.MutationFunction<
+  UpdateProfileMutation,
+  UpdateProfileMutationVariables
+>;
+
+/**
+ * __useUpdateProfileMutation__
+ *
+ * To run a mutation, you first call `useUpdateProfileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateProfileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateProfileMutation, { data, loading, error }] = useUpdateProfileMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateProfileMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateProfileMutation,
+    UpdateProfileMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UpdateProfileMutation,
+    UpdateProfileMutationVariables
+  >(UpdateProfileDocument, options);
+}
+export type UpdateProfileMutationHookResult = ReturnType<
+  typeof useUpdateProfileMutation
+>;
+export type UpdateProfileMutationResult =
+  Apollo.MutationResult<UpdateProfileMutation>;
+export type UpdateProfileMutationOptions = Apollo.BaseMutationOptions<
+  UpdateProfileMutation,
+  UpdateProfileMutationVariables
+>;
+export const FindAccountDocument = gql`
+  query FindAccount($input: AccountInput!) {
+    findAccount(input: $input) {
+      errors {
+        message
+      }
+      account {
+        ...AccountPayloadFragment
+      }
+    }
+  }
+  ${AccountPayloadFragmentFragmentDoc}
+`;
+
+/**
+ * __useFindAccountQuery__
+ *
+ * To run a query within a React component, call `useFindAccountQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindAccountQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindAccountQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useFindAccountQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    FindAccountQuery,
+    FindAccountQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<FindAccountQuery, FindAccountQueryVariables>(
+    FindAccountDocument,
+    options,
+  );
+}
+export function useFindAccountLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    FindAccountQuery,
+    FindAccountQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<FindAccountQuery, FindAccountQueryVariables>(
+    FindAccountDocument,
+    options,
+  );
+}
+export type FindAccountQueryHookResult = ReturnType<typeof useFindAccountQuery>;
+export type FindAccountLazyQueryHookResult = ReturnType<
+  typeof useFindAccountLazyQuery
+>;
+export type FindAccountQueryResult = Apollo.QueryResult<
+  FindAccountQuery,
+  FindAccountQueryVariables
+>;
+export const MeDocument = gql`
+  query Me($input: MeInput!) {
+    me(input: $input) {
+      ...AccountPayloadFragment
+    }
+  }
+  ${AccountPayloadFragmentFragmentDoc}
+`;
+
+/**
+ * __useMeQuery__
+ *
+ * To run a query within a React component, call `useMeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMeQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useMeQuery(
+  baseOptions: Apollo.QueryHookOptions<MeQuery, MeQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, options);
+}
+export function useMeLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, options);
+}
+export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
+export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
+export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const LoginDocument = gql`
   mutation Login($input: LoginInput!) {
     logIn(input: $input) {
@@ -855,108 +1279,6 @@ export type SignUpOAuthMutationOptions = Apollo.BaseMutationOptions<
   SignUpOAuthMutation,
   SignUpOAuthMutationVariables
 >;
-export const FindAccountDocument = gql`
-  query FindAccount($input: AccountInput!) {
-    findAccount(input: $input) {
-      errors {
-        message
-      }
-      account {
-        ...AccountPayloadFragment
-      }
-    }
-  }
-  ${AccountPayloadFragmentFragmentDoc}
-`;
-
-/**
- * __useFindAccountQuery__
- *
- * To run a query within a React component, call `useFindAccountQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindAccountQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFindAccountQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useFindAccountQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    FindAccountQuery,
-    FindAccountQueryVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<FindAccountQuery, FindAccountQueryVariables>(
-    FindAccountDocument,
-    options,
-  );
-}
-export function useFindAccountLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    FindAccountQuery,
-    FindAccountQueryVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<FindAccountQuery, FindAccountQueryVariables>(
-    FindAccountDocument,
-    options,
-  );
-}
-export type FindAccountQueryHookResult = ReturnType<typeof useFindAccountQuery>;
-export type FindAccountLazyQueryHookResult = ReturnType<
-  typeof useFindAccountLazyQuery
->;
-export type FindAccountQueryResult = Apollo.QueryResult<
-  FindAccountQuery,
-  FindAccountQueryVariables
->;
-export const MeDocument = gql`
-  query Me($input: MeInput!) {
-    me(input: $input) {
-      ...AccountPayloadFragment
-    }
-  }
-  ${AccountPayloadFragmentFragmentDoc}
-`;
-
-/**
- * __useMeQuery__
- *
- * To run a query within a React component, call `useMeQuery` and pass it any options that fit your needs.
- * When your component renders, `useMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useMeQuery({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useMeQuery(
-  baseOptions: Apollo.QueryHookOptions<MeQuery, MeQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, options);
-}
-export function useMeLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, options);
-}
-export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
-export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
-export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const GetCompaniesDocument = gql`
   query GetCompanies {
     getCompanies {

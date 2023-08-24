@@ -9,6 +9,7 @@ import FixedLayer from '@/components/commons/FixedLayer';
 import Applicant from '@/components/Layout/Applicant';
 import LayoutEmpty from '@/components/Layout/LayoutEmpty';
 import { MotionParent } from '@/components/MotionItems';
+import { useTransitionFix } from '@/utils';
 import LayoutCompany from 'src/components/Layout/Company';
 
 const useRoleLayout = (pathname: string) => {
@@ -46,7 +47,7 @@ const LayoutContents = ({ children }: any) => {
   const { pathname } = useRouter();
 
   const getLayout = useRoleLayout(pathname);
-  // const transitionCallback = useTransitionFix();
+  const transitionCallback = useTransitionFix();
 
   return getLayout(
     <>
@@ -69,7 +70,7 @@ const LayoutContents = ({ children }: any) => {
         mode="wait"
         custom={{ pathname }}
         onExitComplete={() => {
-          // transitionCallback();
+          transitionCallback();
           window.scrollTo(0, 0);
         }}
       >

@@ -18,7 +18,9 @@ const AccountAlert = () => {
     <Alert severity="warning" className={s.account_alert}>
       Please verify your email address by sending a verification link to{' '}
       <b>{me?.email}</b>.{' '}
-      <Button variant="text">Send Verification Email</Button>
+      <Button variant="text" sx={{ padding: 0, pl: '1rem' }}>
+        ReSend Verification Email
+      </Button>
     </Alert>
   );
 };

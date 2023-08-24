@@ -30,6 +30,9 @@
         gap: 4rem;
         //padding: 2rem;
         flex: .3;
+        position: sticky;
+        top: 20%;
+        align-self: flex-start;
 
         @include s.media-breakpoint-up(xl) {
           //order: 2;
@@ -40,6 +43,18 @@
         //border: 1px solid blue;
 
         .pp {
+          position: relative;
+          width: 5rem;
+          height: 5rem;
+          border-radius: 50%;
+          aspect-ratio: 1/1;
+          box-shadow: 0 0 0 .2rem white, 0 0 0 .4rem #d3dde9;
+          margin: 0 auto;
+          overflow: hidden;
+
+          img{
+            object-fit: cover;
+          }
         }
 
         .tab_list {
@@ -104,12 +119,13 @@
       .controll {
         position: sticky;
         bottom: 0;
-        backdrop-filter: blur(10px);
+        backdrop-filter: blur(5px);
         z-index: 2;
         padding: 1.5rem 3rem;
         display: flex;
         justify-content: space-between;
         //border-top: 1px solid #e5e5e5;
+        border-radius: 1.5rem;
 
 
 

@@ -1,189 +1,207 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect } from 'react';
 
 import {
   Autocomplete,
   FormControl,
   FormLabel,
-  MenuItem,
-  Select,
-  Slider,
   Stack,
   TextField,
   Typography,
 } from '@mui/material';
+import { matchIsValidTel, MuiTelInput } from 'mui-tel-input';
 
-import { EnglishLevel } from '@/graphql/client/gql/schema';
-import FilePond from '@/lib/filePong';
-import Poster from '@/public/vercel.svg';
+import { useProfileSettingFormContext } from '@/scenes/Applicant/Profile';
+import {
+  type NestedOnSubmit,
+  type StepProps,
+} from '@/scenes/Applicant/Profile/data';
 import { useCountries } from '@/scenes/Search/SearchFilter/country-list';
-import { useIndustry } from '@/scenes/Search/SearchFilter/industry-list';
-import { capitalize } from '@/utils';
 
 import s from './contact_info.module.scss';
 
-const ProfileInfo = () => {
-  const countryListOptions = useCountries();
-  const industry = useIndustry();
+const ITEM_HEIGHT = 88;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
 
-  const filePond = useRef<FilePond>(null);
-  const [files, setFiles] = useState<any>([]);
+const ProfileInfo = ({ stepUtil }: StepProps) => {
+  const countryListOptions = useCountries();
+  const { formik } = useProfileSettingFormContext();
+  const { values, handleChange } = formik;
+
+  const onSubmit: NestedOnSubmit = async (values) => {
+    return values;
+  };
+
+  useEffect(() => {
+    stepUtil.current = {
+      onSubmit,
+    };
+
+    return () => {
+      stepUtil.current = {
+        onSubmit: () => false,
+      } as any;
+    };
+  }, []);
 
   return (
     <div className={s.container}>
       <div className={s.wrapper}>
         <Stack>
           <fieldset className={s.wrap}>
-            <legend>Information</legend>
+            <legend>
+              <Typography variant="h6">Contact Information</Typography>
+            </legend>
             <Stack direction="row" gap=".5rem">
               <Stack flex="1">
-                <FormLabel htmlFor="fullname">Fullname</FormLabel>
+                <FormLabel htmlFor="first">First Name</FormLabel>
                 <TextField
-                  id="fullname"
-                  name="description"
+                  id="first"
+                  name="account.firstName"
                   // disabled
-                  required
                   fullWidth
-                  // label="Job Description"
-                  // onChange={handleChange}
-                  // value={values.description}
-                  // error={Boolean(formik.errors.description)}
-                  // helperText={formik.errors.description as string}
+                  onChange={handleChange}
+                  value={values.account.firstName}
+                  error={Boolean(formik.errors.account?.firstName)}
+                  helperText={formik.errors.account?.firstName}
                 />
               </Stack>
 
               <Stack flex="1">
-                <FormLabel htmlFor="fullname">Phone number</FormLabel>
+                <FormLabel htmlFor="fullname">Last Name</FormLabel>
                 <TextField
-                  id="phone"
-                  name="description"
-                  type="number"
-                  // disabled
-                  required
+                  name="account.lastName"
                   fullWidth
-                  // label="Job Description"
-                  // onChange={handleChange}
-                  // value={values.description}
-                  // error={Boolean(formik.errors.description)}
-                  // helperText={formik.errors.description as string}
+                  onChange={handleChange}
+                  value={values.account.lastName}
+                  error={Boolean(formik.errors.account?.lastName)}
+                  helperText={formik.errors.account?.lastName}
                 />
               </Stack>
             </Stack>
 
-            <Stack>
-              <FormLabel htmlFor="email">Email</FormLabel>
-              <TextField
-                id="email"
-                name="email"
-                // disabled
-                required
+            <Stack flex="1">
+              <FormLabel htmlFor="fullname">Phone number</FormLabel>
+
+              <MuiTelInput
+                // label="phone no"
+                name="account.phone"
+                placeholder={Array(15).fill('_').join(' ')}
+                value={values.account.phone}
+                // onlyCountries={['ET']}
+                defaultCountry="US"
                 fullWidth
-                // label="Job Description"
-                // onChange={handleChange}
-                // value={values.description}
-                // error={Boolean(formik.errors.description)}
-                // helperText={formik.errors.description as string}
+                forceCallingCode
+                focusOnSelectCountry
+                MenuProps={MenuProps}
+                onChange={(value, info) => {
+                  console.log('value: ', info);
+                  void formik.setFieldValue('account.phone', value);
+                }}
+                error={Boolean(
+                  values.account.phone &&
+                    !matchIsValidTel(values.account.phone),
+                )}
+                helperText={
+                  values.account.phone && !matchIsValidTel(values.account.phone)
+                    ? 'phone number is invalid'
+                    : ''
+                }
               />
+            </Stack>
+
+            <Stack direction="row" gap=".5rem">
+              <Stack flex="1">
+                <FormLabel htmlFor="email">Email</FormLabel>
+                <TextField
+                  id="account.email"
+                  name="email"
+                  // disabled
+                  fullWidth
+                  onChange={handleChange}
+                  value={values.account.email}
+                  error={Boolean(formik.errors.account?.email)}
+                  helperText={formik.errors.account?.email as string}
+                />
+              </Stack>
+              <FormControl sx={{ flex: '1' }}>
+                <FormLabel>Location</FormLabel>
+                <Autocomplete
+                  disablePortal
+                  fullWidth
+                  options={countryListOptions}
+                  getOptionLabel={(option) => option.label}
+                  isOptionEqualToValue={(option, value) =>
+                    option.label === value.label
+                  }
+                  value={{ label: values.applicant.location }}
+                  onChange={(event, newValue) => {
+                    void formik.setFieldValue(
+                      'applicant.location',
+                      newValue.label,
+                    );
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      name="applicant.location"
+                      fullWidth
+                    />
+                  )}
+                />
+              </FormControl>
             </Stack>
           </fieldset>
         </Stack>
 
-        <fieldset className={s.wrap}>
-          <legend>CV (max 3)</legend>
-          <div className={s.file_pond_wrap}>
-            <FilePond
-              ref={filePond}
-              name="interview-file"
-              // files={files}
-              // onupdatefiles={setFiles}
-              allowFileSizeValidation
-              maxFileSize="15MB"
-              labelMaxFileSizeExceeded={'File is too large'}
-              checkValidity
-              allowFilePoster={true}
-              allowReorder
-              allowMultiple
-              maxFiles={3}
-              allowFileMetadata
-              instantUpload={false}
-              credits={false}
-              allowProcess={false}
-              allowReplace={true}
-              forceRevert={true}
-              allowRevert={true}
-              // disabled={disabled}
-              labelIdle={
-                'Drag & Drop your CV (Resume) or <b class="filepond--label-action">Browse</b>'
-              }
-              acceptedFileTypes={[
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'application/vnd.ms-excel',
-                'text/csv',
-                'application/vnd.oasis.opendocument.spreadsheet',
-                'application/vnd.oasis.opendocument.spreadsheet-template',
-              ]}
-              onaddfile={(error, file) => {
-                console.log('onAddFile', error, file);
-                if (!error) {
-                  // setDisabled(false);
-                }
-              }}
-              onprocessfilestart={() => {
-                // setLoading(true);
-              }}
-              onerror={(err) => {
-                console.log('errro: ', err);
-                // void formik.setFieldValue('interviewQuestions', []);
-                // setDisabled(true);
-              }}
-            />
-          </div>
-        </fieldset>
-
         <Stack>
           <fieldset className={s.wrap}>
-            <legend>Links</legend>
+            <legend>
+              <Typography variant="h6">Links</Typography>
+            </legend>
             <Stack spacing={0.5} flex="1" style={{ width: '100%' }}>
               <FormLabel>Linkedin</FormLabel>
               <TextField
-                name="description"
-                type="number"
-                required
+                name="applicant.linkedin"
+                type="text"
                 fullWidth
-                label="Job Description"
-                // onChange={handleChange}
-                // value={values.description}
-                // error={Boolean(formik.errors.description)}
-                // helperText={formik.errors.description as string}
+                onChange={handleChange}
+                value={values.applicant.linkedin}
+                error={Boolean(formik.errors.applicant?.linkedin)}
+                helperText={formik.errors.applicant?.linkedin as string}
               />
             </Stack>
 
             <Stack spacing={0.5} flex="1" style={{ width: '100%' }}>
               <FormLabel>Github</FormLabel>
               <TextField
-                name="description"
-                type="number"
-                required
+                name="applicant.github"
+                type="text"
                 fullWidth
-                label="Job Description"
-                // onChange={handleChange}
-                // value={values.description}
-                // error={Boolean(formik.errors.description)}
-                // helperText={formik.errors.description as string}
+                onChange={handleChange}
+                value={values.applicant.github}
+                error={Boolean(formik.errors.applicant?.github)}
+                helperText={formik.errors.applicant?.github as string}
               />
             </Stack>
 
             <Stack spacing={0.5} flex="1" style={{ width: '100%' }}>
               <FormLabel>Portfolio</FormLabel>
               <TextField
-                name="description"
-                type="number"
-                required
+                name="applicant.portfolio"
+                type="text"
                 fullWidth
-                label="Job Description"
-                // onChange={handleChange}
-                // value={values.description}
-                // error={Boolean(formik.errors.description)}
-                // helperText={formik.errors.description as string}
+                onChange={handleChange}
+                value={values.applicant.portfolio}
+                error={Boolean(formik.errors.applicant?.portfolio)}
+                helperText={formik.errors.applicant?.portfolio as string}
               />
             </Stack>
           </fieldset>

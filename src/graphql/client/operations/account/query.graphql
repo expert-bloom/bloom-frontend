@@ -1,0 +1,69 @@
+fragment AccountPayloadFragment on AccountPayload{
+    id
+    email
+    emailVerified
+    accountType
+    image
+    firstName
+    lastName
+    createdAt
+    phone
+
+
+
+    applicant{
+        id
+        about
+        jobPosition
+        salaryExpectation
+        WorkExperienceYears
+        location
+        experience
+        englishLevel
+        otherLanguages
+        accomplishment
+
+
+        skillLevel
+        skills
+        experienceYear
+
+        resume
+        github
+        linkedin
+        portfolio
+    }
+    company {
+        id
+        companyName
+        logo
+    }
+
+    oAuthClient {
+        id
+        provider
+    }
+
+    affiliate {
+        id
+    }
+}
+
+query FindAccount($input: AccountInput!) {
+    findAccount(input: $input){
+        errors {
+            message
+        }
+        account {
+            ...AccountPayloadFragment
+
+        }
+    }
+}
+
+query Me($input: MeInput!) {
+    me(input: $input){
+        ...AccountPayloadFragment
+    }
+}
+

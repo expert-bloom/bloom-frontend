@@ -1,0 +1,10 @@
+mutation UpdateProfile($input: UpdateProfileInput!) {
+    updateProfile(input: $input) {
+        errors {
+            message
+        }
+        account {
+            ...AccountPayloadFragment
+        }
+    }
+}

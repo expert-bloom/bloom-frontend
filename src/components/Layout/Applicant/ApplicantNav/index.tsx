@@ -85,7 +85,9 @@ export default function Applicant({ pageProps }: any) {
   const router = useRouter();
   const accountPopover = usePopover();
 
-  const { data } = useSession();
+  const { data: session } = useSession();
+
+  console.log('session', session);
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -143,7 +145,7 @@ export default function Applicant({ pageProps }: any) {
                 height: 40,
                 width: 40,
               }}
-              // src="/assets/avatars/avatar-anika-visser.png"
+              src={session?.user?.image}
             />
           </Tooltip>
 

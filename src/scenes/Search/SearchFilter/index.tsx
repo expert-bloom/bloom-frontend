@@ -22,7 +22,7 @@ import {
 import { darken, lighten, styled } from '@mui/material/styles';
 
 import { JobType } from '@/graphql/client/gql/schema';
-import { useCountries } from '@/scenes/Search/SearchFilter/country-list';
+import { useCountriesWithRegion } from '@/scenes/Search/SearchFilter/country-list';
 import { useIndustry } from '@/scenes/Search/SearchFilter/industry-list';
 import { capitalize } from '@/utils';
 
@@ -45,7 +45,7 @@ const GroupItems = styled('ul')({
 
 const Filter = () => {
   const industry = useIndustry();
-  const countryListOptions = useCountries();
+  const countryListOptions = useCountriesWithRegion();
 
   const [state, setState] = React.useState({
     gilad: true,

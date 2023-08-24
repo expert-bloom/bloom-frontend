@@ -42,7 +42,7 @@ import s from './jobrequirment.module.scss';
 
 const jobExperience = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-const skillOption = [
+export const skillOption = [
   {
     label: 'React.js',
   },
@@ -107,8 +107,8 @@ const JobRequirement = () => {
 
           <Autocomplete
             id="skills"
-            multiple
-            limitTags={3}
+            emultiple
+            limitTags={10}
             options={skillOption}
             disableCloseOnSelect
             sx={{ width: 500 }}

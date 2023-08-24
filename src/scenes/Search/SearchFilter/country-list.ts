@@ -20,7 +20,7 @@ const continent = [
   },
 ];
 
-export function useCountries() {
+export function useCountriesWithRegion() {
   return useMemo(() => {
     const cl = countryList().getData();
 
@@ -39,5 +39,18 @@ export function useCountries() {
     });
 
     return [...region, ...countryListOptions];
+  }, []);
+}
+export function useCountries() {
+  return useMemo(() => {
+    const cl = countryList().getData();
+
+    const countryListOptions = cl.map((option) => {
+      return {
+        label: option.label,
+      };
+    });
+
+    return [...countryListOptions];
   }, []);
 }
