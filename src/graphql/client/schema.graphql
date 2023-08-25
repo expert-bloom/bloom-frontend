@@ -67,37 +67,12 @@ type AffiliateLight {
     id: String!
 }
 
-type Applicant implements IAccount {
-    WorkExperienceYears: Int
-    about: String
-    accomplishment: String
-    accountType: AccountType!
-    createdAt: DateTime!
-    email: String!
-    englishLevel: EnglishLevel
-    experience: Int
-    experienceYear: Int
-    firstName: String!
-    gender: String
-    id: String!
-    image: String
-    jobPosition: String
-    lastName: String!
-    location: String
-    otherLanguages: [String]
-    phone: String
-    resume: String
-    salaryExpectation: Int
-    skillLevel: ExperienceLevel
-}
-
-type ApplicantLight {
+type Applicant {
     WorkExperienceYears: Int
     about: String
     accomplishment: String
     education: String
     englishLevel: EnglishLevel
-    experience: Int
     experienceYear: Int
     gender: String
     github: String
@@ -111,6 +86,29 @@ type ApplicantLight {
     resume: String
     salaryExpectation: Int
     savedJobs: [JobPost!]!
+    skillLevel: ExperienceLevel
+    skills: [String!]
+    workExperience: [WorkExperience!]!
+}
+
+type ApplicantLight {
+    WorkExperienceYears: Int
+    about: String
+    accomplishment: String
+    education: String
+    englishLevel: EnglishLevel
+    experienceYear: Int
+    gender: String
+    github: String
+    id: String!
+    jobPosition: String
+    languages: [String]
+    linkedin: String
+    location: String
+    otherLanguages: [String]
+    portfolio: String
+    resume: String
+    salaryExpectation: Int
     skillLevel: ExperienceLevel
     skills: [String!]
 }
@@ -198,6 +196,22 @@ type JobPostPayload {
     jobPost: JobPost
 }
 
+type MeAccountPayload {
+    accountType: AccountType!
+    affiliate: AffiliateLight
+    applicant: Applicant
+    company: CompanyLight
+    createdAt: DateTime!
+    email: String!
+    emailVerified: DateTime
+    firstName: String!
+    id: String!
+    image: String
+    lastName: String!
+    oAuthClient: [OAuth!]!
+    phone: String
+}
+
 type Mutation {
     createJobPost(input: CreateJobPostInput!): JobPostPayload!
     logIn(input: LoginInput!): AuthPayload!
@@ -223,8 +237,18 @@ type Query {
     getCompanies: [Company!]!
     getJobPosts(input: JopPostFilterInput): [JobPost!]!
     getSavedJobPosts(input: SavedJobPostsInput!): [JobPost!]!
-    me(input: MeInput!): AccountPayload
+    me(input: MeInput!): MeAccountPayload
     sayHi: String
+}
+
+type WorkExperience {
+    accomplishment: String!
+    companyName: String!
+    companyWebsite: String
+    endDate: DateTime!
+    position: String!
+    skills: [String!]!
+    startDate: DateTime!
 }
 
 enum AccountType {
@@ -298,20 +322,14 @@ input AccountUpdateInput {
 }
 
 input ApplicantUpdateInput {
-    WorkExperienceYears: Int
     about: String
     accomplishment: String
-    education: String
     englishLevel: EnglishLevel
-    experience: Int
     experienceYear: Int
-    gender: String
     github: String
     jobPosition: String
-    languages: [String]
     linkedin: String
     location: String
-    otherLanguages: [String]
     portfolio: String
     resume: String
     salaryExpectation: Int

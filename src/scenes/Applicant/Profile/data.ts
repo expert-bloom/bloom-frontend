@@ -11,9 +11,6 @@ import { type FormikHelpers } from 'formik/dist/types';
 import {
   type EnglishLevel,
   type ExperienceLevel,
-  JobSite,
-  JobType,
-  SalaryType,
 } from '@/graphql/client/gql/schema';
 
 export const settingCategories = [
@@ -43,11 +40,11 @@ export const initialValues = {
   // profile
 
   account: {
-    image: '' as string | undefined | null,
+    image: '' as string,
     firstName: '' as string,
     lastName: '' as string,
     phone: '' as string,
-    email: '',
+    email: '' as string,
   },
 
   applicant: {
@@ -55,8 +52,8 @@ export const initialValues = {
     jobPosition: '' as string,
     salaryExpectation: '' as unknown as number | null,
     experienceYear: 0 as number,
-    skillLevel: 'Beginner' as ExperienceLevel,
-    englishLevel: 'FLUENT' as EnglishLevel,
+    skillLevel: 'Beginner' as ExperienceLevel | any,
+    englishLevel: 'FLUENT' as EnglishLevel | any,
     accomplishment: '' as string,
     skills: [] as string[],
 
@@ -68,8 +65,19 @@ export const initialValues = {
 
     // CV & Experience
     resume: '' as string | undefined | null,
+    workExperience: [] as WorkExperienceFormValuesType[],
   },
 };
+
+export interface WorkExperienceFormValuesType {
+  companyName: string;
+  position: string;
+  companyWebsite?: string | null;
+  startDate: string;
+  endDate: string;
+  accomplishment: string;
+  skills: string[];
+}
 
 export type SettingFormValuesType = typeof initialValues;
 

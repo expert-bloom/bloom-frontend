@@ -3,9 +3,9 @@ import React from 'react';
 import { Stack, Typography } from '@mui/material';
 import Image from 'next/image';
 
+import HowItWork from './ConfirmEmail';
 import s from './db-comp.module.scss';
-import FAQ from './FAQ';
-import HowItWork from './HowItWork';
+import EditProfile from './EditProfile';
 import Placeholder from './img_2.png';
 
 const DashboardCompany = () => {
@@ -27,7 +27,7 @@ const DashboardCompany = () => {
             </div>
 
             <div className={s.faq}>
-              <FAQ />
+              <EditProfile />
             </div>
           </Stack>
         </div>

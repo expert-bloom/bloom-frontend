@@ -131,8 +131,7 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
   }, []);
 
   useEffect(() => {
-    // if (me.me?.applicant === null || me.me?.applicant === undefined) return;
-    if (!me.me?.image) return;
+    if (!me.me?.image || !filePond.current) return;
 
     if (me.me?.image !== filePond.current.getFile()?.source) {
       console.log('image values ', me.me?.image);
@@ -190,8 +189,12 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
                     }
                     credits={false}
                     onerror={(err: any, file, status) => {
+                      console.log('error : ', err, status);
+
                       toast.error(
-                        `${err.main ?? 'error on image'} - ${err.sub ?? ''}`,
+                        `${
+                          status.main ?? err?.main ?? 'Error loading image'
+                        } - ${status.sub ?? err?.sub ?? ''}`,
                       );
                     }}
                     onremovefile={async (error, file) => {
@@ -209,32 +212,36 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
                         return;
                       }
 
-                      if (file?.file) {
+                      if (file?.file && error !== null) {
                         void formik.setFieldValue('account.image', file.source);
                       }
                     }}
                     server={{
                       fetch: (url, load, error, progress, abort, headers) => {
-                        console.log(
-                          'fetch url ----------: ',
-                          url,
-                          process.env.NEXT_PUBLIC_URL,
-                        );
+                        try {
+                          fetch(
+                            `${process.env.NEXT_PUBLIC_URL}/api/image?url=${url}`,
+                          )
+                            .then(async (response) => {
+                              if (!response.ok) {
+                                error('Failed to load profile pic');
+                                // abort();
+                                return;
+                              }
 
-                        fetch(
-                          `${process.env.NEXT_PUBLIC_URL}/api/image?url=${url}`,
-                        )
-                          .then(async (response) => {
-                            const blob = await response.blob();
-                            const file = new File([blob], 'fileName', {
-                              type: blob.type,
+                              const blob = await response.blob();
+                              const file = new File([blob], 'fileName', {
+                                type: blob.type,
+                              });
+
+                              load(file);
+                            })
+                            .catch((err) => {
+                              console.log('image fetch error : ', err);
                             });
-
-                            load(file);
-                          })
-                          .catch((err) => {
-                            console.log('image fetch error : ', err);
-                          });
+                        } catch (err) {
+                          console.log('image fetch error -- : ', err);
+                        }
                       },
 
                       process: async (

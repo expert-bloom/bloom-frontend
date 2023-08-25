@@ -9,8 +9,6 @@ fragment AccountPayloadFragment on AccountPayload{
     createdAt
     phone
 
-
-
     applicant{
         id
         about
@@ -18,7 +16,6 @@ fragment AccountPayloadFragment on AccountPayload{
         salaryExpectation
         WorkExperienceYears
         location
-        experience
         englishLevel
         otherLanguages
         accomplishment
@@ -32,6 +29,65 @@ fragment AccountPayloadFragment on AccountPayload{
         github
         linkedin
         portfolio
+    }
+    company {
+        id
+        companyName
+        logo
+    }
+
+    oAuthClient {
+        id
+        provider
+    }
+
+    affiliate {
+        id
+    }
+}
+
+fragment MePayloadFragment on MeAccountPayload{
+    id
+    email
+    emailVerified
+    accountType
+    image
+    firstName
+    lastName
+    createdAt
+    phone
+
+    applicant{
+        id
+        about
+        jobPosition
+        salaryExpectation
+        WorkExperienceYears
+        location
+        englishLevel
+        otherLanguages
+        accomplishment
+
+
+        skillLevel
+        skills
+        experienceYear
+
+        resume
+        github
+        linkedin
+        portfolio
+
+        workExperience {
+            companyName
+            position
+            startDate
+            endDate
+            accomplishment
+            companyWebsite
+            skills
+            __typename
+        }
 
         savedJobs {
             ...JopPost
@@ -67,7 +123,7 @@ query FindAccount($input: AccountInput!) {
 
 query Me($input: MeInput!) {
     me(input: $input){
-        ...AccountPayloadFragment
+        ...MePayloadFragment
     }
 }
 

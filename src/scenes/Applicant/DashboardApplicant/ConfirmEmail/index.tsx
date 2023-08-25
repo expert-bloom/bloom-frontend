@@ -10,7 +10,7 @@ import {
   Typography,
 } from '@mui/material';
 
-import s from './howitwork.module.scss';
+import s from './confirmemail.module.scss';
 
 const HowItWork = () => {
   return (

@@ -10,15 +10,26 @@ interface Data {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>,
+  res: NextApiResponse<Data | { error: string }>,
 ) {
   // access the request body
 
   const { url } = req.query;
 
-  const response = await fetch(url as string);
-  const mimeType = response.headers.get('Content-Type');
-  const imageBuffer: any = await response.buffer();
-  res.setHeader('Content-Type', mimeType as string);
-  res.send(imageBuffer);
+  // catch for network errors
+  try {
+    const response = await fetch(url as string);
+    const mimeType = response.headers.get('Content-Type');
+    const imageBuffer: any = await response.buffer();
+    res.setHeader('Content-Type', mimeType as string);
+    res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');
+    res.status(200).send(imageBuffer);
+
+    // console.log('respons : ', response);
+  } catch (e: any) {
+    console.log('error ------------------------ : ', e);
+    res
+      .status(500)
+      .json({ error: e.message ?? 'Something went wrong loading profile pic' });
+  }
 }

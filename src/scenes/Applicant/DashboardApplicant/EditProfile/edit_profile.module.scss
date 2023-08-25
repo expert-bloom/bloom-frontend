@@ -5,6 +5,7 @@
   border: 1px solid #dedede;
 
 
+
   & :local {
 
     .card{
@@ -15,6 +16,9 @@
       display: flex;
       flex-flow: column;
       gap: 2rem;
+
+      padding-top: 0;
+
 
     }
   }

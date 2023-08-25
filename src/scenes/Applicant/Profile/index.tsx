@@ -23,7 +23,7 @@ import {
 import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { AnimatePresence, motion } from 'framer-motion';
-import { isEqual, pickBy } from 'lodash';
+import { isEqual, pickBy, mapValues } from 'lodash';
 import { matchIsValidTel } from 'mui-tel-input';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
@@ -137,21 +137,44 @@ const Profile = () => {
 
       values = nestedSubmits;
 
-      const accountInput = pickBy(values.account, (value, key) => {
-        return (
-          Boolean(value) &&
-          (formik.initialValues.account as Record<string, any>)[key] !== value
-        );
+      // filter out only the changed values
+      const changedValues: Record<keyof typeof values.account, string> = pickBy(
+        values.account,
+        (value, key) => {
+          const equal = isEqual(
+            (formik.initialValues.account as Record<string, any>)[key],
+            value,
+          );
+          return !equal;
+        },
+      ) as any;
+
+      // map any '' to null
+      const accountInput = mapValues(changedValues, (value, key) => {
+        if (value === ('' as const)) return null as any;
+        return value;
       });
 
-      const applicant = pickBy(values.applicant, (value, key) => {
-        return (
-          Boolean(value) &&
-          (formik.initialValues.applicant as Record<string, any>)[key] !== value
+      const changedApplicantValues: Record<
+        keyof typeof values.applicant,
+        string
+      > = pickBy(values.applicant, (value, key) => {
+        const equal = isEqual(
+          (formik.initialValues.applicant as Record<string, any>)[key],
+          value,
         );
+
+        // console.log('isEqual : ', equal, key, value);
+        return !equal;
+      }) as any;
+
+      // map any '' to null
+      const applicantInput = mapValues(changedApplicantValues, (value, key) => {
+        if (value === ('' as const)) return null as any;
+        return value;
       });
 
-      console.log('accountInput : ', accountInput, 'app', applicant);
+      console.log('accountInput : ', accountInput, 'applicant', applicantInput);
 
       try {
         const profilePayload = await updateProfile({
@@ -162,7 +185,7 @@ const Profile = () => {
                 ...accountInput,
               },
               applicant: {
-                ...applicant,
+                ...applicantInput,
               },
             },
           },
@@ -234,8 +257,8 @@ const Profile = () => {
       applicant: {
         about: applicant.about ?? '',
         accomplishment: applicant.accomplishment ?? '',
-        englishLevel: applicant.englishLevel ?? ('' as any),
-        skillLevel: applicant.skillLevel ?? ('' as any),
+        englishLevel: applicant.englishLevel ?? '',
+        skillLevel: applicant.skillLevel ?? '',
         experienceYear: applicant.experienceYear ?? 0,
         jobPosition: applicant.jobPosition ?? '',
         location: applicant.location ?? '',
@@ -245,6 +268,13 @@ const Profile = () => {
         github: applicant.github ?? '',
         linkedin: applicant.linkedin ?? '',
         portfolio: applicant.portfolio ?? '',
+
+        // filter out the __typename from the workExperience
+        workExperience: applicant.workExperience.map((item) => {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          const { __typename, ...rest } = item;
+          return rest;
+        }),
       },
     };
 
@@ -351,6 +381,11 @@ const Profile = () => {
                     disabled={formik.isSubmitting || !isChanged}
                     variant="outlined"
                     color="error"
+                    onClick={() => {
+                      setOpen(true);
+                      formik.resetForm();
+                      setSettingTogo(activeStep);
+                    }}
                   >
                     Undo Changes
                   </MoButton>
@@ -361,32 +396,6 @@ const Profile = () => {
                     disabled={!isChanged}
                     type="submit"
                     endIcon={<Save />}
-                    onClick={async () => {
-                      /* await formik.validateForm();
-                      if (
-                        formik.errors &&
-                        Object.keys(formik.errors).length > 0
-                      ) {
-                        console.log('formik errror : ', formik.errors);
-                        toast.error('Please fill all required fields');
-                        return;
-                      }
-
-                      formik.setSubmitting(true);
-                      const nestedFormSubmitResult =
-                        await stepUtil.current.onSubmit();
-
-                      console.log(
-                        'nestedFormSubmitResult : ',
-                        nestedFormSubmitResult,
-                      );
-
-                      if (!nestedFormSubmitResult) {
-                        formik.setSubmitting(false);
-                        return;
-                      }
-                      await formik.submitForm(); */
-                    }}
                   >
                     Update Setting
                   </MoButton>

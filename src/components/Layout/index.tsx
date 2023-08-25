@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { useNextCssRemovalPrevention } from '@madeinhaus/nextjs-page-transition';
 import { AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
@@ -47,7 +48,7 @@ const LayoutContents = ({ children }: any) => {
   const { pathname } = useRouter();
 
   const getLayout = useRoleLayout(pathname);
-  const transitionCallback = useTransitionFix();
+  const removeUnusedStyles = useNextCssRemovalPrevention();
 
   return getLayout(
     <>
@@ -70,7 +71,7 @@ const LayoutContents = ({ children }: any) => {
         mode="wait"
         custom={{ pathname }}
         onExitComplete={() => {
-          transitionCallback();
+          removeUnusedStyles();
           window.scrollTo(0, 0);
         }}
       >

@@ -1,6 +1,24 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import React, { useEffect, useRef } from 'react';
 
+import { AddCircle, DateRangeSharp } from '@mui/icons-material';
+import {
+  Autocomplete,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  FormLabel,
+  InputAdornment,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers';
+import { useFormik } from 'formik';
+import moment from 'moment';
 import { toast } from 'react-hot-toast';
 
 import FilePond from '@/lib/filePong';
@@ -8,10 +26,22 @@ import { usePresignedUpload } from '@/lib/uploader';
 import { useProfileSettingFormContext } from '@/scenes/Applicant/Profile';
 import {
   type NestedOnSubmit,
+  type SettingFormValuesType,
   type StepProps,
 } from '@/scenes/Applicant/Profile/data';
+import { skillOption } from '@/scenes/CreateJobPost/JobRequirement';
 
 import s from './cv.module.scss';
+
+const initialExperience = {
+  companyName: '' as string,
+  position: '' as string,
+  companyWebsite: '' as string,
+  startDate: null as unknown as string,
+  endDate: null as unknown as string,
+  accomplishment: '' as string,
+  skills: [] as string[],
+};
 
 const ProfileInfo = ({ stepUtil }: StepProps) => {
   const { formik } = useProfileSettingFormContext();
@@ -26,8 +56,8 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
     let loadingToast = '';
 
     if (!filePond.current.getFile()) {
-      toast.error('Resume file is required');
-      return null;
+      // toast.error('Resume file is required');
+      return values;
     }
 
     console.log('nested submit : ', values, filePond.current.getFile());
@@ -89,6 +119,30 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
       };
     };
   }, []);
+
+  const [open, setOpen] = React.useState(false);
+
+  const handleClose = () => {
+    experienceForm.resetForm();
+    setOpen(false);
+  };
+
+  const experienceForm = useFormik({
+    validateOnMount: false,
+    validateOnChange: false,
+    validateOnBlur: true,
+    initialValues: initialExperience, // validationSchema: currentStep?.schema,
+    onSubmit: async (values, helpers) => {
+      void formik.setFieldValue('applicant.workExperience', [
+        ...formik.values.applicant.workExperience,
+        values,
+      ]);
+      experienceForm.resetForm();
+      setOpen(false);
+    },
+  });
+
+  console.log('experienceForm : ', formik.values);
 
   return (
     <div className={s.container}>
@@ -214,25 +268,230 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
           </div>
         </fieldset>
 
-        {/* <Stack>
+        <Stack>
           <fieldset className={s.wrap}>
             <legend>Experience</legend>
-            <Stack spacing={0.5} flex="1" style={{ width: '100%' }}>
-              <FormLabel>Previous Work Experience</FormLabel>
-              <TextField
-                name="description"
-                type="number"
-                required
-                fullWidth
-                // label="Job Description"
-                // onChange={handleChange}
-                // value={values.description}
-                // error={Boolean(formik.errors.description)}
-                // helperText={formik.errors.description as string}
-              />
+            <Stack
+              spacing={0.5}
+              flex="1"
+              style={{ width: '100%' }}
+              className={s.experience}
+            >
+              {formik.values.applicant.workExperience.length === 0 ? (
+                <div className={s.guide}>
+                  <FormLabel>Previous Work Experience</FormLabel>
+
+                  <Typography>
+                    Adding previous work experience will help you stand out.
+                  </Typography>
+                </div>
+              ) : (
+                formik.values.applicant.workExperience.map((ex, i) => (
+                  <div key={i} className={s.experience_item}>
+                    <div className={s.experience_item_header}>
+                      <Typography variant="h6">{ex.position}</Typography>
+                      <Typography variant="body2">{ex.companyName}</Typography>
+                      <Typography variant="body2">
+                        {ex.companyWebsite ?? '-'}
+                      </Typography>
+                    </div>
+
+                    <div className={s.experience_item_body}>
+                      <Typography variant="body2">
+                        <DateRangeSharp /> {moment(ex.startDate).toISOString()}{' '}
+                        - {moment(ex.endDate).toISOString()}
+                      </Typography>
+                      <Typography variant="body2">
+                        {ex.accomplishment}
+                      </Typography>
+                    </div>
+                  </div>
+                ))
+              )}
+
+              <Button
+                className={s.add_btn}
+                startIcon={<AddCircle />}
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  setOpen(true);
+                }}
+              >
+                Add Experience
+              </Button>
             </Stack>
           </fieldset>
-        </Stack> */}
+        </Stack>
+
+        <Dialog
+          disableEscapeKeyDown
+          open={open}
+          onClose={handleClose}
+          className={s.ex_dialog}
+        >
+          <DialogTitle>
+            <Typography className={s.title} variant="h5">
+              Add Your Experiences
+            </Typography>
+          </DialogTitle>
+          <form onSubmit={experienceForm.handleSubmit}>
+            <DialogContent>
+              <div className={s.ex_form}>
+                <Stack spacing={0.5} flex="1" style={{ width: '100%' }}>
+                  <FormLabel>Job Position</FormLabel>
+                  <TextField
+                    name="position"
+                    fullWidth
+                    required
+                    onChange={experienceForm.handleChange}
+                    value={experienceForm.values.position}
+                    error={Boolean(experienceForm.errors.position)}
+                    // helperText={formik.errors.applicant?.about as string}
+                  />
+                </Stack>
+
+                <Stack
+                  direction="row"
+                  gap=".5rem"
+                  flex="1"
+                  style={{ width: '100%' }}
+                >
+                  <Stack spacing={0.5} flex="1" style={{ width: '100%' }}>
+                    <FormLabel>Company Name</FormLabel>
+                    <TextField
+                      name="companyName"
+                      fullWidth
+                      required
+                      onChange={experienceForm.handleChange}
+                      value={experienceForm.values.companyName}
+                      error={Boolean(experienceForm.errors.companyName)}
+                      // helperText={formik.errors.applicant?.about as string}
+                    />
+                  </Stack>
+
+                  <Stack spacing={0.5} flex="1" style={{ width: '100%' }}>
+                    <FormLabel>Company Website</FormLabel>
+                    <TextField
+                      name="companyWebsite"
+                      fullWidth
+                      onChange={experienceForm.handleChange}
+                      value={experienceForm.values.companyWebsite}
+                      error={Boolean(experienceForm.errors.companyWebsite)}
+                      // helperText={formik.errors.applicant?.about as string}
+                    />
+                  </Stack>
+                </Stack>
+
+                <FormControl>
+                  <FormLabel htmlFor="skills">
+                    What skills did you use in this job?
+                  </FormLabel>
+                  <Autocomplete
+                    id="skills"
+                    disablePortal
+                    // readOnly
+                    fullWidth
+                    limitTags={10}
+                    multiple
+                    disableCloseOnSelect
+                    options={skillOption}
+                    getOptionLabel={(option) => option.label}
+                    isOptionEqualToValue={(option, value) =>
+                      option.label === value.label
+                    }
+                    value={experienceForm.values.skills.map((s) => ({
+                      label: s,
+                    }))}
+                    onChange={(event, newValue) => {
+                      console.log('newValue', newValue);
+                      void experienceForm.setFieldValue(
+                        'skills',
+                        newValue.map((S) => S.label),
+                      );
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        // disabled
+                        // label="Search industry"
+                        // placeholder="type ..."
+                        fullWidth
+                      />
+                    )}
+                  />
+                </FormControl>
+
+                <Stack
+                  direction="row"
+                  gap=".5rem"
+                  flex="1"
+                  style={{ width: '100%' }}
+                >
+                  <Stack spacing={0.5} flex="1" style={{ width: '100%' }}>
+                    <FormLabel>Start Date</FormLabel>
+
+                    <DatePicker
+                      label="Start Date"
+                      value={experienceForm.values.startDate}
+                      onChange={(newValue) => {
+                        void experienceForm.setFieldValue(
+                          'startDate',
+                          newValue,
+                        );
+                      }}
+                      slotProps={{
+                        textField: {
+                          required: true,
+                        },
+                      }}
+                    />
+                  </Stack>
+                  <Stack spacing={0.5} flex="1" style={{ width: '100%' }}>
+                    <FormLabel>End Date</FormLabel>
+                    <DatePicker
+                      label="End Date"
+                      minDate={experienceForm.values.startDate}
+                      value={experienceForm.values.endDate}
+                      onChange={(newValue) => {
+                        void experienceForm.setFieldValue('endDate', newValue);
+                      }}
+                      slotProps={{
+                        textField: {
+                          required: true,
+                        },
+                      }}
+                    />
+                  </Stack>
+                </Stack>
+
+                <Stack spacing={0.5} flex="1" style={{ width: '100%' }}>
+                  <FormLabel>
+                    List any accomplishments or awards that you&apos;ve achieved
+                    at this position. (Optional)
+                  </FormLabel>
+                  <TextField
+                    name="accomplishment"
+                    placeholder="My accomplishments were ..."
+                    fullWidth
+                    multiline
+                    rows={4}
+                    onChange={experienceForm.handleChange}
+                    value={experienceForm.values.accomplishment}
+                    error={Boolean(experienceForm.errors.accomplishment)}
+                    // helperText={formik.errors.applicant?.about as string}
+                  />
+                </Stack>
+              </div>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Cancel</Button>
+              <Button variant="contained" type="submit">
+                Save
+              </Button>
+            </DialogActions>
+          </form>
+        </Dialog>
       </div>
     </div>
   );

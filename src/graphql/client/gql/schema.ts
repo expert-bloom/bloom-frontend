@@ -33,44 +33,42 @@ export type Scalars = {
 };
 
 export type Account = IAccount & {
-  __typename?: 'Account';
   accountType: AccountType;
   createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
   firstName: Scalars['String']['output'];
   id: Scalars['String']['output'];
-  image?: Maybe<Scalars['String']['output']>;
+  image: Maybe<Scalars['String']['output']>;
   lastName: Scalars['String']['output'];
-  phone?: Maybe<Scalars['String']['output']>;
+  phone: Maybe<Scalars['String']['output']>;
 };
 
 export type AccountFilterInput = {
-  email?: InputMaybe<Scalars['String']['input']>;
-  id?: InputMaybe<Scalars['ID']['input']>;
-  phone?: InputMaybe<Scalars['String']['input']>;
+  email: InputMaybe<Scalars['String']['input']>;
+  id: InputMaybe<Scalars['ID']['input']>;
+  phone: InputMaybe<Scalars['String']['input']>;
 };
 
 export type AccountInput = {
-  email?: InputMaybe<Scalars['String']['input']>;
-  id?: InputMaybe<Scalars['ID']['input']>;
-  phone?: InputMaybe<Scalars['String']['input']>;
+  email: InputMaybe<Scalars['String']['input']>;
+  id: InputMaybe<Scalars['ID']['input']>;
+  phone: InputMaybe<Scalars['String']['input']>;
 };
 
 export type AccountPayload = {
-  __typename?: 'AccountPayload';
   accountType: AccountType;
-  affiliate?: Maybe<AffiliateLight>;
-  applicant?: Maybe<ApplicantLight>;
-  company?: Maybe<CompanyLight>;
+  affiliate: Maybe<AffiliateLight>;
+  applicant: Maybe<ApplicantLight>;
+  company: Maybe<CompanyLight>;
   createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
-  emailVerified?: Maybe<Scalars['DateTime']['output']>;
+  emailVerified: Maybe<Scalars['DateTime']['output']>;
   firstName: Scalars['String']['output'];
   id: Scalars['String']['output'];
-  image?: Maybe<Scalars['String']['output']>;
+  image: Maybe<Scalars['String']['output']>;
   lastName: Scalars['String']['output'];
   oAuthClient: Array<OAuth>;
-  phone?: Maybe<Scalars['String']['output']>;
+  phone: Maybe<Scalars['String']['output']>;
 };
 
 export enum AccountType {
@@ -80,159 +78,141 @@ export enum AccountType {
 }
 
 export type AccountUpdateInput = {
-  email?: InputMaybe<Scalars['String']['input']>;
-  firstName?: InputMaybe<Scalars['String']['input']>;
-  image?: InputMaybe<Scalars['String']['input']>;
-  lastName?: InputMaybe<Scalars['String']['input']>;
-  phone?: InputMaybe<Scalars['String']['input']>;
+  email: InputMaybe<Scalars['String']['input']>;
+  firstName: InputMaybe<Scalars['String']['input']>;
+  image: InputMaybe<Scalars['String']['input']>;
+  lastName: InputMaybe<Scalars['String']['input']>;
+  phone: InputMaybe<Scalars['String']['input']>;
 };
 
 export type AccountUpdatePayload = PayloadError & {
-  __typename?: 'AccountUpdatePayload';
-  account?: Maybe<AccountPayload>;
+  account: Maybe<AccountPayload>;
   errors: Array<Error>;
 };
 
 export type Affiliate = IAccount & {
-  __typename?: 'Affiliate';
   accountType: AccountType;
   createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
   firstName: Scalars['String']['output'];
   id: Scalars['String']['output'];
-  image?: Maybe<Scalars['String']['output']>;
+  image: Maybe<Scalars['String']['output']>;
   lastName: Scalars['String']['output'];
-  phone?: Maybe<Scalars['String']['output']>;
+  phone: Maybe<Scalars['String']['output']>;
 };
 
 export type AffiliateLight = {
-  __typename?: 'AffiliateLight';
   id: Scalars['String']['output'];
 };
 
-export type Applicant = IAccount & {
-  __typename?: 'Applicant';
-  WorkExperienceYears?: Maybe<Scalars['Int']['output']>;
-  about?: Maybe<Scalars['String']['output']>;
-  accomplishment?: Maybe<Scalars['String']['output']>;
-  accountType: AccountType;
-  createdAt: Scalars['DateTime']['output'];
-  email: Scalars['String']['output'];
-  englishLevel?: Maybe<EnglishLevel>;
-  experience?: Maybe<Scalars['Int']['output']>;
-  experienceYear?: Maybe<Scalars['Int']['output']>;
-  firstName: Scalars['String']['output'];
-  gender?: Maybe<Scalars['String']['output']>;
+export type Applicant = {
+  WorkExperienceYears: Maybe<Scalars['Int']['output']>;
+  about: Maybe<Scalars['String']['output']>;
+  accomplishment: Maybe<Scalars['String']['output']>;
+  education: Maybe<Scalars['String']['output']>;
+  englishLevel: Maybe<EnglishLevel>;
+  experienceYear: Maybe<Scalars['Int']['output']>;
+  gender: Maybe<Scalars['String']['output']>;
+  github: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
-  image?: Maybe<Scalars['String']['output']>;
-  jobPosition?: Maybe<Scalars['String']['output']>;
-  lastName: Scalars['String']['output'];
-  location?: Maybe<Scalars['String']['output']>;
-  otherLanguages?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  phone?: Maybe<Scalars['String']['output']>;
-  resume?: Maybe<Scalars['String']['output']>;
-  salaryExpectation?: Maybe<Scalars['Int']['output']>;
-  skillLevel?: Maybe<ExperienceLevel>;
+  jobPosition: Maybe<Scalars['String']['output']>;
+  languages: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  linkedin: Maybe<Scalars['String']['output']>;
+  location: Maybe<Scalars['String']['output']>;
+  otherLanguages: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  portfolio: Maybe<Scalars['String']['output']>;
+  resume: Maybe<Scalars['String']['output']>;
+  salaryExpectation: Maybe<Scalars['Int']['output']>;
+  savedJobs: Array<JobPost>;
+  skillLevel: Maybe<ExperienceLevel>;
+  skills: Maybe<Array<Scalars['String']['output']>>;
+  workExperience: Array<WorkExperience>;
 };
 
 export type ApplicantLight = {
-  __typename?: 'ApplicantLight';
-  WorkExperienceYears?: Maybe<Scalars['Int']['output']>;
-  about?: Maybe<Scalars['String']['output']>;
-  accomplishment?: Maybe<Scalars['String']['output']>;
-  education?: Maybe<Scalars['String']['output']>;
-  englishLevel?: Maybe<EnglishLevel>;
-  experience?: Maybe<Scalars['Int']['output']>;
-  experienceYear?: Maybe<Scalars['Int']['output']>;
-  gender?: Maybe<Scalars['String']['output']>;
-  github?: Maybe<Scalars['String']['output']>;
+  WorkExperienceYears: Maybe<Scalars['Int']['output']>;
+  about: Maybe<Scalars['String']['output']>;
+  accomplishment: Maybe<Scalars['String']['output']>;
+  education: Maybe<Scalars['String']['output']>;
+  englishLevel: Maybe<EnglishLevel>;
+  experienceYear: Maybe<Scalars['Int']['output']>;
+  gender: Maybe<Scalars['String']['output']>;
+  github: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
-  jobPosition?: Maybe<Scalars['String']['output']>;
-  languages?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  linkedin?: Maybe<Scalars['String']['output']>;
-  location?: Maybe<Scalars['String']['output']>;
-  otherLanguages?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
-  portfolio?: Maybe<Scalars['String']['output']>;
-  resume?: Maybe<Scalars['String']['output']>;
-  salaryExpectation?: Maybe<Scalars['Int']['output']>;
-  savedJobs: Array<JobPost>;
-  skillLevel?: Maybe<ExperienceLevel>;
-  skills?: Maybe<Array<Scalars['String']['output']>>;
+  jobPosition: Maybe<Scalars['String']['output']>;
+  languages: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  linkedin: Maybe<Scalars['String']['output']>;
+  location: Maybe<Scalars['String']['output']>;
+  otherLanguages: Maybe<Array<Maybe<Scalars['String']['output']>>>;
+  portfolio: Maybe<Scalars['String']['output']>;
+  resume: Maybe<Scalars['String']['output']>;
+  salaryExpectation: Maybe<Scalars['Int']['output']>;
+  skillLevel: Maybe<ExperienceLevel>;
+  skills: Maybe<Array<Scalars['String']['output']>>;
 };
 
 export type ApplicantUpdateInput = {
-  WorkExperienceYears?: InputMaybe<Scalars['Int']['input']>;
-  about?: InputMaybe<Scalars['String']['input']>;
-  accomplishment?: InputMaybe<Scalars['String']['input']>;
-  education?: InputMaybe<Scalars['String']['input']>;
-  englishLevel?: InputMaybe<EnglishLevel>;
-  experience?: InputMaybe<Scalars['Int']['input']>;
-  experienceYear?: InputMaybe<Scalars['Int']['input']>;
-  gender?: InputMaybe<Scalars['String']['input']>;
-  github?: InputMaybe<Scalars['String']['input']>;
-  jobPosition?: InputMaybe<Scalars['String']['input']>;
-  languages?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  linkedin?: InputMaybe<Scalars['String']['input']>;
-  location?: InputMaybe<Scalars['String']['input']>;
-  otherLanguages?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
-  portfolio?: InputMaybe<Scalars['String']['input']>;
-  resume?: InputMaybe<Scalars['String']['input']>;
-  salaryExpectation?: InputMaybe<Scalars['Int']['input']>;
-  skillLevel?: InputMaybe<ExperienceLevel>;
-  skills?: InputMaybe<Array<Scalars['String']['input']>>;
+  about: InputMaybe<Scalars['String']['input']>;
+  accomplishment: InputMaybe<Scalars['String']['input']>;
+  englishLevel: InputMaybe<EnglishLevel>;
+  experienceYear: InputMaybe<Scalars['Int']['input']>;
+  github: InputMaybe<Scalars['String']['input']>;
+  jobPosition: InputMaybe<Scalars['String']['input']>;
+  linkedin: InputMaybe<Scalars['String']['input']>;
+  location: InputMaybe<Scalars['String']['input']>;
+  portfolio: InputMaybe<Scalars['String']['input']>;
+  resume: InputMaybe<Scalars['String']['input']>;
+  salaryExpectation: InputMaybe<Scalars['Int']['input']>;
+  skillLevel: InputMaybe<ExperienceLevel>;
+  skills: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
 export type AuthAccountPayload = {
-  __typename?: 'AuthAccountPayload';
   accountType: AccountType;
   createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
-  emailVerified?: Maybe<Scalars['DateTime']['output']>;
+  emailVerified: Maybe<Scalars['DateTime']['output']>;
   firstName: Scalars['String']['output'];
   id: Scalars['String']['output'];
-  image?: Maybe<Scalars['String']['output']>;
+  image: Maybe<Scalars['String']['output']>;
   lastName: Scalars['String']['output'];
   oAuthClient: Array<OAuth>;
-  phone?: Maybe<Scalars['String']['output']>;
+  phone: Maybe<Scalars['String']['output']>;
 };
 
 export type AuthApplicant = {
-  __typename?: 'AuthApplicant';
-  experienceYear?: Maybe<Scalars['Int']['output']>;
-  gender?: Maybe<Scalars['String']['output']>;
+  experienceYear: Maybe<Scalars['Int']['output']>;
+  gender: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
-  resume?: Maybe<Scalars['String']['output']>;
+  resume: Maybe<Scalars['String']['output']>;
 };
 
 export type AuthPayload = PayloadError & {
-  __typename?: 'AuthPayload';
-  account?: Maybe<AuthAccountPayload>;
+  account: Maybe<AuthAccountPayload>;
   errors: Array<Error>;
 };
 
 export type Company = IAccount & {
-  __typename?: 'Company';
   accountType: AccountType;
-  companyName?: Maybe<Scalars['String']['output']>;
+  companyName: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
   firstName: Scalars['String']['output'];
   id: Scalars['String']['output'];
-  image?: Maybe<Scalars['String']['output']>;
+  image: Maybe<Scalars['String']['output']>;
   lastName: Scalars['String']['output'];
-  logo?: Maybe<Scalars['String']['output']>;
-  phone?: Maybe<Scalars['String']['output']>;
+  logo: Maybe<Scalars['String']['output']>;
+  phone: Maybe<Scalars['String']['output']>;
 };
 
 export type CompanyLight = {
-  __typename?: 'CompanyLight';
-  companyName?: Maybe<Scalars['String']['output']>;
+  companyName: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
-  logo?: Maybe<Scalars['String']['output']>;
+  logo: Maybe<Scalars['String']['output']>;
 };
 
 export type CreateJobPostInput = {
-  affiliateId?: InputMaybe<Scalars['String']['input']>;
+  affiliateId: InputMaybe<Scalars['String']['input']>;
   applicationDeadline: Scalars['DateTime']['input'];
   category: Array<Scalars['String']['input']>;
   companyId: Scalars['String']['input'];
@@ -264,7 +244,6 @@ export enum EnglishLevel {
 }
 
 export type Error = {
-  __typename?: 'Error';
   message: Scalars['String']['output'];
 };
 
@@ -277,8 +256,7 @@ export enum ExperienceLevel {
 }
 
 export type FindOnePayload = PayloadError & {
-  __typename?: 'FindOnePayload';
-  account?: Maybe<AccountPayload>;
+  account: Maybe<AccountPayload>;
   errors: Array<Error>;
 };
 
@@ -294,13 +272,12 @@ export type IAccount = {
   email: Scalars['String']['output'];
   firstName: Scalars['String']['output'];
   id: Scalars['String']['output'];
-  image?: Maybe<Scalars['String']['output']>;
+  image: Maybe<Scalars['String']['output']>;
   lastName: Scalars['String']['output'];
-  phone?: Maybe<Scalars['String']['output']>;
+  phone: Maybe<Scalars['String']['output']>;
 };
 
 export type JobPost = {
-  __typename?: 'JobPost';
   applicationDeadline: Scalars['DateTime']['output'];
   category: Array<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
@@ -326,9 +303,8 @@ export type JobPost = {
 };
 
 export type JobPostPayload = {
-  __typename?: 'JobPostPayload';
   errors: Array<Error>;
-  jobPost?: Maybe<JobPost>;
+  jobPost: Maybe<JobPost>;
 };
 
 export enum JobSite {
@@ -353,15 +329,30 @@ export type LoginInput = {
   password: Scalars['String']['input'];
 };
 
+export type MeAccountPayload = {
+  accountType: AccountType;
+  affiliate: Maybe<AffiliateLight>;
+  applicant: Maybe<Applicant>;
+  company: Maybe<CompanyLight>;
+  createdAt: Scalars['DateTime']['output'];
+  email: Scalars['String']['output'];
+  emailVerified: Maybe<Scalars['DateTime']['output']>;
+  firstName: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  image: Maybe<Scalars['String']['output']>;
+  lastName: Scalars['String']['output'];
+  oAuthClient: Array<OAuth>;
+  phone: Maybe<Scalars['String']['output']>;
+};
+
 export type MeInput = {
   accountId: Scalars['String']['input'];
 };
 
 export type Mutation = {
-  __typename?: 'Mutation';
   createJobPost: JobPostPayload;
   logIn: AuthPayload;
-  saveJobPost?: Maybe<JobPost>;
+  saveJobPost: Maybe<JobPost>;
   sayHi: Scalars['String']['output'];
   signUp: AuthPayload;
   signUpOAuth: AuthPayload;
@@ -393,27 +384,26 @@ export type MutationUpdateProfileArgs = {
 };
 
 export type OAuth = {
-  __typename?: 'OAuth';
   accessToken: Scalars['String']['output'];
   expires: Scalars['DateTime']['output'];
   id: Scalars['String']['output'];
   provider: Scalars['String']['output'];
   providerAccountId: Scalars['String']['output'];
-  refreshToken?: Maybe<Scalars['String']['output']>;
+  refreshToken: Maybe<Scalars['String']['output']>;
   tokenType: Scalars['String']['output'];
 };
 
 export type OAuthAccount = {
-  provider?: InputMaybe<Scalars['String']['input']>;
+  provider: InputMaybe<Scalars['String']['input']>;
 };
 
 export type OAuthAccountInput = {
   accountType: AccountType;
   email: Scalars['String']['input'];
   firstName: Scalars['String']['input'];
-  image?: InputMaybe<Scalars['String']['input']>;
+  image: InputMaybe<Scalars['String']['input']>;
   lastName: Scalars['String']['input'];
-  userName?: InputMaybe<Scalars['String']['input']>;
+  userName: InputMaybe<Scalars['String']['input']>;
 };
 
 export type OAuthInput = {
@@ -421,7 +411,7 @@ export type OAuthInput = {
   expires: Scalars['DateTime']['input'];
   provider: Scalars['String']['input'];
   providerAccountId: Scalars['String']['input'];
-  refreshToken?: InputMaybe<Scalars['String']['input']>;
+  refreshToken: InputMaybe<Scalars['String']['input']>;
   tokenType: Scalars['String']['input'];
 };
 
@@ -440,13 +430,12 @@ export type PayloadError = {
 };
 
 export type Query = {
-  __typename?: 'Query';
-  findAccount?: Maybe<FindOnePayload>;
+  findAccount: Maybe<FindOnePayload>;
   getCompanies: Array<Company>;
   getJobPosts: Array<JobPost>;
   getSavedJobPosts: Array<JobPost>;
-  me?: Maybe<AccountPayload>;
-  sayHi?: Maybe<Scalars['String']['output']>;
+  me: Maybe<MeAccountPayload>;
+  sayHi: Maybe<Scalars['String']['output']>;
 };
 
 export type QueryFindAccountArgs = {
@@ -454,7 +443,7 @@ export type QueryFindAccountArgs = {
 };
 
 export type QueryGetJobPostsArgs = {
-  input?: InputMaybe<JopPostFilterInput>;
+  input: InputMaybe<JopPostFilterInput>;
 };
 
 export type QueryGetSavedJobPostsArgs = {
@@ -487,16 +476,26 @@ export type SignUpInput = {
   country: Scalars['String']['input'];
   email: Scalars['String']['input'];
   firstName: Scalars['String']['input'];
-  image?: InputMaybe<Scalars['String']['input']>;
+  image: InputMaybe<Scalars['String']['input']>;
   lastName: Scalars['String']['input'];
-  name?: InputMaybe<Scalars['String']['input']>;
+  name: InputMaybe<Scalars['String']['input']>;
   password: Scalars['String']['input'];
 };
 
 export type UpdateProfileInput = {
-  account?: InputMaybe<AccountUpdateInput>;
+  account: InputMaybe<AccountUpdateInput>;
   accountId: Scalars['String']['input'];
-  applicant?: InputMaybe<ApplicantUpdateInput>;
+  applicant: InputMaybe<ApplicantUpdateInput>;
+};
+
+export type WorkExperience = {
+  accomplishment: Scalars['String']['output'];
+  companyName: Scalars['String']['output'];
+  companyWebsite: Maybe<Scalars['String']['output']>;
+  endDate: Scalars['DateTime']['output'];
+  position: Scalars['String']['output'];
+  skills: Array<Scalars['String']['output']>;
+  startDate: Scalars['DateTime']['output'];
 };
 
 export type UpdateProfileMutationVariables = Exact<{
@@ -504,114 +503,122 @@ export type UpdateProfileMutationVariables = Exact<{
 }>;
 
 export type UpdateProfileMutation = {
-  __typename?: 'Mutation';
   updateProfile: {
-    __typename?: 'AccountUpdatePayload';
-    errors: Array<{ __typename?: 'Error'; message: string }>;
-    account?: {
-      __typename?: 'AccountPayload';
+    errors: Array<{ message: string }>;
+    account: {
       id: string;
       email: string;
-      emailVerified?: any | null;
+      emailVerified: any | null;
       accountType: AccountType;
-      image?: string | null;
+      image: string | null;
       firstName: string;
       lastName: string;
       createdAt: any;
-      phone?: string | null;
-      applicant?: {
-        __typename?: 'ApplicantLight';
+      phone: string | null;
+      applicant: {
         id: string;
-        about?: string | null;
-        jobPosition?: string | null;
-        salaryExpectation?: number | null;
-        WorkExperienceYears?: number | null;
-        location?: string | null;
-        experience?: number | null;
-        englishLevel?: EnglishLevel | null;
-        otherLanguages?: Array<string | null> | null;
-        accomplishment?: string | null;
-        skillLevel?: ExperienceLevel | null;
-        skills?: Array<string> | null;
-        experienceYear?: number | null;
-        resume?: string | null;
-        github?: string | null;
-        linkedin?: string | null;
-        portfolio?: string | null;
-        savedJobs: Array<{
-          __typename?: 'JobPost';
-          id: string;
-          title: string;
-          applicationDeadline: any;
-          description: string;
-          location: string;
-          salary: Array<number>;
-          salaryType: SalaryType;
-          jobType: JobType;
-          category: Array<string>;
-          vacancy: number;
-          email: string;
-          jobSite: JobSite;
-          isVisible: boolean;
-          jobExperience: number;
-          experienceLevel: ExperienceLevel;
-          englishLevel: EnglishLevel;
-          otherLanguages: Array<string>;
-          skills: Array<string>;
-          qualifications: Array<string>;
-          interviewQuestions: Array<string>;
-          createdAt: any;
-          updatedAt: any;
-        }>;
+        about: string | null;
+        jobPosition: string | null;
+        salaryExpectation: number | null;
+        WorkExperienceYears: number | null;
+        location: string | null;
+        englishLevel: EnglishLevel | null;
+        otherLanguages: Array<string | null> | null;
+        accomplishment: string | null;
+        skillLevel: ExperienceLevel | null;
+        skills: Array<string> | null;
+        experienceYear: number | null;
+        resume: string | null;
+        github: string | null;
+        linkedin: string | null;
+        portfolio: string | null;
       } | null;
-      company?: {
-        __typename?: 'CompanyLight';
+      company: {
         id: string;
-        companyName?: string | null;
-        logo?: string | null;
+        companyName: string | null;
+        logo: string | null;
       } | null;
-      oAuthClient: Array<{
-        __typename?: 'OAuth';
-        id: string;
-        provider: string;
-      }>;
-      affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
+      oAuthClient: Array<{ id: string; provider: string }>;
+      affiliate: { id: string } | null;
     } | null;
   };
 };
 
 export type AccountPayloadFragmentFragment = {
-  __typename?: 'AccountPayload';
   id: string;
   email: string;
-  emailVerified?: any | null;
+  emailVerified: any | null;
   accountType: AccountType;
-  image?: string | null;
+  image: string | null;
   firstName: string;
   lastName: string;
   createdAt: any;
-  phone?: string | null;
-  applicant?: {
-    __typename?: 'ApplicantLight';
+  phone: string | null;
+  applicant: {
     id: string;
-    about?: string | null;
-    jobPosition?: string | null;
-    salaryExpectation?: number | null;
-    WorkExperienceYears?: number | null;
-    location?: string | null;
-    experience?: number | null;
-    englishLevel?: EnglishLevel | null;
-    otherLanguages?: Array<string | null> | null;
-    accomplishment?: string | null;
-    skillLevel?: ExperienceLevel | null;
-    skills?: Array<string> | null;
-    experienceYear?: number | null;
-    resume?: string | null;
-    github?: string | null;
-    linkedin?: string | null;
-    portfolio?: string | null;
+    about: string | null;
+    jobPosition: string | null;
+    salaryExpectation: number | null;
+    WorkExperienceYears: number | null;
+    location: string | null;
+    englishLevel: EnglishLevel | null;
+    otherLanguages: Array<string | null> | null;
+    accomplishment: string | null;
+    skillLevel: ExperienceLevel | null;
+    skills: Array<string> | null;
+    experienceYear: number | null;
+    resume: string | null;
+    github: string | null;
+    linkedin: string | null;
+    portfolio: string | null;
+  } | null;
+  company: {
+    id: string;
+    companyName: string | null;
+    logo: string | null;
+  } | null;
+  oAuthClient: Array<{ id: string; provider: string }>;
+  affiliate: { id: string } | null;
+};
+
+export type MePayloadFragmentFragment = {
+  id: string;
+  email: string;
+  emailVerified: any | null;
+  accountType: AccountType;
+  image: string | null;
+  firstName: string;
+  lastName: string;
+  createdAt: any;
+  phone: string | null;
+  applicant: {
+    id: string;
+    about: string | null;
+    jobPosition: string | null;
+    salaryExpectation: number | null;
+    WorkExperienceYears: number | null;
+    location: string | null;
+    englishLevel: EnglishLevel | null;
+    otherLanguages: Array<string | null> | null;
+    accomplishment: string | null;
+    skillLevel: ExperienceLevel | null;
+    skills: Array<string> | null;
+    experienceYear: number | null;
+    resume: string | null;
+    github: string | null;
+    linkedin: string | null;
+    portfolio: string | null;
+    workExperience: Array<{
+      __typename: 'WorkExperience';
+      companyName: string;
+      position: string;
+      startDate: any;
+      endDate: any;
+      accomplishment: string;
+      companyWebsite: string | null;
+      skills: Array<string>;
+    }>;
     savedJobs: Array<{
-      __typename?: 'JobPost';
       id: string;
       title: string;
       applicationDeadline: any;
@@ -636,14 +643,13 @@ export type AccountPayloadFragmentFragment = {
       updatedAt: any;
     }>;
   } | null;
-  company?: {
-    __typename?: 'CompanyLight';
+  company: {
     id: string;
-    companyName?: string | null;
-    logo?: string | null;
+    companyName: string | null;
+    logo: string | null;
   } | null;
-  oAuthClient: Array<{ __typename?: 'OAuth'; id: string; provider: string }>;
-  affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
+  oAuthClient: Array<{ id: string; provider: string }>;
+  affiliate: { id: string } | null;
 };
 
 export type FindAccountQueryVariables = Exact<{
@@ -651,78 +657,43 @@ export type FindAccountQueryVariables = Exact<{
 }>;
 
 export type FindAccountQuery = {
-  __typename?: 'Query';
-  findAccount?: {
-    __typename?: 'FindOnePayload';
-    errors: Array<{ __typename?: 'Error'; message: string }>;
-    account?: {
-      __typename?: 'AccountPayload';
+  findAccount: {
+    errors: Array<{ message: string }>;
+    account: {
       id: string;
       email: string;
-      emailVerified?: any | null;
+      emailVerified: any | null;
       accountType: AccountType;
-      image?: string | null;
+      image: string | null;
       firstName: string;
       lastName: string;
       createdAt: any;
-      phone?: string | null;
-      applicant?: {
-        __typename?: 'ApplicantLight';
+      phone: string | null;
+      applicant: {
         id: string;
-        about?: string | null;
-        jobPosition?: string | null;
-        salaryExpectation?: number | null;
-        WorkExperienceYears?: number | null;
-        location?: string | null;
-        experience?: number | null;
-        englishLevel?: EnglishLevel | null;
-        otherLanguages?: Array<string | null> | null;
-        accomplishment?: string | null;
-        skillLevel?: ExperienceLevel | null;
-        skills?: Array<string> | null;
-        experienceYear?: number | null;
-        resume?: string | null;
-        github?: string | null;
-        linkedin?: string | null;
-        portfolio?: string | null;
-        savedJobs: Array<{
-          __typename?: 'JobPost';
-          id: string;
-          title: string;
-          applicationDeadline: any;
-          description: string;
-          location: string;
-          salary: Array<number>;
-          salaryType: SalaryType;
-          jobType: JobType;
-          category: Array<string>;
-          vacancy: number;
-          email: string;
-          jobSite: JobSite;
-          isVisible: boolean;
-          jobExperience: number;
-          experienceLevel: ExperienceLevel;
-          englishLevel: EnglishLevel;
-          otherLanguages: Array<string>;
-          skills: Array<string>;
-          qualifications: Array<string>;
-          interviewQuestions: Array<string>;
-          createdAt: any;
-          updatedAt: any;
-        }>;
+        about: string | null;
+        jobPosition: string | null;
+        salaryExpectation: number | null;
+        WorkExperienceYears: number | null;
+        location: string | null;
+        englishLevel: EnglishLevel | null;
+        otherLanguages: Array<string | null> | null;
+        accomplishment: string | null;
+        skillLevel: ExperienceLevel | null;
+        skills: Array<string> | null;
+        experienceYear: number | null;
+        resume: string | null;
+        github: string | null;
+        linkedin: string | null;
+        portfolio: string | null;
       } | null;
-      company?: {
-        __typename?: 'CompanyLight';
+      company: {
         id: string;
-        companyName?: string | null;
-        logo?: string | null;
+        companyName: string | null;
+        logo: string | null;
       } | null;
-      oAuthClient: Array<{
-        __typename?: 'OAuth';
-        id: string;
-        provider: string;
-      }>;
-      affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
+      oAuthClient: Array<{ id: string; provider: string }>;
+      affiliate: { id: string } | null;
     } | null;
   } | null;
 };
@@ -732,39 +703,44 @@ export type MeQueryVariables = Exact<{
 }>;
 
 export type MeQuery = {
-  __typename?: 'Query';
-  me?: {
-    __typename?: 'AccountPayload';
+  me: {
     id: string;
     email: string;
-    emailVerified?: any | null;
+    emailVerified: any | null;
     accountType: AccountType;
-    image?: string | null;
+    image: string | null;
     firstName: string;
     lastName: string;
     createdAt: any;
-    phone?: string | null;
-    applicant?: {
-      __typename?: 'ApplicantLight';
+    phone: string | null;
+    applicant: {
       id: string;
-      about?: string | null;
-      jobPosition?: string | null;
-      salaryExpectation?: number | null;
-      WorkExperienceYears?: number | null;
-      location?: string | null;
-      experience?: number | null;
-      englishLevel?: EnglishLevel | null;
-      otherLanguages?: Array<string | null> | null;
-      accomplishment?: string | null;
-      skillLevel?: ExperienceLevel | null;
-      skills?: Array<string> | null;
-      experienceYear?: number | null;
-      resume?: string | null;
-      github?: string | null;
-      linkedin?: string | null;
-      portfolio?: string | null;
+      about: string | null;
+      jobPosition: string | null;
+      salaryExpectation: number | null;
+      WorkExperienceYears: number | null;
+      location: string | null;
+      englishLevel: EnglishLevel | null;
+      otherLanguages: Array<string | null> | null;
+      accomplishment: string | null;
+      skillLevel: ExperienceLevel | null;
+      skills: Array<string> | null;
+      experienceYear: number | null;
+      resume: string | null;
+      github: string | null;
+      linkedin: string | null;
+      portfolio: string | null;
+      workExperience: Array<{
+        __typename: 'WorkExperience';
+        companyName: string;
+        position: string;
+        startDate: any;
+        endDate: any;
+        accomplishment: string;
+        companyWebsite: string | null;
+        skills: Array<string>;
+      }>;
       savedJobs: Array<{
-        __typename?: 'JobPost';
         id: string;
         title: string;
         applicationDeadline: any;
@@ -789,39 +765,35 @@ export type MeQuery = {
         updatedAt: any;
       }>;
     } | null;
-    company?: {
-      __typename?: 'CompanyLight';
+    company: {
       id: string;
-      companyName?: string | null;
-      logo?: string | null;
+      companyName: string | null;
+      logo: string | null;
     } | null;
-    oAuthClient: Array<{ __typename?: 'OAuth'; id: string; provider: string }>;
-    affiliate?: { __typename?: 'AffiliateLight'; id: string } | null;
+    oAuthClient: Array<{ id: string; provider: string }>;
+    affiliate: { id: string } | null;
   } | null;
 };
 
 export type AccountFragmentFragment = {
-  __typename?: 'Account';
   id: string;
   email: string;
   accountType: AccountType;
-  image?: string | null;
+  image: string | null;
   firstName: string;
   lastName: string;
   createdAt: any;
 };
 
 export type AuthAccountFragmentFragment = {
-  __typename?: 'AuthAccountPayload';
   id: string;
   email: string;
   accountType: AccountType;
-  image?: string | null;
+  image: string | null;
   firstName: string;
   lastName: string;
   createdAt: any;
   oAuthClient: Array<{
-    __typename?: 'OAuth';
     id: string;
     provider: string;
     accessToken: string;
@@ -836,21 +808,17 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 export type LoginMutation = {
-  __typename?: 'Mutation';
   logIn: {
-    __typename?: 'AuthPayload';
-    errors: Array<{ __typename?: 'Error'; message: string }>;
-    account?: {
-      __typename?: 'AuthAccountPayload';
+    errors: Array<{ message: string }>;
+    account: {
       id: string;
       email: string;
       accountType: AccountType;
-      image?: string | null;
+      image: string | null;
       firstName: string;
       lastName: string;
       createdAt: any;
       oAuthClient: Array<{
-        __typename?: 'OAuth';
         id: string;
         provider: string;
         accessToken: string;
@@ -867,21 +835,17 @@ export type SignUpMutationVariables = Exact<{
 }>;
 
 export type SignUpMutation = {
-  __typename?: 'Mutation';
   signUp: {
-    __typename?: 'AuthPayload';
-    errors: Array<{ __typename?: 'Error'; message: string }>;
-    account?: {
-      __typename?: 'AuthAccountPayload';
+    errors: Array<{ message: string }>;
+    account: {
       id: string;
       email: string;
       accountType: AccountType;
-      image?: string | null;
+      image: string | null;
       firstName: string;
       lastName: string;
       createdAt: any;
       oAuthClient: Array<{
-        __typename?: 'OAuth';
         id: string;
         provider: string;
         accessToken: string;
@@ -898,21 +862,17 @@ export type SignUpOAuthMutationVariables = Exact<{
 }>;
 
 export type SignUpOAuthMutation = {
-  __typename?: 'Mutation';
   signUpOAuth: {
-    __typename?: 'AuthPayload';
-    errors: Array<{ __typename?: 'Error'; message: string }>;
-    account?: {
-      __typename?: 'AuthAccountPayload';
+    errors: Array<{ message: string }>;
+    account: {
       id: string;
       email: string;
       accountType: AccountType;
-      image?: string | null;
+      image: string | null;
       firstName: string;
       lastName: string;
       createdAt: any;
       oAuthClient: Array<{
-        __typename?: 'OAuth';
         id: string;
         provider: string;
         accessToken: string;
@@ -927,16 +887,14 @@ export type SignUpOAuthMutation = {
 export type GetCompaniesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetCompaniesQuery = {
-  __typename?: 'Query';
   getCompanies: Array<{
-    __typename?: 'Company';
     id: string;
-    companyName?: string | null;
+    companyName: string | null;
     firstName: string;
     lastName: string;
-    phone?: string | null;
+    phone: string | null;
     email: string;
-    logo?: string | null;
+    logo: string | null;
     createdAt: any;
   }>;
 };
@@ -946,11 +904,9 @@ export type CreateJobPostMutationVariables = Exact<{
 }>;
 
 export type CreateJobPostMutation = {
-  __typename?: 'Mutation';
   createJobPost: {
-    __typename?: 'JobPostPayload';
-    errors: Array<{ __typename?: 'Error'; message: string }>;
-    jobPost?: { __typename?: 'JobPost'; id: string } | null;
+    errors: Array<{ message: string }>;
+    jobPost: { id: string } | null;
   };
 };
 
@@ -959,9 +915,7 @@ export type SaveJobPostMutationVariables = Exact<{
 }>;
 
 export type SaveJobPostMutation = {
-  __typename?: 'Mutation';
-  saveJobPost?: {
-    __typename?: 'JobPost';
+  saveJobPost: {
     id: string;
     title: string;
     applicationDeadline: any;
@@ -988,7 +942,6 @@ export type SaveJobPostMutation = {
 };
 
 export type JopPostFragment = {
-  __typename?: 'JobPost';
   id: string;
   title: string;
   applicationDeadline: any;
@@ -1014,13 +967,11 @@ export type JopPostFragment = {
 };
 
 export type GetJobPostsQueryVariables = Exact<{
-  input?: InputMaybe<JopPostFilterInput>;
+  input: InputMaybe<JopPostFilterInput>;
 }>;
 
 export type GetJobPostsQuery = {
-  __typename?: 'Query';
   getJobPosts: Array<{
-    __typename?: 'JobPost';
     id: string;
     title: string;
     applicationDeadline: any;
@@ -1046,6 +997,49 @@ export type GetJobPostsQuery = {
   }>;
 };
 
+export const AccountPayloadFragmentFragmentDoc = gql`
+  fragment AccountPayloadFragment on AccountPayload {
+    id
+    email
+    emailVerified
+    accountType
+    image
+    firstName
+    lastName
+    createdAt
+    phone
+    applicant {
+      id
+      about
+      jobPosition
+      salaryExpectation
+      WorkExperienceYears
+      location
+      englishLevel
+      otherLanguages
+      accomplishment
+      skillLevel
+      skills
+      experienceYear
+      resume
+      github
+      linkedin
+      portfolio
+    }
+    company {
+      id
+      companyName
+      logo
+    }
+    oAuthClient {
+      id
+      provider
+    }
+    affiliate {
+      id
+    }
+  }
+`;
 export const JopPostFragmentDoc = gql`
   fragment JopPost on JobPost {
     id
@@ -1072,8 +1066,8 @@ export const JopPostFragmentDoc = gql`
     updatedAt
   }
 `;
-export const AccountPayloadFragmentFragmentDoc = gql`
-  fragment AccountPayloadFragment on AccountPayload {
+export const MePayloadFragmentFragmentDoc = gql`
+  fragment MePayloadFragment on MeAccountPayload {
     id
     email
     emailVerified
@@ -1090,7 +1084,6 @@ export const AccountPayloadFragmentFragmentDoc = gql`
       salaryExpectation
       WorkExperienceYears
       location
-      experience
       englishLevel
       otherLanguages
       accomplishment
@@ -1101,6 +1094,16 @@ export const AccountPayloadFragmentFragmentDoc = gql`
       github
       linkedin
       portfolio
+      workExperience {
+        companyName
+        position
+        startDate
+        endDate
+        accomplishment
+        companyWebsite
+        skills
+        __typename
+      }
       savedJobs {
         ...JopPost
       }
@@ -1271,10 +1274,10 @@ export type FindAccountQueryResult = Apollo.QueryResult<
 export const MeDocument = gql`
   query Me($input: MeInput!) {
     me(input: $input) {
-      ...AccountPayloadFragment
+      ...MePayloadFragment
     }
   }
-  ${AccountPayloadFragmentFragmentDoc}
+  ${MePayloadFragmentFragmentDoc}
 `;
 
 /**

@@ -7,6 +7,7 @@ function useMe() {
 
   const mePayload = useMeQuery({
     skip: !session?.user?.id,
+    nextFetchPolicy: 'network-only',
     variables: {
       input: {
         accountId: session?.user?.id as string,
