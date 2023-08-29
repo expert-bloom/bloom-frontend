@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { Modal } from '@mui/material';
 import { type Variants } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 
 import { MotionChild, MotionParent } from '@/components/MotionItems';
+import { useGetJobPostQuery } from '@/graphql/client/gql/schema';
 import { useAppStore } from '@/lib/store';
 
 import DetailContent from './components/DetailContent';
@@ -68,7 +69,19 @@ const menuVariants: { variants: Variants } & Record<string, any> = {
 const JobDetail = () => {
   const { jobPostDetailState, setJobPostDetailId } = useAppStore();
 
-  const { data, loading } = { data: {}, loading: false };
+  const payload = useGetJobPostQuery({
+    skip: !jobPostDetailState.jobPostId,
+    variables: {
+      input: {
+        id: jobPostDetailState.jobPostId ?? '',
+      },
+    },
+  });
+  const [jobPost, setJobPost] = React.useState<typeof payload>(payload);
+
+  useEffect(() => {
+    setJobPost(payload);
+  }, [payload]);
 
   const onClose = () => {
     if (jobPostDetailState.isLoading) {
@@ -96,7 +109,10 @@ const JobDetail = () => {
           variants={menuVariants.variants}
           transition={menuVariants.transition}
         >
-          <DetailContent isLoading={loading} />
+          <DetailContent
+            isLoading={jobPost.loading}
+            jobPost={jobPost.data?.getJobPost}
+          />
         </MotionChild>
       </MotionParent>
     </Modal>

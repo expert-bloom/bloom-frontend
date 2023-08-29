@@ -74,7 +74,8 @@ export interface WorkExperienceFormValuesType {
   position: string;
   companyWebsite?: string | null;
   startDate: string;
-  endDate: string;
+  endDate?: string;
+  ongoing: boolean;
   accomplishment: string;
   skills: string[];
 }

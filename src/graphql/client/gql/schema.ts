@@ -165,6 +165,7 @@ export type ApplicantUpdateInput = {
   salaryExpectation: InputMaybe<Scalars['Int']['input']>;
   skillLevel: InputMaybe<ExperienceLevel>;
   skills: InputMaybe<Array<Scalars['String']['input']>>;
+  workExperience: InputMaybe<Array<WorkExperienceInput>>;
 };
 
 export type AuthAccountPayload = {
@@ -265,6 +266,10 @@ export enum Gender {
   Male = 'MALE',
   Other = 'OTHER',
 }
+
+export type GetJobPostInput = {
+  id: Scalars['String']['input'];
+};
 
 export type IAccount = {
   accountType: AccountType;
@@ -432,6 +437,7 @@ export type PayloadError = {
 export type Query = {
   findAccount: Maybe<FindOnePayload>;
   getCompanies: Array<Company>;
+  getJobPost: Maybe<JobPost>;
   getJobPosts: Array<JobPost>;
   getSavedJobPosts: Array<JobPost>;
   me: Maybe<MeAccountPayload>;
@@ -440,6 +446,10 @@ export type Query = {
 
 export type QueryFindAccountArgs = {
   input: AccountInput;
+};
+
+export type QueryGetJobPostArgs = {
+  input: GetJobPostInput;
 };
 
 export type QueryGetJobPostsArgs = {
@@ -493,9 +503,21 @@ export type WorkExperience = {
   companyName: Scalars['String']['output'];
   companyWebsite: Maybe<Scalars['String']['output']>;
   endDate: Scalars['DateTime']['output'];
+  ongoing: Scalars['Boolean']['output'];
   position: Scalars['String']['output'];
   skills: Array<Scalars['String']['output']>;
   startDate: Scalars['DateTime']['output'];
+};
+
+export type WorkExperienceInput = {
+  accomplishment: Scalars['String']['input'];
+  companyName: Scalars['String']['input'];
+  companyWebsite: InputMaybe<Scalars['String']['input']>;
+  endDate: InputMaybe<Scalars['DateTime']['input']>;
+  ongoing: Scalars['Boolean']['input'];
+  position: Scalars['String']['input'];
+  skills: Array<Scalars['String']['input']>;
+  startDate: Scalars['DateTime']['input'];
 };
 
 export type UpdateProfileMutationVariables = Exact<{
@@ -617,6 +639,7 @@ export type MePayloadFragmentFragment = {
       accomplishment: string;
       companyWebsite: string | null;
       skills: Array<string>;
+      ongoing: boolean;
     }>;
     savedJobs: Array<{
       id: string;
@@ -739,6 +762,7 @@ export type MeQuery = {
         accomplishment: string;
         companyWebsite: string | null;
         skills: Array<string>;
+        ongoing: boolean;
       }>;
       savedJobs: Array<{
         id: string;
@@ -997,6 +1021,37 @@ export type GetJobPostsQuery = {
   }>;
 };
 
+export type GetJobPostQueryVariables = Exact<{
+  input: GetJobPostInput;
+}>;
+
+export type GetJobPostQuery = {
+  getJobPost: {
+    id: string;
+    title: string;
+    applicationDeadline: any;
+    description: string;
+    location: string;
+    salary: Array<number>;
+    salaryType: SalaryType;
+    jobType: JobType;
+    category: Array<string>;
+    vacancy: number;
+    email: string;
+    jobSite: JobSite;
+    isVisible: boolean;
+    jobExperience: number;
+    experienceLevel: ExperienceLevel;
+    englishLevel: EnglishLevel;
+    otherLanguages: Array<string>;
+    skills: Array<string>;
+    qualifications: Array<string>;
+    interviewQuestions: Array<string>;
+    createdAt: any;
+    updatedAt: any;
+  } | null;
+};
+
 export const AccountPayloadFragmentFragmentDoc = gql`
   fragment AccountPayloadFragment on AccountPayload {
     id
@@ -1102,6 +1157,7 @@ export const MePayloadFragmentFragmentDoc = gql`
         accomplishment
         companyWebsite
         skills
+        ongoing
         __typename
       }
       savedJobs {
@@ -1699,4 +1755,61 @@ export type GetJobPostsLazyQueryHookResult = ReturnType<
 export type GetJobPostsQueryResult = Apollo.QueryResult<
   GetJobPostsQuery,
   GetJobPostsQueryVariables
+>;
+export const GetJobPostDocument = gql`
+  query GetJobPost($input: GetJobPostInput!) {
+    getJobPost(input: $input) {
+      ...JopPost
+    }
+  }
+  ${JopPostFragmentDoc}
+`;
+
+/**
+ * __useGetJobPostQuery__
+ *
+ * To run a query within a React component, call `useGetJobPostQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetJobPostQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetJobPostQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetJobPostQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetJobPostQuery,
+    GetJobPostQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetJobPostQuery, GetJobPostQueryVariables>(
+    GetJobPostDocument,
+    options,
+  );
+}
+export function useGetJobPostLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetJobPostQuery,
+    GetJobPostQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetJobPostQuery, GetJobPostQueryVariables>(
+    GetJobPostDocument,
+    options,
+  );
+}
+export type GetJobPostQueryHookResult = ReturnType<typeof useGetJobPostQuery>;
+export type GetJobPostLazyQueryHookResult = ReturnType<
+  typeof useGetJobPostLazyQuery
+>;
+export type GetJobPostQueryResult = Apollo.QueryResult<
+  GetJobPostQuery,
+  GetJobPostQueryVariables
 >;

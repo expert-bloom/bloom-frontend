@@ -27,8 +27,12 @@ fragment JopPost on JobPost{
 query GetJobPosts($input: JopPostFilterInput ){
     getJobPosts(input: $input){
         ...JopPost
+    }
+}
 
-
+query GetJobPost($input: GetJobPostInput!){
+    getJobPost(input: $input){
+        ...JopPost
     }
 }
 

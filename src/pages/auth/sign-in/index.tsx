@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import React, { useEffect } from 'react';
-import { signIn, useSession } from 'next-auth/react';
+
 import { useRouter } from 'next/router';
+import { signIn, useSession } from 'next-auth/react';
+
 import s from '@/pages/auth/sign-in/signin.module.scss';
 
 const SignIn = () => {
@@ -27,7 +29,7 @@ const SignIn = () => {
     if (error) {
       let message = error;
       if (['OAuthCallback', 'OAuthSignin'].includes(error as string))
-        message = `Account or Network Error! ${error as string} `;
+        message = 'Account or Network Error!';
 
       window.opener?.postMessage({
         type: 'auth',

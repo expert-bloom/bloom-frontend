@@ -1,17 +1,27 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
+/* eslint-disable @typescript-eslint/no-misused-promises,@typescript-eslint/prefer-nullish-coalescing */
 import React, { useEffect, useRef } from 'react';
 
-import { AddCircle, DateRangeSharp } from '@mui/icons-material';
 import {
+  AddCircle,
+  CalendarMonth,
+  DateRangeSharp,
+  ExpandMore,
+} from '@mui/icons-material';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Autocomplete,
   Button,
+  Checkbox,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   FormControl,
+  FormControlLabel,
   FormLabel,
-  InputAdornment,
   Stack,
   TextField,
   Typography,
@@ -26,17 +36,18 @@ import { usePresignedUpload } from '@/lib/uploader';
 import { useProfileSettingFormContext } from '@/scenes/Applicant/Profile';
 import {
   type NestedOnSubmit,
-  type SettingFormValuesType,
   type StepProps,
+  type WorkExperienceFormValuesType,
 } from '@/scenes/Applicant/Profile/data';
 import { skillOption } from '@/scenes/CreateJobPost/JobRequirement';
 
 import s from './cv.module.scss';
 
-const initialExperience = {
+const initialExperience: WorkExperienceFormValuesType = {
   companyName: '' as string,
   position: '' as string,
   companyWebsite: '' as string,
+  ongoing: false as boolean,
   startDate: null as unknown as string,
   endDate: null as unknown as string,
   accomplishment: '' as string,
@@ -288,23 +299,74 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
               ) : (
                 formik.values.applicant.workExperience.map((ex, i) => (
                   <div key={i} className={s.experience_item}>
-                    <div className={s.experience_item_header}>
-                      <Typography variant="h6">{ex.position}</Typography>
-                      <Typography variant="body2">{ex.companyName}</Typography>
-                      <Typography variant="body2">
-                        {ex.companyWebsite ?? '-'}
-                      </Typography>
-                    </div>
+                    <Accordion>
+                      <AccordionSummary
+                        expandIcon={<ExpandMore />}
+                        sx={{
+                          borderBottom: '1px solid #e0e0e0',
+                        }}
+                      >
+                        <Stack>
+                          <Typography variant="h6" color="gray">
+                            {ex.position}
+                          </Typography>
+                          <FormLabel>{ex.companyName}</FormLabel>
+                        </Stack>
 
-                    <div className={s.experience_item_body}>
-                      <Typography variant="body2">
-                        <DateRangeSharp /> {moment(ex.startDate).toISOString()}{' '}
-                        - {moment(ex.endDate).toISOString()}
-                      </Typography>
-                      <Typography variant="body2">
-                        {ex.accomplishment}
-                      </Typography>
-                    </div>
+                        <Stack
+                          direction="row"
+                          alignItems="center"
+                          gap=".3rem"
+                          marginLeft="auto"
+                          marginRight="1.5rem"
+                        >
+                          <CalendarMonth fontSize="small" color="disabled" />
+                          <Typography color="gray">
+                            {moment(ex.startDate).format('MMM YYYY')} -{' '}
+                            {ex.ongoing
+                              ? 'Present'
+                              : moment(ex.endDate).format('MMM YYYY')}
+                          </Typography>
+                        </Stack>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <Stack gap=".5rem" flex="1" style={{ width: '100%' }}>
+                          <div>
+                            <FormLabel>Skills</FormLabel>
+                            <Stack
+                              direction="row"
+                              alignItems="center"
+                              gap=".3rem"
+                            >
+                              {ex.skills.map((s, i) => (
+                                <Chip
+                                  key={i}
+                                  label={s}
+                                  size="small"
+                                  variant="outlined"
+                                />
+                              ))}
+                            </Stack>
+                          </div>
+
+                          <div className={s.experience_item_header}>
+                            <FormLabel>Company website</FormLabel>
+
+                            <Typography variant="body2">
+                              {ex.companyWebsite || '-'}
+                            </Typography>
+                          </div>
+
+                          <div className={s.experience_item_body}>
+                            <FormLabel>Accomplishments and awards</FormLabel>
+
+                            <Typography variant="body2">
+                              {ex.accomplishment || '-'}
+                            </Typography>
+                          </div>
+                        </Stack>
+                      </AccordionDetails>
+                    </Accordion>
                   </div>
                 ))
               )}
@@ -448,8 +510,32 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
                     />
                   </Stack>
                   <Stack spacing={0.5} flex="1" style={{ width: '100%' }}>
-                    <FormLabel>End Date</FormLabel>
+                    <Stack direction="row" alignItems="center" gap="1.5rem">
+                      <FormLabel>End Date</FormLabel>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            sx={{ p: 0, pr: '.2rem' }}
+                            size="small"
+                            checked={experienceForm.values.ongoing}
+                            onChange={(e) => {
+                              void experienceForm.setFieldValue(
+                                'ongoing',
+                                e.target.checked,
+                              );
+                            }}
+                            name="ongoing"
+                            color="primary"
+                          />
+                        }
+                        label="Ongoing"
+                      />
+                    </Stack>
                     <DatePicker
+                      disabled={
+                        experienceForm.values.ongoing ||
+                        !experienceForm.values.startDate
+                      }
                       label="End Date"
                       minDate={experienceForm.values.startDate}
                       value={experienceForm.values.endDate}

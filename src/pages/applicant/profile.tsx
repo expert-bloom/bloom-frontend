@@ -1,9 +1,9 @@
 import React from 'react';
 
-import ProfileScenes from '@/scenes/Applicant/Profile';
+import ProfileSettingScenes from '@/scenes/Applicant/Profile';
 
 const Profile = () => {
-  return <ProfileScenes />;
+  return <ProfileSettingScenes />;
 };
 
 export default Profile;

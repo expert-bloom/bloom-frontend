@@ -86,6 +86,8 @@ fragment MePayloadFragment on MeAccountPayload{
             accomplishment
             companyWebsite
             skills
+            ongoing
+
             __typename
         }
 

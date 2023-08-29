@@ -112,6 +112,26 @@ const Profile = () => {
     },
   });
 
+  const nullify = <T extends Record<string, any>>(obj: T) => {
+    const value = mapValues(obj, (value) => {
+      if (value === '') return null;
+      return value;
+    });
+    return value;
+  };
+
+  // generic arrow function
+
+  const getChangedFields = (
+    from: Record<string, any>,
+    target: Record<string, any>,
+  ) => {
+    return pickBy(from, (value, key) => {
+      const equal = isEqual(target[key], value);
+      return !equal;
+    });
+  };
+
   const formik = useFormik<SettingFormValuesType>({
     validateOnMount: false,
     validateOnChange: false,
@@ -138,41 +158,18 @@ const Profile = () => {
       values = nestedSubmits;
 
       // filter out only the changed values
-      const changedValues: Record<keyof typeof values.account, string> = pickBy(
-        values.account,
-        (value, key) => {
-          const equal = isEqual(
-            (formik.initialValues.account as Record<string, any>)[key],
-            value,
-          );
-          return !equal;
-        },
-      ) as any;
-
-      // map any '' to null
-      const accountInput = mapValues(changedValues, (value, key) => {
-        if (value === ('' as const)) return null as any;
-        return value;
-      });
+      const changedValues: Record<keyof typeof values.account, string> =
+        getChangedFields(values.account, formik.initialValues.account) as any;
+      const accountInput = nullify(changedValues);
 
       const changedApplicantValues: Record<
         keyof typeof values.applicant,
         string
-      > = pickBy(values.applicant, (value, key) => {
-        const equal = isEqual(
-          (formik.initialValues.applicant as Record<string, any>)[key],
-          value,
-        );
-
-        // console.log('isEqual : ', equal, key, value);
-        return !equal;
-      }) as any;
-
-      // map any '' to null
-      const applicantInput = mapValues(changedApplicantValues, (value, key) => {
-        if (value === ('' as const)) return null as any;
-        return value;
-      });
+      > = getChangedFields(
+        values.applicant,
+        formik.initialValues.applicant,
+      ) as any;
+      const applicantInput = nullify(changedApplicantValues);
 
       console.log('accountInput : ', accountInput, 'applicant', applicantInput);
 
@@ -185,7 +182,7 @@ const Profile = () => {
                 ...accountInput,
               },
               applicant: {
-                ...applicantInput,
+                ...(applicantInput as any),
               },
             },
           },

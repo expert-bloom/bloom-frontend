@@ -235,6 +235,7 @@ type OAuth {
 type Query {
     findAccount(input: AccountInput!): FindOnePayload
     getCompanies: [Company!]!
+    getJobPost(input: GetJobPostInput!): JobPost
     getJobPosts(input: JopPostFilterInput): [JobPost!]!
     getSavedJobPosts(input: SavedJobPostsInput!): [JobPost!]!
     me(input: MeInput!): MeAccountPayload
@@ -246,6 +247,7 @@ type WorkExperience {
     companyName: String!
     companyWebsite: String
     endDate: DateTime!
+    ongoing: Boolean!
     position: String!
     skills: [String!]!
     startDate: DateTime!
@@ -335,6 +337,7 @@ input ApplicantUpdateInput {
     salaryExpectation: Int
     skillLevel: ExperienceLevel
     skills: [String!]
+    workExperience: [WorkExperienceInput!]
 }
 
 input CreateJobPostInput {
@@ -360,6 +363,10 @@ input CreateJobPostInput {
     skills: [String!]!
     title: String!
     vacancy: Int!
+}
+
+input GetJobPostInput {
+    id: String!
 }
 
 input JopPostFilterInput {
@@ -432,4 +439,15 @@ input UpdateProfileInput {
     account: AccountUpdateInput
     accountId: String!
     applicant: ApplicantUpdateInput
+}
+
+input WorkExperienceInput {
+    accomplishment: String!
+    companyName: String!
+    companyWebsite: String
+    endDate: DateTime
+    ongoing: Boolean!
+    position: String!
+    skills: [String!]!
+    startDate: DateTime!
 }

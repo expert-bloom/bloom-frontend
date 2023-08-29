@@ -1,7 +1,6 @@
 import React from 'react';
 
 import {
-  AddLink,
   Bookmark,
   Close,
   Flag,
@@ -10,31 +9,41 @@ import {
   Money,
   PersonPin,
   Psychology,
-  RadioButtonChecked,
   Verified,
   Work,
 } from '@mui/icons-material';
-import { Button, Chip, IconButton, Stack, Typography } from '@mui/material';
+import {
+  Button,
+  Chip,
+  CircularProgress,
+  IconButton,
+  Stack,
+  Typography,
+} from '@mui/material';
+import { AnimatePresence } from 'framer-motion';
+import moment from 'moment';
 import Link from 'next/link';
 import SimpleBar from 'simplebar-react';
 
 import { MoButton } from '@/components/MoButton';
-import { MotionChild } from '@/components/MotionItems';
+import { MotionChild, MotionParent } from '@/components/MotionItems';
+import 'simplebar-react/dist/simplebar.min.css';
+import { type JobPost } from '@/graphql/client/gql/schema';
+import { capitalize } from '@/utils';
 
 import s from '../job_detail_slider.module.scss';
-import 'simplebar-react/dist/simplebar.min.css';
-
-interface Props {
-  // program: GetProgramQuery['getProgram']['program'] | null | undefined;
-  isLoading: boolean;
-}
 
 const transition = {
   duration: 1,
   ease: [0.6, 0.01, 0, 0.9],
 };
 
-const DetailContent = () => {
+interface Props {
+  isLoading: boolean;
+  jobPost: JobPost | null | undefined;
+}
+
+const DetailContent = ({ jobPost, isLoading }: Props) => {
   return (
     <SimpleBar style={{ maxHeight: '100vh' }}>
       <MotionChild className={s.content} transition={transition}>
@@ -48,129 +57,141 @@ const DetailContent = () => {
           </Link>
         </header>
 
-        <div className={s.detail}>
-          <div className={s.job_info}>
-            <div className={s.title_div}>
-              <Typography variant="h5">
-                Aws/Devops Infrastructure Engineer (Terraform)
-              </Typography>
+        <AnimatePresence mode="wait">
+          <MotionParent key={isLoading ? '0' : '1'}>
+            {isLoading && (
+              <MotionChild className={s.loading_spinner}>
+                <CircularProgress />
+              </MotionChild>
+            )}
 
-              <Stack sx={{ mt: '2rem' }}>
-                <Typography className={s.category}>
-                  Cloud Engineering
-                </Typography>
-                <Typography variant="body2" color="gray" className={s.time}>
-                  Posted 1 day ago
-                </Typography>
-              </Stack>
+            {!isLoading && jobPost && (
+              <MotionChild className={s.detail}>
+                <div className={s.job_info}>
+                  <div className={s.title_div}>
+                    <Typography variant="h5">{jobPost.title}</Typography>
 
-              <Stack direction="row" alignItems="center">
-                <LocationOn fontSize="small" />
-                <Typography className={s.location}>Worldwide</Typography>
-              </Stack>
-            </div>
+                    <Stack sx={{ mt: '2rem' }}>
+                      <Typography className={s.category}>
+                        Cloud Engineering
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color="gray"
+                        className={s.time}
+                      >
+                        Posted {moment(jobPost.createdAt).fromNow()}
+                      </Typography>
+                    </Stack>
 
-            <div className={s.desc}>
-              <Typography variant="body1">
-                Currently searching for an Individual with strong Infrastructure
-                background managing AWS environment using TERRAFORM. Also, our
-                Infrastructure is automated with Devops CI/CD pipeline and
-                Github as Version Control. Be able to Come up with new ideas on
-                how to secure the infrastructure and maintain the pipeline.
-                Also, you will be assigned to do Terraform upgrade for the first
-                project with in infrastructure. Environment is relatively small
-                so most of the task is quite simple. The person should have
-                experience in AWS and Devops infrastructure for at least 6 years
-              </Typography>
-            </div>
+                    <Stack direction="row" alignItems="center">
+                      <LocationOn fontSize="small" />
+                      <Typography className={s.location}>
+                        {jobPost.location}
+                      </Typography>
+                    </Stack>
+                  </div>
 
-            <div className={s.stat}>
-              <Stack direction="row" alignItems="flex-start" gap=".3rem">
-                <Money />
-                <Stack>
-                  <Typography>Salary Type</Typography>
-                  <Typography color="gray" variant="body2">
-                    Hourly
-                  </Typography>
-                </Stack>
-              </Stack>
+                  <div className={s.desc}>
+                    <Typography variant="body1">
+                      {jobPost.description}
+                    </Typography>
+                  </div>
 
-              <Stack direction="row" alignItems="flex-start" gap=".3rem">
-                <Psychology />
-                <Stack>
-                  <Typography>Intermediate</Typography>
-                  <Typography color="gray" variant="body2">
-                    Skill Level
-                  </Typography>
-                </Stack>
-              </Stack>
+                  <div className={s.stat}>
+                    <Stack direction="row" alignItems="flex-start" gap=".3rem">
+                      <Money />
+                      <Stack>
+                        <Typography>Salary Type</Typography>
+                        <Typography color="gray" variant="body2">
+                          {capitalize(jobPost.salaryType)}
+                        </Typography>
+                      </Stack>
+                    </Stack>
 
-              <Stack direction="row" alignItems="flex-start" gap=".3rem">
-                <PersonPin />
-                <Stack>
-                  <Typography>Remote</Typography>
-                  <Typography color="gray" variant="body2">
-                    Job Site
-                  </Typography>
-                </Stack>
-              </Stack>
+                    <Stack direction="row" alignItems="flex-start" gap=".3rem">
+                      <Psychology />
+                      <Stack>
+                        <Typography>
+                          {capitalize(jobPost.experienceLevel)}
+                        </Typography>
+                        <Typography color="gray" variant="body2">
+                          Skill Level
+                        </Typography>
+                      </Stack>
+                    </Stack>
 
-              <Stack direction="row" alignItems="flex-start" gap=".3rem">
-                <Work />
-                <Stack>
-                  <Typography>Job Type</Typography>
-                  <Typography color="gray" variant="body2">
-                    Full time
-                  </Typography>
-                </Stack>
-              </Stack>
-            </div>
+                    <Stack direction="row" alignItems="flex-start" gap=".3rem">
+                      <PersonPin />
+                      <Stack>
+                        <Typography>{capitalize(jobPost.jobSite)}</Typography>
+                        <Typography color="gray" variant="body2">
+                          Job Site
+                        </Typography>
+                      </Stack>
+                    </Stack>
 
-            <div className={s.skills}>
-              <Typography variant="h6">Skills and Expertise</Typography>
-              <div className={s.chips}>
-                <Chip label="DevOps" />
-                <Chip label="DevOps" />
-                <Chip label="DevOps" />
-                <Chip label="DevOps" />
-                <Chip label="DevOps" />
-              </div>
-            </div>
-          </div>
+                    <Stack direction="row" alignItems="flex-start" gap=".3rem">
+                      <Work />
+                      <Stack>
+                        <Typography>Job Type</Typography>
+                        <Typography color="gray" variant="body2">
+                          {capitalize(jobPost.jobType).replace('_', '')}
+                        </Typography>
+                      </Stack>
+                    </Stack>
+                  </div>
 
-          <div className={s.job_action}>
-            <div className={s.apply}>
-              <MoButton fullWidth variant="contained">
-                Apply Now
-              </MoButton>
+                  <div className={s.skills}>
+                    <Typography variant="h6">Skills and Expertise</Typography>
+                    <div className={s.chips}>
+                      {jobPost.skills.map((skill) => (
+                        <Chip key={skill} label={capitalize(skill)} />
+                      ))}
+                    </div>
+                  </div>
+                </div>
 
-              <MoButton fullWidth variant="outlined" startIcon={<Bookmark />}>
-                Save Job
-              </MoButton>
+                <div className={s.job_action}>
+                  <div className={s.apply}>
+                    <MoButton fullWidth variant="contained">
+                      Apply Now
+                    </MoButton>
 
-              <Button startIcon={<Flag fontSize="small" />}>
-                Flag as inappropriate
-              </Button>
-            </div>
+                    <MoButton
+                      fullWidth
+                      variant="outlined"
+                      startIcon={<Bookmark />}
+                    >
+                      Save Job
+                    </MoButton>
 
-            <div className={s.about_client}>
-              <Typography variant="h6">About the client</Typography>
+                    <Button startIcon={<Flag fontSize="small" />}>
+                      Flag as inappropriate
+                    </Button>
+                  </div>
 
-              <Stack direction="row" gap=".5rem">
-                <Verified color="primary" />
-                <Typography>Verified</Typography>
-              </Stack>
+                  <div className={s.about_client}>
+                    <Typography variant="h6">About the client</Typography>
 
-              <Typography>United Sates</Typography>
-              <Typography>34 Jobs posted</Typography>
-              <Typography>0 Hired</Typography>
+                    <Stack direction="row" gap=".5rem">
+                      <Verified color="primary" />
+                      <Typography>Verified</Typography>
+                    </Stack>
 
-              <Typography variant="body2" color="gray">
-                Member since Jul 12, 2020,
-              </Typography>
-            </div>
-          </div>
-        </div>
+                    <Typography>United Sates</Typography>
+                    <Typography>34 Jobs posted</Typography>
+                    <Typography>0 Hired</Typography>
+
+                    <Typography variant="body2" color="gray">
+                      Member since Jul 12, 2020,
+                    </Typography>
+                  </div>
+                </div>
+              </MotionChild>
+            )}
+          </MotionParent>
+        </AnimatePresence>
       </MotionChild>
     </SimpleBar>
   );

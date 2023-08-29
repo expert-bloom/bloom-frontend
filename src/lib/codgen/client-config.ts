@@ -19,7 +19,6 @@ const config: CodegenConfig = {
         useTypeImports: true,
         avoidOptionals: true,
         skipTypename: true,
-        nonOptionalTypename: false,
 
         // avoid the __typename prop
       },
