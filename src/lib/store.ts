@@ -5,9 +5,16 @@ interface JobPostDetail {
   jobPostId: string | null;
 }
 
+interface ProfileDetail {
+  isLoading: boolean;
+  profileId: string | null;
+}
+
 interface Store {
   jobPostDetailState: JobPostDetail;
-  setJobPostDetailId: (dayOfWeek: Partial<JobPostDetail>) => void;
+  profileDetail: ProfileDetail;
+  setJobPostDetailId: (postDetail: Partial<JobPostDetail>) => void;
+  setProfileDetail: (profileDetail: Partial<ProfileDetail>) => void;
   settingIdxClicked: string | null;
   setSettingIdx: (idx: string | null) => void;
 }
@@ -15,6 +22,10 @@ interface Store {
 export const useAppStore = create<Store>((set) => ({
   jobPostDetailState: {
     jobPostId: null,
+    isLoading: false,
+  },
+  profileDetail: {
+    profileId: null,
     isLoading: false,
   },
   settingIdxClicked: null,
@@ -26,6 +37,11 @@ export const useAppStore = create<Store>((set) => ({
   setJobPostDetailId: (postDetail: Partial<JobPostDetail>) => {
     set((state) => ({
       jobPostDetailState: { ...state.jobPostDetailState, ...postDetail },
+    }));
+  },
+  setProfileDetail: (profileDetail: Partial<ProfileDetail>) => {
+    set((state) => ({
+      profileDetail: { ...state.profileDetail, ...profileDetail },
     }));
   },
 }));

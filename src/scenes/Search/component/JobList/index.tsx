@@ -34,6 +34,8 @@ const JobList = () => {
     posts?.getJobPosts ?? [],
   );
 
+  console.log('filteredJobs : ', filteredJobs);
+
   useEffect(() => {
     if (jopPostsPayload.error) {
       toast.error('Something wrong showing job-posts');

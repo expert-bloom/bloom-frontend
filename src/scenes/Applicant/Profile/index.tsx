@@ -97,12 +97,12 @@ const Profile = () => {
   const [open, setOpen] = useState(false);
   const [settingTogo, setSettingTogo] = useState<number | null>(null);
   const { data: session } = useSession();
+  const me = useMe();
   const [currentStep, setCurrentStep] = useState<typeof formSteps[number]>({
     ...formSteps[activeStep],
   });
 
   const [updateProfile, payload] = useUpdateProfileMutation();
-  const me = useMe();
 
   const stepUtil = useRef<{
     onSubmit: NestedOnSubmit;
@@ -119,9 +119,6 @@ const Profile = () => {
     });
     return value;
   };
-
-  // generic arrow function
-
   const getChangedFields = (
     from: Record<string, any>,
     target: Record<string, any>,
@@ -194,17 +191,17 @@ const Profile = () => {
         }
 
         if (
-          profilePayload.data?.updateProfile.errors &&
-          profilePayload.data?.updateProfile.errors.length > 0
+          profilePayload.data?.profileUpdate.errors &&
+          profilePayload.data?.profileUpdate.errors.length > 0
         ) {
           toast.error(
-            profilePayload.data?.updateProfile.errors
+            profilePayload.data?.profileUpdate.errors
               .map((e) => e.message)
               .join(', '),
           );
         }
 
-        if (profilePayload.data?.updateProfile.account?.id) {
+        if (profilePayload.data?.profileUpdate.account?.id) {
           toast.success('Profile Updated!');
         }
 
@@ -219,7 +216,6 @@ const Profile = () => {
   const checkForChange = () => {
     return !isEqual(formik.initialValues, formik.values);
   };
-
   const handleSettingChange = (idx: number) => {
     if (isChanged) {
       // show modal to confirm
@@ -232,11 +228,9 @@ const Profile = () => {
     // setValue(item.value);
     // setActiveStep(idx);
   };
-
   const handleClose = () => {
     setOpen(false);
   };
-
   const reset = () => {
     if (me.me?.applicant === null || me.me?.applicant === undefined) return;
     const applicant = me.me.applicant;

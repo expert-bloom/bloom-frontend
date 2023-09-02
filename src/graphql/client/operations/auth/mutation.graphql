@@ -1,13 +1,3 @@
-fragment AccountFragment on Account{
-    id
-    email
-    accountType
-    image
-    firstName
-    lastName
-    createdAt
-}
-
 fragment AuthAccountFragment on AuthAccountPayload{
     id
     email

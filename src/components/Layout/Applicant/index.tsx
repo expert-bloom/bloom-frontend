@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -12,13 +12,22 @@ interface Props {
   children: React.ReactNode;
 }
 
-const Applicant: React.FC<Props> = ({ children }) => {
-  // define a ref for the top nav bar (mutable)
+export const useTopPadding = () => {
   const [height, setHeight] = React.useState(0);
 
   useEffect(() => {
-    setHeight(document.getElementById('applicant-nav')?.offsetHeight ?? 0);
+    setHeight(document.getElementById('top-nav')?.offsetHeight ?? 0);
   }, []);
+
+  return { top: height };
+};
+
+const Applicant: React.FC<Props> = ({ children }) => {
+  // define a ref for the top nav bar (mutable)
+
+  const { top } = useTopPadding();
+
+  console.log('top : ', top);
 
   return (
     <>
@@ -32,7 +41,7 @@ const Applicant: React.FC<Props> = ({ children }) => {
         <div
           className={s.wrapper}
           style={{
-            paddingTop: height,
+            paddingTop: top,
           }}
         >
           <AccountAlert />

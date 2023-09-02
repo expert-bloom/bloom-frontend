@@ -73,7 +73,7 @@ const MarketPlace = () => {
 
       <div className={s.posts}>
         {posts?.getJobPosts &&
-          posts.getJobPosts.map((post) => (
+          posts.getJobPosts.slice(0, 3).map((post) => (
             <>
               <ButtonBase key={post.id} className={s.post}>
                 <Typography>{post.title}</Typography>

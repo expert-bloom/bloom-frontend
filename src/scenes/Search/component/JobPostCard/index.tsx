@@ -8,6 +8,7 @@ import moment from 'moment';
 import { toast } from 'react-hot-toast';
 import { BsClock } from 'react-icons/bs';
 
+import { useResponseErrorHandler } from '@/components/commons/FixedLayer/ProfileView';
 import {
   type JobPost,
   MeDocument,
@@ -32,10 +33,15 @@ const JobPostCard = ({ post }: Props) => {
   const [isSaved, setIsSaved] = useState(false);
   const [isPending, startTransition] = useTransition();
 
+  useResponseErrorHandler(savePayload.error, 'Error saving job');
+  useResponseErrorHandler(me.mePayload.error, 'Error fetching user(me)');
+
   useEffect(() => {
     startTransition(() => {
       setIsSaved(
-        !!me.me?.applicant?.savedJobs.find((saved) => saved.id === post.id),
+        !!me.me?.applicant?.savedJobs?.edges.find(
+          (saved) => saved.node.id === post.id,
+        ),
       );
     });
   }, [me.me?.applicant, post]);

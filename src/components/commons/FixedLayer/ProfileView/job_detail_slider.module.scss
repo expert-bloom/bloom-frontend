@@ -1,0 +1,174 @@
+@use '@/styles/index' as s;
+
+.container {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  pointer-events: auto;
+  display: grid;
+  place-items: center;
+
+  & :local {
+
+    .blur_bg {
+      backdrop-filter: blur(4.5px);
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      background-color: rgba(139, 140, 248, 0.1);
+
+    }
+
+    .wrapper {
+      position: absolute;
+      margin-top: 4rem;
+      // center the menu
+
+      height: 100%;
+      width: 75%;
+      display: flex;
+      flex-flow: column;
+      background-color: white;
+      z-index: 1;
+      overflow: hidden;
+      border-radius: 1.5rem;
+
+
+      //border: 11px solid #000;
+
+      // larger boxshadow to ther left
+      box-shadow: 0 0 1.5rem 0.1rem rgba(0, 0, 0, 0.1);
+
+      @include s.media-breakpoint-up(sm) {
+        //white-space: nowrap;
+        width: 65rem;
+      }
+
+      .content {
+        $p: 2.5rem;
+        position: relative;
+        display: flex;
+        flex-flow: column;
+        height: 100%;
+        padding: $p;
+        //border: 1px solid red;
+
+        header {
+          display: flex;
+          margin-left: auto;
+          align-items: center;
+          justify-content: space-between;
+          width: max-content;
+          //border: 1px solid #000;
+
+          & :global {
+            .MuiIconButton-root {
+              border: thin solid lightsteelblue;
+            }
+          }
+        }
+
+        .loading_spinner {
+          display: grid;
+          place-items: center;
+          height: 90vh;
+
+          border: 1px solid #000;
+        }
+
+        .profile {
+          display: flex;
+          gap: 2rem;
+          flex-flow: column;
+
+            //border: 1px solid #000;
+
+          .list_item {
+            border-radius: .5rem;
+            padding: 0;
+            //margin-top: 4rem;
+
+            .list_item_btn {
+              padding: 1rem;
+            }
+            .name{
+              text-transform: capitalize;
+            }
+
+            .avatar {
+              // use box-shadow to create border for image
+              box-shadow: 0 0 0 3px #e3e3e3;
+              height: 8rem;
+              width: 8rem;
+              margin-right: 1.5rem;
+            }
+
+            .detail {
+              display: flex;
+              flex-wrap: wrap;
+              align-items: center;
+              gap: 1.5rem;
+              row-gap: .7rem;
+              margin-top: .5rem;
+              max-width: 90%;
+              //width: max-content;
+
+              //border: 1px solid #000;
+
+              .detail_item {
+                //flex: 1 30%;
+                display: flex;
+                gap: .3rem;
+                align-items: center;
+              }
+
+              p {
+                margin-top: .2rem;
+                //font-weight: 300;
+                color: black;
+                font-size: 1rem;
+              }
+            }
+
+            .skills {
+              display: flex;
+              gap: .3rem;
+              align-items: center;
+              margin-top: 1.5rem;
+
+              //border: 1px solid #000;
+
+              // select material ui chip
+                & :global{
+                  .MuiChip-root {
+                    color: gray;
+                  }
+                }
+            }
+
+            .actions {
+              margin-top: 2rem;
+              display: flex;
+              gap: 1rem;
+            }
+          }
+
+
+          .about{
+            .txt{
+              font-weight: 300;
+              font-size: 1.1rem;
+              //color: #464646;
+            }
+          }
+        }
+
+
+      }
+
+    }
+
+  }
+
+
+}

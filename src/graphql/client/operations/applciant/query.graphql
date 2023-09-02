@@ -1,0 +1,151 @@
+fragment ApplicantLight on Applicant{
+    id
+    about
+    jobPosition
+    salaryExpectation
+    WorkExperienceYears
+    location
+    englishLevel
+    otherLanguages
+    accomplishment
+
+
+    skillLevel
+    skills
+    experienceYear
+
+    resume
+    github
+    linkedin
+    portfolio
+
+}
+
+fragment Applicant on Applicant{
+    id
+    about
+    jobPosition
+    salaryExpectation
+    WorkExperienceYears
+    location
+    englishLevel
+    otherLanguages
+    accomplishment
+
+
+    skillLevel
+    skills
+    experienceYear
+
+    resume
+    github
+    linkedin
+    portfolio
+
+    workExperience {
+        companyName
+        position
+        startDate
+        endDate
+        accomplishment
+        companyWebsite
+        skills
+        ongoing
+
+        __typename
+    }
+
+    savedJobs {
+        edges {
+            node {
+                ...JopPost
+            }
+        }
+    }
+
+    account {
+        ...AccountFragment
+    }
+
+}
+
+query GetApplicants($input: GetApplicantsInput!){
+    getApplicants(input: $input){
+        edges {
+            node {
+                id
+                about
+                jobPosition
+                salaryExpectation
+                WorkExperienceYears
+                location
+                englishLevel
+                otherLanguages
+                accomplishment
+
+
+                skillLevel
+                skills
+                experienceYear
+
+                resume
+                github
+                linkedin
+                portfolio
+
+                account{
+                    ...AccountFragment
+                }
+            }
+        }
+    }
+}
+
+query GetApplicant($input: GetApplicantInput!){
+    getApplicant(input: $input){
+        id
+        about
+        jobPosition
+        salaryExpectation
+        WorkExperienceYears
+        location
+        englishLevel
+        otherLanguages
+        accomplishment
+
+
+        skillLevel
+        skills
+        experienceYear
+
+        resume
+        github
+        linkedin
+        portfolio
+
+        workExperience {
+            companyName
+            position
+            startDate
+            endDate
+            accomplishment
+            companyWebsite
+            skills
+            ongoing
+
+            __typename
+        }
+
+        savedJobs {
+            edges {
+                node {
+                    ...JopPost
+                }
+            }
+        }
+
+        account{
+            ...AccountFragment
+        }
+    }
+}

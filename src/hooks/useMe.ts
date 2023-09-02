@@ -1,5 +1,6 @@
 import { useSession } from 'next-auth/react';
 
+import { useResponseErrorHandler } from '@/components/commons/FixedLayer/ProfileView';
 import { useMeQuery } from '@/graphql/client/gql/schema';
 
 function useMe() {
@@ -15,6 +16,10 @@ function useMe() {
     },
   });
   const { data, loading, error } = mePayload;
+
+  // console.log('mePayload: ', mePayload);
+
+  useResponseErrorHandler(error, 'Error getting me !');
 
   return {
     me: data?.me,

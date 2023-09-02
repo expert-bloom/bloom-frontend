@@ -32,7 +32,7 @@ const SavedJobs = () => {
               </div>
             )}
 
-            {applicant.savedJobs.length === 0 && (
+            {applicant.savedJobs?.edges.length === 0 && (
               <Alert>
                 <AlertTitle>No Job-Posts</AlertTitle>
                 You have no saved jobs,{' '}
@@ -44,7 +44,7 @@ const SavedJobs = () => {
 
             {applicant.savedJobs && (
               <div className={s.list}>
-                {applicant.savedJobs.map((post, idx) => (
+                {applicant.savedJobs.edges.map(({ node: post }, idx) => (
                   <JobPostCard post={post} key={idx} />
                 ))}
               </div>

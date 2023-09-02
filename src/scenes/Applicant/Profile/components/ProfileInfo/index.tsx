@@ -203,17 +203,27 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
                           `Error removing thumbnail. ${error?.body ?? ''}`,
                         );
                       }
+
+                      void formik.setFieldValue(
+                        'account.image',
+                        formik.initialValues.account.image,
+                      );
+
                       // await formik.setFieldValue('image', '');
                     }}
                     onaddfile={(error, file) => {
-                      console.log('onAddFile :> ', file);
+                      console.log('onAddFile :> ', file, error);
                       if (error) {
                         console.log('onAdd file error : ', error);
                         return;
                       }
 
-                      if (file?.file && error !== null) {
+                      if (file?.file && error === null) {
                         void formik.setFieldValue('account.image', file.source);
+                        console.log(
+                          'onAddFile :> ',
+                          formik.values.account.image,
+                        );
                       }
                     }}
                     server={{

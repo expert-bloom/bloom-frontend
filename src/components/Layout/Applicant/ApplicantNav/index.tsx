@@ -110,7 +110,7 @@ export default function Applicant({ pageProps }: any) {
           className={clsx([s.container])}
           variants={navVariants}
           transition={navTransition}
-          id="applicant-nav"
+          id="top-nav"
         >
           <Stack
             direction="row"

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 
 import AccountSteps from '@/scenes/Company/DashboardCompany/AccountSteps';
 import CompanyProfile from '@/scenes/Company/DashboardCompany/CompanyProfile';
@@ -23,21 +23,25 @@ const DashboardCompany = () => {
             <MarketPlace />
           </div>
 
-          <div className={s.how_it_work}>
-            <HowItWork />
-          </div>
+          <Stack gap="2rem">
+            <div className={s.how_it_work}>
+              <HowItWork />
+            </div>
 
-          <div className={s.faq}>
-            <FAQ />
-          </div>
+            <div className={s.faq}>
+              <FAQ />
+            </div>
+          </Stack>
 
-          <div className={s.account_steps}>
-            <AccountSteps />
-          </div>
+          <Stack gap="2rem">
+            <div className={s.profile}>
+              <CompanyProfile />
+            </div>
 
-          <div className={s.profile}>
-            <CompanyProfile />
-          </div>
+            <div className={s.account_steps}>
+              <AccountSteps />
+            </div>
+          </Stack>
         </div>
       </div>
     </div>

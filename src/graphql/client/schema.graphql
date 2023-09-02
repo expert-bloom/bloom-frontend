@@ -9,11 +9,18 @@ interface IAccount {
     accountType: AccountType!
     createdAt: DateTime!
     email: String!
+    emailVerified: DateTime
     firstName: String!
     id: String!
     image: String
     lastName: String!
     phone: String
+}
+
+"An object with an ID"
+interface Node {
+    "The ID of the object."
+    id: ID!
 }
 
 interface PayloadError {
@@ -24,9 +31,11 @@ type Account implements IAccount {
     accountType: AccountType!
     createdAt: DateTime!
     email: String!
+    emailVerified: DateTime
     firstName: String!
+    fullName: String!
     id: String!
-    image: String
+    image: String!
     lastName: String!
     phone: String
 }
@@ -34,8 +43,8 @@ type Account implements IAccount {
 type AccountPayload {
     accountType: AccountType!
     affiliate: AffiliateLight
-    applicant: ApplicantLight
-    company: CompanyLight
+    applicant: Applicant
+    company: Company
     createdAt: DateTime!
     email: String!
     emailVerified: DateTime
@@ -47,7 +56,7 @@ type AccountPayload {
     phone: String
 }
 
-type AccountUpdatePayload implements PayloadError {
+type AccountUpdate implements PayloadError {
     account: AccountPayload
     errors: [Error!]!
 }
@@ -56,6 +65,7 @@ type Affiliate implements IAccount {
     accountType: AccountType!
     createdAt: DateTime!
     email: String!
+    emailVerified: DateTime
     firstName: String!
     id: String!
     image: String
@@ -67,16 +77,17 @@ type AffiliateLight {
     id: String!
 }
 
-type Applicant {
+type Applicant implements Node {
     WorkExperienceYears: Int
     about: String
     accomplishment: String
+    account: Account!
     education: String
     englishLevel: EnglishLevel
     experienceYear: Int
     gender: String
     github: String
-    id: String!
+    id: ID!
     jobPosition: String
     languages: [String]
     linkedin: String
@@ -85,32 +96,50 @@ type Applicant {
     portfolio: String
     resume: String
     salaryExpectation: Int
-    savedJobs: [JobPost!]!
+    savedJobs(after: String, before: String, first: Int, last: Int): ApplicantSavedJobPostConnections!
     skillLevel: ExperienceLevel
     skills: [String!]
     workExperience: [WorkExperience!]!
 }
 
-type ApplicantLight {
-    WorkExperienceYears: Int
-    about: String
-    accomplishment: String
-    education: String
-    englishLevel: EnglishLevel
-    experienceYear: Int
-    gender: String
-    github: String
-    id: String!
-    jobPosition: String
-    languages: [String]
-    linkedin: String
-    location: String
-    otherLanguages: [String]
-    portfolio: String
-    resume: String
-    salaryExpectation: Int
-    skillLevel: ExperienceLevel
-    skills: [String!]
+type ApplicantAccountConnections {
+    edges: [ApplicantAccountEdge!]!
+    pageInfo: PageInfo!
+}
+
+type ApplicantAccountEdge {
+    cursor: String!
+    node: Account!
+}
+
+type ApplicantAppliedJobPostEdge {
+    cursor: String!
+    node: JobPost!
+}
+
+type ApplicantConnection {
+    edges: [ApplicantEdge!]!
+    "Pagination data for this connection."
+    pageInfo: PageInfo!
+    "A total count of items in the collection."
+    totalCount: Int
+}
+
+type ApplicantEdge {
+    "A cursor for use in pagination."
+    cursor: String!
+    "The item at the end of the edge."
+    node: Applicant!
+}
+
+type ApplicantSavedJobPostConnections {
+    edges: [ApplicantSavedJobPostEdge!]!
+    pageInfo: PageInfo!
+}
+
+type ApplicantSavedJobPostEdge {
+    cursor: String!
+    node: JobPost!
 }
 
 type AuthAccountPayload {
@@ -138,22 +167,10 @@ type AuthPayload implements PayloadError {
     errors: [Error!]!
 }
 
-type Company implements IAccount {
-    accountType: AccountType!
+type Company implements Node {
+    account: Account!
     companyName: String
-    createdAt: DateTime!
-    email: String!
-    firstName: String!
-    id: String!
-    image: String
-    lastName: String!
-    logo: String
-    phone: String
-}
-
-type CompanyLight {
-    companyName: String
-    id: String!
+    id: ID!
     logo: String
 }
 
@@ -166,7 +183,7 @@ type FindOnePayload implements PayloadError {
     errors: [Error!]!
 }
 
-type JobPost {
+type JobPost implements Node {
     applicationDeadline: DateTime!
     category: [String!]!
     createdAt: DateTime!
@@ -174,7 +191,7 @@ type JobPost {
     email: String!
     englishLevel: EnglishLevel!
     experienceLevel: ExperienceLevel!
-    id: String!
+    id: ID!
     interviewQuestions: [String!]!
     isVisible: Boolean!
     jobExperience: Int!
@@ -191,35 +208,20 @@ type JobPost {
     vacancy: Int!
 }
 
-type JobPostPayload {
+type JobPostCreate {
     errors: [Error!]!
     jobPost: JobPost
 }
 
-type MeAccountPayload {
-    accountType: AccountType!
-    affiliate: AffiliateLight
-    applicant: Applicant
-    company: CompanyLight
-    createdAt: DateTime!
-    email: String!
-    emailVerified: DateTime
-    firstName: String!
-    id: String!
-    image: String
-    lastName: String!
-    oAuthClient: [OAuth!]!
-    phone: String
-}
-
 type Mutation {
-    createJobPost(input: CreateJobPostInput!): JobPostPayload!
+    applicantProfileUpdate(input: ApplicantProfileUpdateInput!): AccountUpdate!
+    createJobPost(input: CreateJobPostInput!): JobPostCreate!
     logIn(input: LoginInput!): AuthPayload!
+    profileUpdate(input: UpdateProfileInput!): AccountUpdate!
     saveJobPost(input: SaveJobPostInput!): JobPost
     sayHi: String!
     signUp(input: SignUpInput!): AuthPayload!
     signUpOAuth(input: OAuthSignUpInput!): AuthPayload!
-    updateProfile(input: UpdateProfileInput!): AccountUpdatePayload!
 }
 
 type OAuth {
@@ -232,13 +234,22 @@ type OAuth {
     tokenType: String!
 }
 
+type PageInfo {
+    endCursor: String
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
+    startCursor: String
+}
+
 type Query {
     findAccount(input: AccountInput!): FindOnePayload
+    getApplicant(input: GetApplicantInput!): Applicant
+    getApplicants(input: GetApplicantsInput!): ApplicantConnection
     getCompanies: [Company!]!
     getJobPost(input: GetJobPostInput!): JobPost
     getJobPosts(input: JopPostFilterInput): [JobPost!]!
     getSavedJobPosts(input: SavedJobPostsInput!): [JobPost!]!
-    me(input: MeInput!): MeAccountPayload
+    me(input: MeInput!): AccountPayload
     sayHi: String
 }
 
@@ -246,11 +257,24 @@ type WorkExperience {
     accomplishment: String!
     companyName: String!
     companyWebsite: String
-    endDate: DateTime!
+    endDate: DateTime
     ongoing: Boolean!
     position: String!
     skills: [String!]!
     startDate: DateTime!
+}
+
+enum AccountSortField {
+    "Sort users by created at."
+    CREATED_AT
+    "Sort users by email."
+    EMAIL
+    "Sort users by first name."
+    FIRST_NAME
+    "Sort users by last modified at."
+    LAST_MODIFIED_AT
+    "Sort users by last name."
+    LAST_NAME
 }
 
 enum AccountType {
@@ -293,6 +317,13 @@ enum JobType {
     PART_TIME
 }
 
+enum OrderDirection {
+    "Specifies an ascending sort order."
+    ASC
+    "Specifies a descending sort order."
+    DESC
+}
+
 enum SalaryType {
     HOURLY
     MONTHLY
@@ -321,6 +352,21 @@ input AccountUpdateInput {
     image: String
     lastName: String
     phone: String
+}
+
+input ApplicantFilter {
+    ids: [String!]
+}
+
+input ApplicantOrdering {
+    direction: OrderDirection!
+    field: AccountSortField!
+}
+
+input ApplicantProfileUpdateInput {
+    account: AccountUpdateInput
+    accountId: String!
+    applicant: ApplicantUpdateInput
 }
 
 input ApplicantUpdateInput {
@@ -363,6 +409,19 @@ input CreateJobPostInput {
     skills: [String!]!
     title: String!
     vacancy: Int!
+}
+
+input GetApplicantInput {
+    id: String!
+}
+
+input GetApplicantsInput {
+    after: String
+    before: String
+    filter: ApplicantFilter
+    first: Int
+    last: Int
+    orderBy: [ApplicantOrdering!]
 }
 
 input GetJobPostInput {

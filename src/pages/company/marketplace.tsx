@@ -1,7 +1,9 @@
 import React from 'react';
 
+import MarketPlaceScene from '@/scenes/Company/MarketPlace';
+
 const MarketPlace = () => {
-  return <div></div>;
+  return <MarketPlaceScene />;
 };
 
 export default MarketPlace;

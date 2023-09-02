@@ -1,0 +1,79 @@
+@use '@/styles/index' as s;
+
+.container {
+  width: 100%;
+  min-height: 100vh;
+  margin-top: 1.5rem;
+
+  //border: 1px solid #000;
+
+  & :local {
+
+    .list{
+      //margin-top: 4rem;
+      //padding: 1rem;
+
+
+      border-radius: 1.2rem;
+
+      & > :not(:last-child) {
+        margin-bottom: .8rem;
+        //border-bottom: 1px solid #e7e7e7;
+      }
+
+      .list_item {
+        border: 1px solid #e7e7e7;
+        border-radius: .5rem;
+        padding: 0;
+
+        .list_item_btn{
+          padding: 1rem;
+        }
+
+        .avatar{
+          // use box-shadow to create border for image
+          box-shadow: 0 0 0 3px #e3e3e3;
+          height: 6rem;
+          width: 6rem;
+          margin-right: 1.5rem;
+        }
+
+        .detail {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          margin-top: .25rem;
+
+          .detail_item{
+            display: flex;
+            gap: .3rem;
+            align-items: center;
+          }
+
+          p{
+            margin-top: .2rem;
+            font-weight: 300;
+            color: black;
+          }
+        }
+
+        .skills {
+          display: flex;
+          gap: .3rem;
+          align-items: center;
+          margin-top: .5rem;
+
+          //border: 1px solid #000;
+        }
+
+      }
+
+    }
+
+    .pagination{
+      margin-top: 2rem;
+      margin-left: auto;
+      width: max-content;
+    }
+  }
+}

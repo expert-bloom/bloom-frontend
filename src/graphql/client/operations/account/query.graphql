@@ -1,3 +1,17 @@
+fragment AccountFragment on Account {
+    id
+    email
+    emailVerified
+    accountType
+    image
+    firstName
+    fullName
+    lastName
+    createdAt
+    phone
+
+}
+
 fragment AccountPayloadFragment on AccountPayload{
     id
     email
@@ -10,26 +24,9 @@ fragment AccountPayloadFragment on AccountPayload{
     phone
 
     applicant{
-        id
-        about
-        jobPosition
-        salaryExpectation
-        WorkExperienceYears
-        location
-        englishLevel
-        otherLanguages
-        accomplishment
-
-
-        skillLevel
-        skills
-        experienceYear
-
-        resume
-        github
-        linkedin
-        portfolio
+        ...Applicant
     }
+
     company {
         id
         companyName
@@ -46,70 +43,6 @@ fragment AccountPayloadFragment on AccountPayload{
     }
 }
 
-fragment MePayloadFragment on MeAccountPayload{
-    id
-    email
-    emailVerified
-    accountType
-    image
-    firstName
-    lastName
-    createdAt
-    phone
-
-    applicant{
-        id
-        about
-        jobPosition
-        salaryExpectation
-        WorkExperienceYears
-        location
-        englishLevel
-        otherLanguages
-        accomplishment
-
-
-        skillLevel
-        skills
-        experienceYear
-
-        resume
-        github
-        linkedin
-        portfolio
-
-        workExperience {
-            companyName
-            position
-            startDate
-            endDate
-            accomplishment
-            companyWebsite
-            skills
-            ongoing
-
-            __typename
-        }
-
-        savedJobs {
-            ...JopPost
-        }
-    }
-    company {
-        id
-        companyName
-        logo
-    }
-
-    oAuthClient {
-        id
-        provider
-    }
-
-    affiliate {
-        id
-    }
-}
 
 query FindAccount($input: AccountInput!) {
     findAccount(input: $input){
@@ -125,7 +58,7 @@ query FindAccount($input: AccountInput!) {
 
 query Me($input: MeInput!) {
     me(input: $input){
-        ...MePayloadFragment
+        ...AccountPayloadFragment
     }
 }
 

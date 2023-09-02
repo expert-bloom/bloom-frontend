@@ -74,7 +74,7 @@ const navTransition = {
 const links = [
   {
     name: 'Dashboard',
-    href: '/dashboard/company',
+    href: '/company/dashboard',
     Icon: Dashboard,
   },
   {
@@ -107,7 +107,7 @@ export default function CompanyNav({ pageProps }: any) {
 
   return (
     <HideOnScroll>
-      <div style={{ width: '100%', display: 'flex' }}>
+      <div style={{ width: '100%', display: 'flex' }} id="top-nav">
         <motion.nav
           className={clsx([s.container])}
           variants={navVariants}
@@ -141,8 +141,6 @@ export default function CompanyNav({ pageProps }: any) {
               </Link>
             ))}
           </div>
-
-          <AccountAlert />
 
           <Tooltip title="Profile">
             <Avatar

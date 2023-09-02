@@ -17,7 +17,12 @@ const config: CodegenConfig = {
       config: {
         useImplementingTypes: true, // enumsAsTypes: true,
         useTypeImports: true,
-        avoidOptionals: true,
+        avoidOptionals: {
+          field: true,
+          // inputValue: false,
+          // object: true,
+          defaultValue: true,
+        },
         skipTypename: true,
 
         // avoid the __typename prop
