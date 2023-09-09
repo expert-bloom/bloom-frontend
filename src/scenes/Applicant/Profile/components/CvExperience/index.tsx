@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-misused-promises,@typescript-eslint/prefer-nullish-coalescing */
+/* eslint-disable @typescript-eslint/no-misused-promises,@typescript-eslint/prefer-nullish-coalescing,@typescript-eslint/restrict-template-expressions */
 import React, { useEffect, useRef } from 'react';
 
 import {
@@ -31,6 +31,7 @@ import { useFormik } from 'formik';
 import moment from 'moment';
 import { toast } from 'react-hot-toast';
 
+import useMe from '@/hooks/useMe';
 import FilePond from '@/lib/filePong';
 import { usePresignedUpload } from '@/lib/uploader';
 import { useProfileSettingFormContext } from '@/scenes/Applicant/Profile';
@@ -57,7 +58,7 @@ const initialExperience: WorkExperienceFormValuesType = {
 const ProfileInfo = ({ stepUtil }: StepProps) => {
   const { formik } = useProfileSettingFormContext();
   const filePond = useRef<FilePond>(null);
-
+  const me = useMe();
   const { uploadToS3 } = usePresignedUpload();
 
   const onSubmit: NestedOnSubmit = async (values, formikHelpers) => {
@@ -95,7 +96,7 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
 
       console.log('url : ', url);
 
-      // await formik.setFieldValue('applicant.resume', url.serverId);
+      await formik.setFieldValue('applicant.resume', url.serverId);
       toast.dismiss(loadingToast);
       return {
         ...values,
@@ -153,7 +154,20 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
     },
   });
 
-  console.log('experienceForm : ', formik.values);
+  // console.log('experienceForm : ', me.me?.applicant);
+
+  useEffect(() => {
+    if (!filePond.current) return;
+
+    if (
+      me.me?.applicant?.resume &&
+      me.me?.applicant?.resume !== filePond.current.getFile()?.source
+    ) {
+      console.log('image values ', me.me?.image);
+
+      void filePond.current?.addFile(me.me?.applicant?.resume ?? '');
+    }
+  }, [me.me?.applicant?.resume]);
 
   return (
     <div className={s.container}>
@@ -181,15 +195,6 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
               labelIdle={
                 'Drag & Drop your CV (Resume) or <b class="filepond--label-action">Browse</b>'
               }
-              acceptedFileTypes={[
-                'application/pdf',
-                'application/msword',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                '.doc',
-                '.docx',
-                'text/csv',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-              ]}
               onaddfile={(error, file) => {
                 console.log('onAddFile :> ', file, error);
                 if (error) {
@@ -197,18 +202,32 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
                   return;
                 }
 
-                if (file?.file) {
+                if (file?.file && error === null) {
                   void formik.setFieldValue('applicant.resume', file.source);
                 }
               }}
-              onerror={(err) => {
+              onerror={(err: any, file, status) => {
                 console.log('Error cv resume: ', err);
+                toast.error(
+                  `${status.main ?? err?.main ?? 'Error loading image'} - ${
+                    status.sub ?? err?.sub ?? ''
+                  }`,
+                );
               }}
-              onremovefile={(err, file) => {
+              onremovefile={async (err, file) => {
                 console.log('file-pond -remove: ', err, file);
+
+                if (err) {
+                  return toast.error(
+                    `Error removing thumbnail. ${err?.body ?? ''}`,
+                  );
+                }
+
                 void formik.setFieldValue(
                   'applicant.resume',
-                  formik.initialValues.applicant.resume,
+                  formik.initialValues.applicant.resume
+                    ? null
+                    : formik.initialValues.applicant.resume,
                 );
               }}
               onprocessfile={(err, file) => {
@@ -216,21 +235,21 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
               }}
               server={{
                 /* fetch: async (url, load, error, progress, abort, headers) => {
-                  console.log('fetch url: ', url);
+                 console.log('fetch url: --- ', url);
 
-                  fetch(`${process.env.NEXT_PUBLIC_URL}/api/image?url=${url}`)
-                    .then(async (response) => {
-                      const blob = await response.blob();
-                      const file = new File([blob], 'fileName', {
-                        type: blob.type,
-                      });
+                 fetch(url)
+                   .then(async (response) => {
+                     const blob = await response.blob();
+                     const file = new File([blob], 'fileName', {
+                       type: blob.type,
+                     });
 
-                      load(file);
-                    })
-                    .catch((err) => {
-                      console.log('image fetch error : ', err);
-                    });
-                }, */
+                     load(file);
+                   })
+                   .catch((err) => {
+                     console.log('image fetch error : ', err);
+                   });
+               }, */
                 process: async (
                   fieldName,
                   file,
@@ -251,7 +270,8 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
                         endpoint: {
                           request: {
                             body: {
-                              filePath: 'bloom/cv/',
+                              // filePath: 'bloom/cv/',
+                              filePath: 'bloom',
                             },
                           },
                         },

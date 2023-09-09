@@ -172,6 +172,7 @@ type Company implements Node {
     companyName: String
     id: ID!
     logo: String
+    savedApplicants: [Applicant!]!
 }
 
 type Error {
@@ -218,6 +219,7 @@ type Mutation {
     createJobPost(input: CreateJobPostInput!): JobPostCreate!
     logIn(input: LoginInput!): AuthPayload!
     profileUpdate(input: UpdateProfileInput!): AccountUpdate!
+    saveApplicant(input: SaveApplicantInput!): Boolean
     saveJobPost(input: SaveJobPostInput!): JobPost
     sayHi: String!
     signUp(input: SignUpInput!): AuthPayload!
@@ -248,6 +250,7 @@ type Query {
     getCompanies: [Company!]!
     getJobPost(input: GetJobPostInput!): JobPost
     getJobPosts(input: JopPostFilterInput): [JobPost!]!
+    getSavedApplicant(input: GetSavedApplicantInput!): [Applicant!]!
     getSavedJobPosts(input: SavedJobPostsInput!): [JobPost!]!
     me(input: MeInput!): AccountPayload
     sayHi: String
@@ -428,6 +431,10 @@ input GetJobPostInput {
     id: String!
 }
 
+input GetSavedApplicantInput {
+    companyId: String!
+}
+
 input JopPostFilterInput {
     companyId: String!
 }
@@ -471,6 +478,12 @@ input OAuthLoginInput {
 input OAuthSignUpInput {
     OAuth: OAuthInput!
     account: OAuthAccountInput!
+}
+
+input SaveApplicantInput {
+    applicantId: String!
+    companyId: String!
+    save: Boolean! = true
 }
 
 input SaveJobPostInput {

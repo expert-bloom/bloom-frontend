@@ -31,6 +31,10 @@ fragment AccountPayloadFragment on AccountPayload{
         id
         companyName
         logo
+
+        savedApplicants {
+            id
+        }
     }
 
     oAuthClient {

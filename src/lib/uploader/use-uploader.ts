@@ -54,8 +54,8 @@ const getUploadParams = async (
   };
 
   const headers = {
-    ...additionalHeaders,
     'Content-Type': 'application/json',
+    ...additionalHeaders,
   };
 
   const res = await fetch(apiRouteUrl, {

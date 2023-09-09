@@ -48,14 +48,13 @@ const Filter = () => {
   return (
     <Card elevation={0} className={s.left}>
       <header>
-        <Stack direction="row" spacing={2} alignItems="center">
-          <Typography variant="h5" color="gray">
-            Filter By
-          </Typography>
-
+        <Stack direction="row" spacing={1} alignItems="center">
           <Icon>
             <FilterAltOutlined />
           </Icon>
+          <Typography variant="h5" color="gray">
+            Filter By
+          </Typography>
         </Stack>
       </header>
 

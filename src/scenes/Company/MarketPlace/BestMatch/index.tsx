@@ -7,6 +7,7 @@ import {
   Place,
   Save,
 } from '@mui/icons-material';
+import { LoadingButton } from '@mui/lab';
 import {
   Avatar,
   Button,
@@ -22,7 +23,13 @@ import {
 } from '@mui/material';
 import { toast } from 'react-hot-toast';
 
-import { useGetApplicantsQuery } from '@/graphql/client/gql/schema';
+import {
+  GetSavedApplicantsDocument,
+  MeDocument,
+  SaveApplicantDocument,
+  useGetApplicantsQuery,
+  useSaveApplicantMutation,
+} from '@/graphql/client/gql/schema';
 import useMe from '@/hooks/useMe';
 import { useAppStore } from '@/lib/store';
 
@@ -45,6 +52,21 @@ const MarketPlace = () => {
     },
   });
 
+  const [saveApplicant, savedPayload] = useSaveApplicantMutation();
+
+  const onSaveApplicant = (applicantId: string, save = true) => {
+    const saved = saveApplicant({
+      variables: {
+        input: {
+          companyId: me?.company?.id ?? '',
+          applicantId,
+          save,
+        },
+      },
+      refetchQueries: [MeDocument, GetSavedApplicantsDocument],
+    });
+  };
+
   // console.log('applicantsPayload : ', applicantsPayload);
 
   useEffect(() => {
@@ -61,83 +83,89 @@ const MarketPlace = () => {
     <div className={s.container}>
       <List className={s.list}>
         {applicantsPayload.data?.getApplicants?.edges
-          .concat(applicantsPayload.data?.getApplicants?.edges)
-          .concat(applicantsPayload.data?.getApplicants?.edges)
-          .concat(applicantsPayload.data?.getApplicants?.edges)
-          .map(({ node: applicant }, idx) => (
-            <ListItem
-              key={idx}
-              className={s.list_item}
-              secondaryAction={
-                <Stack direction="row" alignItems="center">
-                  <Button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                    startIcon={<CalendarToday />}
-                  >
-                    Interview
-                  </Button>
-                  <Button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                    startIcon={<Save />}
-                  >
-                    Save
-                  </Button>
-                </Stack>
-              }
-              onClick={() => {
-                setProfileDetail({
-                  profileId: applicant?.id,
-                });
-              }}
-            >
-              <ListItemButton className={s.list_item_btn}>
-                <ListItemIcon>
-                  <Avatar className={s.avatar} src={applicant?.account.image} />
-                </ListItemIcon>
-                <ListItemText
-                  primary={
-                    <Typography variant="h6" color="gray" fontWeight="600">
-                      {`${applicant?.account.firstName} ${applicant.account.lastName}`}
-                    </Typography>
-                  }
-                  secondary={
-                    <Stack className={s.secondary}>
-                      <div className={s.detail}>
-                        <div className={s.detail_item}>
-                          <BusinessCenter fontSize="small" />
-                          <Typography variant="body2">
-                            {applicant.jobPosition}
-                          </Typography>
-                        </div>
-                        -
-                        <div className={s.detail_item}>
-                          <MonetizationOn fontSize="small" />
-                          <Typography variant="body2">
-                            {applicant.salaryExpectation?.toLocaleString()}
-                            /mo
-                          </Typography>
-                        </div>
-                        -
-                        <div className={s.detail_item}>
-                          <Place fontSize="small" />
-                          <Typography variant="body2">
-                            {applicant.location}
-                          </Typography>
-                        </div>
-                      </div>
+          // .concat(applicantsPayload.data?.getApplicants?.edges)
+          // .concat(applicantsPayload.data?.getApplicants?.edges)
+          // .concat(applicantsPayload.data?.getApplicants?.edges)
+          .map(({ node: applicant }, idx) => {
+            const saved = me?.company?.savedApplicants.find(
+              (savedApplicant) => savedApplicant.id === applicant.id,
+            );
 
-                      <div className={s.skills}>
-                        skills:
-                        {applicant?.skills
-                          ?.slice(0, 4)
-                          ?.concat(applicant.skills)
-                          ?.concat(applicant.skills)
-                          ?.concat(applicant.skills)
-                          .map((skill, idx) => (
+            return (
+              <ListItem
+                key={idx}
+                className={s.list_item}
+                secondaryAction={
+                  <Stack direction="row" alignItems="center">
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                      startIcon={<CalendarToday />}
+                    >
+                      Interview
+                    </Button>
+                    <LoadingButton
+                      loading={savedPayload.loading}
+                      onClick={(e) => {
+                        e.stopPropagation();
+
+                        onSaveApplicant(applicant.id, !saved);
+                      }}
+                      startIcon={<Save />}
+                    >
+                      {saved ? 'Unsave' : 'Save'}
+                    </LoadingButton>
+                  </Stack>
+                }
+                onClick={() => {
+                  setProfileDetail({
+                    profileId: applicant?.id,
+                  });
+                }}
+              >
+                <ListItemButton className={s.list_item_btn}>
+                  <ListItemIcon>
+                    <Avatar
+                      className={s.avatar}
+                      src={applicant?.account.image}
+                    />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={
+                      <Typography variant="h6" color="gray" fontWeight="600">
+                        {`${applicant?.account.firstName} ${applicant.account.lastName}`}
+                      </Typography>
+                    }
+                    secondary={
+                      <Stack className={s.secondary}>
+                        <div className={s.detail}>
+                          <div className={s.detail_item}>
+                            <BusinessCenter fontSize="small" />
+                            <Typography variant="body2">
+                              {applicant.jobPosition}
+                            </Typography>
+                          </div>
+                          -
+                          <div className={s.detail_item}>
+                            <MonetizationOn fontSize="small" />
+                            <Typography variant="body2">
+                              {applicant.salaryExpectation?.toLocaleString()}
+                              /mo
+                            </Typography>
+                          </div>
+                          -
+                          <div className={s.detail_item}>
+                            <Place fontSize="small" />
+                            <Typography variant="body2">
+                              {applicant.location}
+                            </Typography>
+                          </div>
+                        </div>
+
+                        <div className={s.skills}>
+                          skills:
+                          {applicant?.skills?.slice(0, 5).map((skill, idx) => (
                             <>
                               <Chip
                                 key={idx}
@@ -147,13 +175,14 @@ const MarketPlace = () => {
                               />
                             </>
                           ))}
-                      </div>
-                    </Stack>
-                  }
-                />
-              </ListItemButton>
-            </ListItem>
-          ))}
+                        </div>
+                      </Stack>
+                    }
+                  />
+                </ListItemButton>
+              </ListItem>
+            );
+          })}
       </List>
 
       <Pagination

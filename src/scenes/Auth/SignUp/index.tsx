@@ -1,20 +1,23 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import React, { useEffect, useState } from 'react';
-import s from './signup.module.scss';
-import { Form, Formik, type FormikProps } from 'formik';
-import { MoButton } from '@/components/MoButton';
+
 import { ArrowCircleRightTwoTone } from '@mui/icons-material';
-import AuthType from '@/scenes/Auth/SignUp/component/AuthType';
-import AuthDetails from '@/scenes/Auth/SignUp/component/AuthDetails';
 import { Button, Typography } from '@mui/material';
-import { signIn } from 'next-auth/react';
-import Link from 'next/link';
-import { AuthTypeKeys } from '@/constants';
 import { type Country } from 'countries-list';
-import { toast } from 'react-hot-toast';
+import { Form, Formik, type FormikProps } from 'formik';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { AccountType, type SignUpInput } from '@/graphql/client/gql/schema';
+import { signIn } from 'next-auth/react';
 import { type SignInOptions } from 'next-auth/src/react/types';
+import { toast } from 'react-hot-toast';
+
+import { MoButton } from '@/components/MoButton';
+import { AuthTypeKeys } from '@/constants';
+import { AccountType, type SignUpInput } from '@/graphql/client/gql/schema';
+import AuthDetails from '@/scenes/Auth/SignUp/component/AuthDetails';
+import AuthType from '@/scenes/Auth/SignUp/component/AuthType';
+
+import s from './signup.module.scss';
 
 const initialValues = {
   type: '' as AccountType,

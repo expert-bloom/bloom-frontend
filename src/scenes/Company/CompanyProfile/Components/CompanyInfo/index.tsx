@@ -13,38 +13,24 @@ import {
   Typography,
 } from '@mui/material';
 import clsx from 'clsx';
-import { isEqual } from 'lodash';
 import { FilePond } from 'react-filepond';
 import { toast } from 'react-hot-toast';
 import Z from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 
-import { EnglishLevel, ExperienceLevel } from '@/graphql/client/gql/schema';
+import { EnglishLevel } from '@/graphql/client/gql/schema';
 import useMe from '@/hooks/useMe';
 import { Editor } from '@/lib/filePong';
 import { usePresignedUpload } from '@/lib/uploader';
-import { useProfileSettingFormContext } from '@/scenes/Applicant/Profile';
 import {
   type NestedOnSubmit,
   type StepProps,
 } from '@/scenes/Applicant/Profile/data';
+import { useCompanyProfileSettingFormContext } from '@/scenes/Company/CompanyProfile';
 import { skillOption } from '@/scenes/CreateJobPost/JobRequirement';
 import { capitalize } from '@/utils';
 
 import s from './profileinfo.module.scss';
-
-interface Pro {
-  image: string | undefined | null;
-  about: string | undefined;
-  jobPosition: string | undefined;
-  salaryExpectation: string | undefined;
-  workExperience: any;
-  experience: any;
-  skillLevel: any;
-  englishLevel: any;
-  accomplishment: any;
-  skill: any;
-}
 
 const schema = toFormikValidationSchema(
   Z.object({
@@ -54,7 +40,7 @@ const schema = toFormikValidationSchema(
 
 const ProfileInfo = ({ stepUtil }: StepProps) => {
   const { uploadToS3 } = usePresignedUpload();
-  const { formik } = useProfileSettingFormContext();
+  const { formik } = useCompanyProfileSettingFormContext();
   const { values, handleChange } = formik;
   const filePond = useRef<FilePond>(null);
 
@@ -146,7 +132,7 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
         <Stack alignItems="center" gap="2rem">
           <fieldset className={s.wrap}>
             <legend>
-              <Typography variant="h6">Profile</Typography>
+              <Typography variant="h6">Company Info</Typography>
             </legend>
 
             <Stack alignItems="center" sx={{ mb: '2rem' }}>
@@ -306,7 +292,7 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
             </Stack>
 
             <Stack spacing={0.5} flex="1" style={{ width: '100%' }}>
-              <FormLabel>About</FormLabel>
+              <FormLabel>About Company</FormLabel>
               <TextField
                 name="applicant.about"
                 fullWidth
@@ -317,65 +303,6 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
                 error={Boolean(formik.errors.applicant?.about)}
                 helperText={formik.errors.applicant?.about as string}
               />
-            </Stack>
-
-            <Stack>
-              <FormLabel>Job Position</FormLabel>
-              <TextField
-                name="applicant.jobPosition"
-                // disabled
-
-                fullWidth
-                onChange={handleChange}
-                value={values.applicant.jobPosition}
-                error={Boolean(formik.errors.applicant?.jobPosition)}
-                helperText={formik.errors.applicant?.jobPosition as string}
-              />
-            </Stack>
-
-            <Stack spacing={0.5} flex="1" style={{ width: '100%' }}>
-              <FormLabel>Salary Expectation</FormLabel>
-              <TextField
-                name="applicant.salaryExpectation"
-                type="number"
-                fullWidth
-                onChange={handleChange}
-                value={values.applicant.salaryExpectation}
-                error={Boolean(formik.errors.applicant?.salaryExpectation)}
-                helperText={formik.errors.applicant?.salaryExpectation}
-              />
-            </Stack>
-
-            <Stack className={s.slider}>
-              <Typography color="gray" variant="body2">
-                Work Experience
-              </Typography>
-              <Stack sx={{ width: '100%' }}>
-                <Slider
-                  valueLabelDisplay="auto"
-                  defaultValue={0}
-                  step={1}
-                  min={0}
-                  max={10}
-                  name="applicant.experienceYear"
-                  marks={true}
-                  value={values.applicant.experienceYear}
-                  onChange={(e, value) => {
-                    void formik.setFieldValue(
-                      'applicant.experienceYear',
-                      value,
-                    );
-                  }}
-                />
-                <Typography className={s.slider_label}>
-                  {values.applicant.experienceYear === 0
-                    ? 'No Experience'
-                    : values.applicant.experienceYear === 10
-                    ? '10+ '
-                    : `${values.applicant.experienceYear} `}{' '}
-                  Years
-                </Typography>
-              </Stack>
             </Stack>
 
             <FormControl>
@@ -426,23 +353,6 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
                 value={values.applicant.englishLevel}
               >
                 {Object.values(EnglishLevel).map((value, idx) => (
-                  <MenuItem value={value} key={idx}>
-                    {capitalize(value.toLowerCase()).replace('_', '-')}
-                  </MenuItem>
-                ))}
-              </Select>
-            </Stack>
-
-            <Stack gap={0.5} flex="1">
-              <FormLabel htmlFor="skill-level">Your Skill Level</FormLabel>
-
-              <Select
-                id="skill-level"
-                name="applicant.skillLevel"
-                onChange={handleChange}
-                value={values.applicant.skillLevel}
-              >
-                {Object.values(ExperienceLevel).map((value, idx) => (
                   <MenuItem value={value} key={idx}>
                     {capitalize(value.toLowerCase()).replace('_', '-')}
                   </MenuItem>

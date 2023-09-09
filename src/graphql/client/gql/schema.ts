@@ -255,6 +255,7 @@ export type Company = Node & {
   companyName: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   logo: Maybe<Scalars['String']['output']>;
+  savedApplicants: Array<Applicant>;
 };
 
 export type CreateJobPostInput = {
@@ -327,6 +328,10 @@ export type GetApplicantsInput = {
 
 export type GetJobPostInput = {
   id: Scalars['String']['input'];
+};
+
+export type GetSavedApplicantInput = {
+  companyId: Scalars['String']['input'];
 };
 
 export type IAccount = {
@@ -402,6 +407,7 @@ export type Mutation = {
   createJobPost: JobPostCreate;
   logIn: AuthPayload;
   profileUpdate: AccountUpdate;
+  saveApplicant: Maybe<Scalars['Boolean']['output']>;
   saveJobPost: Maybe<JobPost>;
   sayHi: Scalars['String']['output'];
   signUp: AuthPayload;
@@ -422,6 +428,10 @@ export type MutationLogInArgs = {
 
 export type MutationProfileUpdateArgs = {
   input: UpdateProfileInput;
+};
+
+export type MutationSaveApplicantArgs = {
+  input: SaveApplicantInput;
 };
 
 export type MutationSaveJobPostArgs = {
@@ -509,6 +519,7 @@ export type Query = {
   getCompanies: Array<Company>;
   getJobPost: Maybe<JobPost>;
   getJobPosts: Array<JobPost>;
+  getSavedApplicant: Array<Applicant>;
   getSavedJobPosts: Array<JobPost>;
   me: Maybe<AccountPayload>;
   sayHi: Maybe<Scalars['String']['output']>;
@@ -534,6 +545,10 @@ export type QueryGetJobPostsArgs = {
   input?: InputMaybe<JopPostFilterInput>;
 };
 
+export type QueryGetSavedApplicantArgs = {
+  input: GetSavedApplicantInput;
+};
+
 export type QueryGetSavedJobPostsArgs = {
   input: SavedJobPostsInput;
 };
@@ -548,6 +563,12 @@ export enum SalaryType {
   OneTime = 'ONE_TIME',
   Yearly = 'YEARLY',
 }
+
+export type SaveApplicantInput = {
+  applicantId: Scalars['String']['input'];
+  companyId: Scalars['String']['input'];
+  save: Scalars['Boolean']['input'];
+};
 
 export type SaveJobPostInput = {
   accountId: Scalars['String']['input'];
@@ -688,6 +709,7 @@ export type UpdateProfileMutation = {
         id: string;
         companyName: string | null;
         logo: string | null;
+        savedApplicants: Array<{ id: string }>;
       } | null;
       oAuthClient: Array<{ id: string; provider: string }>;
       affiliate: { id: string } | null;
@@ -791,6 +813,7 @@ export type AccountPayloadFragmentFragment = {
     id: string;
     companyName: string | null;
     logo: string | null;
+    savedApplicants: Array<{ id: string }>;
   } | null;
   oAuthClient: Array<{ id: string; provider: string }>;
   affiliate: { id: string } | null;
@@ -886,6 +909,7 @@ export type FindAccountQuery = {
         id: string;
         companyName: string | null;
         logo: string | null;
+        savedApplicants: Array<{ id: string }>;
       } | null;
       oAuthClient: Array<{ id: string; provider: string }>;
       affiliate: { id: string } | null;
@@ -981,6 +1005,7 @@ export type MeQuery = {
       id: string;
       companyName: string | null;
       logo: string | null;
+      savedApplicants: Array<{ id: string }>;
     } | null;
     oAuthClient: Array<{ id: string; provider: string }>;
     affiliate: { id: string } | null;
@@ -1292,6 +1317,12 @@ export type SignUpOAuthMutation = {
   };
 };
 
+export type SaveApplicantMutationVariables = Exact<{
+  input: SaveApplicantInput;
+}>;
+
+export type SaveApplicantMutation = { saveApplicant: boolean | null };
+
 export type GetCompaniesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetCompaniesQuery = {
@@ -1299,6 +1330,84 @@ export type GetCompaniesQuery = {
     id: string;
     companyName: string | null;
     logo: string | null;
+  }>;
+};
+
+export type GetSavedApplicantsQueryVariables = Exact<{
+  input: GetSavedApplicantInput;
+  skipSavedJobs?: InputMaybe<Scalars['Boolean']['input']>;
+  skipWorkExperience?: InputMaybe<Scalars['Boolean']['input']>;
+}>;
+
+export type GetSavedApplicantsQuery = {
+  getSavedApplicant: Array<{
+    id: string;
+    about: string | null;
+    jobPosition: string | null;
+    salaryExpectation: number | null;
+    WorkExperienceYears: number | null;
+    location: string | null;
+    englishLevel: EnglishLevel | null;
+    otherLanguages: Array<string | null> | null;
+    accomplishment: string | null;
+    skillLevel: ExperienceLevel | null;
+    skills: Array<string> | null;
+    experienceYear: number | null;
+    resume: string | null;
+    github: string | null;
+    linkedin: string | null;
+    portfolio: string | null;
+    savedJobs?: {
+      edges: Array<{
+        node: {
+          id: string;
+          title: string;
+          applicationDeadline: any;
+          description: string;
+          location: string;
+          salary: Array<number>;
+          salaryType: SalaryType;
+          jobType: JobType;
+          category: Array<string>;
+          vacancy: number;
+          email: string;
+          jobSite: JobSite;
+          isVisible: boolean;
+          jobExperience: number;
+          experienceLevel: ExperienceLevel;
+          englishLevel: EnglishLevel;
+          otherLanguages: Array<string>;
+          skills: Array<string>;
+          qualifications: Array<string>;
+          interviewQuestions: Array<string>;
+          createdAt: any;
+          updatedAt: any;
+        };
+      }>;
+    };
+    workExperience?: Array<{
+      __typename: 'WorkExperience';
+      companyWebsite: string | null;
+      companyName: string;
+      position: string;
+      startDate: any;
+      endDate: any | null;
+      accomplishment: string;
+      skills: Array<string>;
+      ongoing: boolean;
+    }>;
+    account: {
+      id: string;
+      email: string;
+      emailVerified: any | null;
+      accountType: AccountType;
+      image: string;
+      firstName: string;
+      fullName: string;
+      lastName: string;
+      createdAt: any;
+      phone: string | null;
+    };
   }>;
 };
 
@@ -1532,6 +1641,9 @@ export const AccountPayloadFragmentFragmentDoc = gql`
       id
       companyName
       logo
+      savedApplicants {
+        id
+      }
     }
     oAuthClient {
       id
@@ -2079,6 +2191,54 @@ export type SignUpOAuthMutationOptions = Apollo.BaseMutationOptions<
   SignUpOAuthMutation,
   SignUpOAuthMutationVariables
 >;
+export const SaveApplicantDocument = gql`
+  mutation SaveApplicant($input: SaveApplicantInput!) {
+    saveApplicant(input: $input)
+  }
+`;
+export type SaveApplicantMutationFn = Apollo.MutationFunction<
+  SaveApplicantMutation,
+  SaveApplicantMutationVariables
+>;
+
+/**
+ * __useSaveApplicantMutation__
+ *
+ * To run a mutation, you first call `useSaveApplicantMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSaveApplicantMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [saveApplicantMutation, { data, loading, error }] = useSaveApplicantMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSaveApplicantMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SaveApplicantMutation,
+    SaveApplicantMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    SaveApplicantMutation,
+    SaveApplicantMutationVariables
+  >(SaveApplicantDocument, options);
+}
+export type SaveApplicantMutationHookResult = ReturnType<
+  typeof useSaveApplicantMutation
+>;
+export type SaveApplicantMutationResult =
+  Apollo.MutationResult<SaveApplicantMutation>;
+export type SaveApplicantMutationOptions = Apollo.BaseMutationOptions<
+  SaveApplicantMutation,
+  SaveApplicantMutationVariables
+>;
 export const GetCompaniesDocument = gql`
   query GetCompanies {
     getCompanies {
@@ -2137,6 +2297,81 @@ export type GetCompaniesLazyQueryHookResult = ReturnType<
 export type GetCompaniesQueryResult = Apollo.QueryResult<
   GetCompaniesQuery,
   GetCompaniesQueryVariables
+>;
+export const GetSavedApplicantsDocument = gql`
+  query GetSavedApplicants(
+    $input: GetSavedApplicantInput!
+    $skipSavedJobs: Boolean = true
+    $skipWorkExperience: Boolean = true
+  ) {
+    getSavedApplicant(input: $input) {
+      ...Applicant
+      savedJobs @skip(if: $skipSavedJobs) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+      workExperience @skip(if: $skipWorkExperience) {
+        companyWebsite
+      }
+    }
+  }
+  ${ApplicantFragmentDoc}
+`;
+
+/**
+ * __useGetSavedApplicantsQuery__
+ *
+ * To run a query within a React component, call `useGetSavedApplicantsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSavedApplicantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSavedApplicantsQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *      skipSavedJobs: // value for 'skipSavedJobs'
+ *      skipWorkExperience: // value for 'skipWorkExperience'
+ *   },
+ * });
+ */
+export function useGetSavedApplicantsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetSavedApplicantsQuery,
+    GetSavedApplicantsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetSavedApplicantsQuery,
+    GetSavedApplicantsQueryVariables
+  >(GetSavedApplicantsDocument, options);
+}
+export function useGetSavedApplicantsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetSavedApplicantsQuery,
+    GetSavedApplicantsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetSavedApplicantsQuery,
+    GetSavedApplicantsQueryVariables
+  >(GetSavedApplicantsDocument, options);
+}
+export type GetSavedApplicantsQueryHookResult = ReturnType<
+  typeof useGetSavedApplicantsQuery
+>;
+export type GetSavedApplicantsLazyQueryHookResult = ReturnType<
+  typeof useGetSavedApplicantsLazyQuery
+>;
+export type GetSavedApplicantsQueryResult = Apollo.QueryResult<
+  GetSavedApplicantsQuery,
+  GetSavedApplicantsQueryVariables
 >;
 export const CreateJobPostDocument = gql`
   mutation CreateJobPost($input: CreateJobPostInput!) {

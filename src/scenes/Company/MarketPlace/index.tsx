@@ -6,6 +6,8 @@ import {
   EditRounded,
   PendingActions,
   Settings,
+  WorkOutlineTwoTone,
+  WorkTwoTone,
 } from '@mui/icons-material';
 import { LoadingButton } from '@mui/lab';
 import {
@@ -18,11 +20,15 @@ import {
 } from '@mui/material';
 import clsx from 'clsx';
 import { AnimatePresence, motion } from 'framer-motion';
+import { BsFillJournalBookmarkFill } from 'react-icons/bs';
 
 import { MotionParent } from '@/components/MotionItems';
 import { useGetJobPostsQuery } from '@/graphql/client/gql/schema';
 import useMe from '@/hooks/useMe';
+import AppliedApplicants from '@/scenes/Company/MarketPlace/AppliedApplicants';
 import BestMatch from '@/scenes/Company/MarketPlace/BestMatch';
+import InterviewApplicants from '@/scenes/Company/MarketPlace/InterviewApplicants';
+import SavedApplicants from '@/scenes/Company/MarketPlace/SavedApplicants';
 
 import s from './marketplace.module.scss';
 
@@ -46,24 +52,21 @@ const marketPlaceItems = [
   },
   {
     name: 'Applicants',
-    component: (props: any) => <h1 {...props}>APPLICANT</h1>,
+    component: (props: any) => <AppliedApplicants {...props} />,
     schema: '',
     Icon: Contacts,
   },
   {
     name: 'Saved',
-    component: (props: any) => <h1>SAVED</h1>,
+    component: (props: any) => <SavedApplicants {...props} />,
     schema: '',
     Icon: PendingActions,
   },
   {
     name: 'Interview',
-    component: (props: any) => <h1>INTERVIEW</h1>,
+    component: (props: any) => <InterviewApplicants {...props} />,
     Icon: Settings,
-  } /* {
-    name: 'Done',
-    component: (props: any) => <h1>congradulation </h1>,
-  }, */,
+  },
 ];
 
 const MarketPlace = () => {
@@ -105,27 +108,33 @@ const MarketPlace = () => {
               }}
               MenuProps={MenuProps}
               renderValue={(selected) => (
-                <ListItemText
-                  className={s.selected}
-                  sx={{ py: '.4rem' }}
-                  primary={
-                    posts?.find((post) => post.id === selected)?.title ??
-                    'Select Job Post'
-                  }
-                />
+                <Stack direction="row" alignItems="center" gap=".5rem">
+                  <WorkTwoTone color="primary" />
+                  <ListItemText
+                    className={s.selected}
+                    sx={{ py: '.4rem' }}
+                    primary={
+                      posts?.find((post) => post.id === selected)?.title ??
+                      'Select Job Post'
+                    }
+                  />
+                </Stack>
               )}
             >
               {jobPostPayload.data?.getJobPosts.map((job, idx) => (
                 <MenuItem value={job.id} key={idx}>
-                  <ListItemText sx={{ py: '.4rem' }} primary={job.title} />
+                  <Stack direction="row" alignItems="center" gap="1rem">
+                    <WorkTwoTone />
+                    <ListItemText sx={{ py: '.4rem' }} primary={job.title} />
+                  </Stack>
                 </MenuItem>
               ))}
             </Select>
           </Stack>
 
           <LoadingButton
-            size="small"
-            variant="contained"
+            // size="small"
+            variant="outlined"
             color="primary"
             startIcon={<EditRounded />}
           >

@@ -1,8 +1,8 @@
+import { red } from '@mui/material/colors';
 import {
   createTheme as createMuiTheme,
   responsiveFontSizes,
 } from '@mui/material/styles';
-import { red } from '@mui/material/colors';
 
 // #ededed
 

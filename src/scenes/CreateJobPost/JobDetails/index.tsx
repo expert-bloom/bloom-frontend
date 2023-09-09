@@ -148,7 +148,7 @@ const JobDetails = () => {
             >
               {companies?.getCompanies.map((company, idx) => (
                 <MenuItem value={company.id} key={idx}>
-                  {company.firstName}
+                  {company.companyName}
                 </MenuItem>
               ))}
             </Select>

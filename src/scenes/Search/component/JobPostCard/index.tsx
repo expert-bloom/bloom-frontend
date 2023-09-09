@@ -114,7 +114,8 @@ const JobPostCard = ({ post }: Props) => {
       <Typography className={s.detail}>
         {capitalize(post.salaryType)}: <b>${post.salary[0]}</b> -{' '}
         {post.experienceLevel} - <BsClock /> Posted{' '}
-        {moment(post.createdAt).calendar()}
+        {moment(post.createdAt).calendar()} - JobType:{' '}
+        <b>{capitalize(post.jobType).replace('_', ' ')}</b>
       </Typography>
 
       <Typography variant="body1" className={s.desc}>
@@ -128,7 +129,8 @@ const JobPostCard = ({ post }: Props) => {
         ))}
       </div>
 
-      <Typography className={s.detail}>Proposals: 0</Typography>
+      <Typography className={s.detail}>Applicants: 0</Typography>
+
       <Stack direction="row" gap=".3rem">
         <LocationOn fontSize="small" />
         <Typography className={s.detail}>{post.location}</Typography>

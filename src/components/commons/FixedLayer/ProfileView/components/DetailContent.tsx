@@ -6,6 +6,7 @@ import {
   CalendarMonth,
   CalendarToday,
   ExpandMore,
+  Language,
   MonetizationOn,
   Place,
   Save,
@@ -26,12 +27,15 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
+import { capitalize } from 'lodash';
 import moment from 'moment/moment';
+import { toast } from 'react-hot-toast';
 import SimpleBar from 'simplebar-react';
 
 import { MotionChild } from '@/components/MotionItems';
 import 'simplebar-react/dist/simplebar.min.css';
 import { type GetApplicantQuery } from '@/graphql/client/gql/schema';
+import FilePond from '@/lib/filePong';
 
 import s from '../job_detail_slider.module.scss';
 
@@ -46,6 +50,17 @@ interface Props {
 }
 
 const DetailContent = ({ profile, isLoading }: Props) => {
+  console.log('public profile : ', profile);
+
+  const downloadCv = (url: string) => {
+    const element: HTMLAnchorElement = document.createElement('a');
+
+    element.href = url;
+    element.download = 'one.csv';
+    element.target = '_blank';
+    element.click();
+  };
+
   return (
     <SimpleBar style={{ maxHeight: '100vh' }}>
       <MotionChild className={s.content} transition={transition}>
@@ -63,17 +78,30 @@ const DetailContent = ({ profile, isLoading }: Props) => {
               </ListItemIcon>
               <ListItemText
                 primary={
-                  <Typography variant="h3" fontWeight="600" className={s.name}>
-                    {profile?.account.fullName}
-                  </Typography>
+                  <div className={s.primary}>
+                    <Typography
+                      variant="h3"
+                      fontWeight="600"
+                      className={s.name}
+                    >
+                      {profile?.account.fullName}
+                    </Typography>
+
+                    <Stack direction="row" gap=".5rem">
+                      <BusinessCenter fontSize="small" />
+                      <Typography variant="body2">
+                        {profile.jobPosition}
+                      </Typography>
+                    </Stack>
+                  </div>
                 }
                 secondary={
                   <Stack className={s.secondary}>
                     <div className={s.detail}>
                       <div className={s.detail_item}>
-                        <BusinessCenter fontSize="small" />
+                        <Place fontSize="small" />
                         <Typography variant="body2">
-                          {profile.jobPosition}
+                          {profile.location}
                         </Typography>
                       </div>
                       -
@@ -86,22 +114,6 @@ const DetailContent = ({ profile, isLoading }: Props) => {
                       </div>
                       -
                       <div className={s.detail_item}>
-                        <Place fontSize="small" />
-                        <Typography variant="body2">
-                          {profile.location}
-                        </Typography>
-                      </div>
-                      -
-                      <div className={s.detail_item}>
-                        <Chip
-                          icon={<Place />}
-                          variant="outlined"
-                          label={profile.location}
-                          // size="small"
-                        />
-                      </div>
-                      -
-                      <div className={s.detail_item}>
                         <BusinessCenter fontSize="small" />
                         <Typography variant="body2">
                           {profile.jobPosition}
@@ -109,37 +121,31 @@ const DetailContent = ({ profile, isLoading }: Props) => {
                       </div>
                       -
                       <div className={s.detail_item}>
-                        <MonetizationOn fontSize="small" />
+                        <BusinessCenter fontSize="small" />
                         <Typography variant="body2">
-                          {profile.salaryExpectation?.toLocaleString()}
-                          /mo
+                          {profile.skillLevel || '-'}
                         </Typography>
                       </div>
                       -
                       <div className={s.detail_item}>
-                        <Place fontSize="small" />
+                        <Language fontSize="small" />
                         <Typography variant="body2">
-                          {profile.location}
+                          {capitalize(profile.englishLevel ?? '-')}
                         </Typography>
                       </div>
                     </div>
 
                     <div className={s.skills}>
-                      {profile?.skills
-                        ?.slice(0, 4)
-                        ?.concat(profile.skills)
-                        ?.concat(profile.skills)
-                        ?.concat(profile.skills)
-                        .map((skill, idx) => (
-                          <>
-                            <Chip
-                              key={idx}
-                              variant="outlined"
-                              label={skill}
-                              size="small"
-                            />
-                          </>
-                        ))}
+                      {profile?.skills?.slice(0, 5).map((skill, idx) => (
+                        <>
+                          <Chip
+                            key={idx}
+                            variant="outlined"
+                            label={skill}
+                            size="small"
+                          />
+                        </>
+                      ))}
                     </div>
 
                     <div className={s.actions}>
@@ -157,8 +163,61 @@ const DetailContent = ({ profile, isLoading }: Props) => {
 
             <Divider />
 
+            <div className={s.cv}>
+              <Typography variant="h5" gutterBottom>
+                Resume
+              </Typography>
+
+              <div className={s.file_pond_wrap}>
+                <FilePond
+                  name="resume-file"
+                  allowFileSizeValidation
+                  maxFileSize="10MB"
+                  labelMaxFileSizeExceeded={'File is too large'}
+                  // checkValidity
+
+                  allowFileMetadata
+                  allowFilePoster
+                  files={[
+                    profile.resume ??
+                      `${process.env.NEXT_PUBLIC_S3_CLOUD_FRONT_URL}/next-s3-uploads/bloom/Resume-20(1)-compressed.pdf`,
+                  ]}
+                  allowReplace={false}
+                  allowBrowse={false}
+                  // forceRevert
+                  allowRevert={false}
+                  // disabled
+                  allowMultiple={false}
+                  instantUpload={false}
+                  credits={false}
+                  allowProcess={false}
+                  iconRemove={'cv'}
+                  beforeRemoveFile={() => {
+                    downloadCv(
+                      profile.resume ??
+                        `${process.env.NEXT_PUBLIC_S3_CLOUD_FRONT_URL}/next-s3-uploads/bloom/Resume-20(1)-compressed.pdf`,
+                    );
+                    return false;
+                  }}
+                  onactivatefile={(file) => {
+                    downloadCv(
+                      profile.resume ??
+                        `${process.env.NEXT_PUBLIC_S3_CLOUD_FRONT_URL}/next-s3-uploads/bloom/Resume-20(1)-compressed.pdf`,
+                    );
+                  }}
+                  // disabled={disabled}
+
+                  onerror={(err) => {
+                    console.log('Error cv resume: ', err);
+                  }}
+                />
+              </div>
+            </div>
+
+            <Divider />
+
             <div className={s.about}>
-              <Typography variant="h5" color="gray" gutterBottom>
+              <Typography variant="h5" gutterBottom>
                 About
               </Typography>
 
@@ -168,7 +227,7 @@ const DetailContent = ({ profile, isLoading }: Props) => {
             <Divider />
 
             <div className={s.experience}>
-              <Typography variant="h5" color="gray" gutterBottom>
+              <Typography variant="h5" gutterBottom>
                 Experiences
               </Typography>
 

@@ -10,11 +10,11 @@ import {
 } from '@mui/material';
 import { matchIsValidTel, MuiTelInput } from 'mui-tel-input';
 
-import { useProfileSettingFormContext } from '@/scenes/Applicant/Profile';
 import {
   type NestedOnSubmit,
   type StepProps,
 } from '@/scenes/Applicant/Profile/data';
+import { useCompanyProfileSettingFormContext } from '@/scenes/Company/CompanyProfile';
 import { useCountries } from '@/scenes/Search/SearchFilter/country-list';
 
 import s from './contact_info.module.scss';
@@ -32,7 +32,7 @@ const MenuProps = {
 
 const ProfileInfo = ({ stepUtil }: StepProps) => {
   const countryListOptions = useCountries();
-  const { formik } = useProfileSettingFormContext();
+  const { formik } = useCompanyProfileSettingFormContext();
   const { values, handleChange } = formik;
 
   const onSubmit: NestedOnSubmit = async (values) => {
@@ -180,20 +180,7 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
             </Stack>
 
             <Stack spacing={0.5} flex="1" style={{ width: '100%' }}>
-              <FormLabel>Github</FormLabel>
-              <TextField
-                name="applicant.github"
-                type="text"
-                fullWidth
-                onChange={handleChange}
-                value={values.applicant.github}
-                error={Boolean(formik.errors.applicant?.github)}
-                helperText={formik.errors.applicant?.github as string}
-              />
-            </Stack>
-
-            <Stack spacing={0.5} flex="1" style={{ width: '100%' }}>
-              <FormLabel>Portfolio</FormLabel>
+              <FormLabel>Company Website</FormLabel>
               <TextField
                 name="applicant.portfolio"
                 type="text"

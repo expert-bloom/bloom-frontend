@@ -8,21 +8,20 @@
     .content {
       display: flex;
       flex-flow: column;
-      gap: 1.5rem;
+      gap: 1.1rem;
       align-items: center;
       place-items: center;
 
       .icon {
+        position: relative;
+        height: 10rem;
+        width: 10rem;
         color: #a7b2c3;
-        background-color: #eaeef5;
+        //background-color: #eaeef5;
         display: grid;
         place-items: center;
-        padding: 2rem;
+        //padding: 2rem;
         border-radius: 1.5rem;
-        //max-width: 10rem;
-        width: max-content;
-        // box-shadow as border
-        box-shadow: 0 0 0 6px #fff, 0 0 0 9px #a7b2c3;
 
         svg {
           width: 5rem;
@@ -36,6 +35,7 @@
 
       .desc {
         font-weight: 300;
+        text-align: center;
       }
 
     }

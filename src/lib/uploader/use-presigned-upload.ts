@@ -12,6 +12,9 @@ const upload: Uploader = async (file, params, { onProgress, progress }) => {
   const { url, key, bucket, region, endpoint } = params;
   const buffer = await file.arrayBuffer();
 
+  // convert the file to blob
+  const blob = new Blob([buffer], { type: file.type });
+
   await new Promise<void>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
 
@@ -40,7 +43,7 @@ const upload: Uploader = async (file, params, { onProgress, progress }) => {
       }
     };
 
-    xhr.send(buffer);
+    xhr.send(blob);
   });
 
   const resultUrl = endpoint

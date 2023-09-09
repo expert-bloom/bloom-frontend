@@ -1,0 +1,3 @@
+mutation SaveApplicant($input: SaveApplicantInput!) {
+    saveApplicant(input: $input)
+}

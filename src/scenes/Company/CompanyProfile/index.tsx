@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import React, { useEffect, useRef, useState, useTransition } from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
 
-import {
-  AccountCircle,
-  Contacts,
-  PendingActions,
-  Redo,
-  Save,
-  Settings,
-} from '@mui/icons-material';
+import { AccountCircle, Contacts, Redo, Save } from '@mui/icons-material';
 import {
   Box,
   Button,
@@ -23,7 +22,7 @@ import {
 import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { AnimatePresence, motion } from 'framer-motion';
-import { isEqual, pickBy, mapValues } from 'lodash';
+import { isEqual, mapValues, pickBy } from 'lodash';
 import { matchIsValidTel } from 'mui-tel-input';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
@@ -36,61 +35,45 @@ import {
   useUpdateProfileMutation,
 } from '@/graphql/client/gql/schema';
 import useMe from '@/hooks/useMe';
-import CvExperience from '@/scenes/Applicant/Profile/components/CvExperience';
-import ProfileInfo from '@/scenes/Applicant/Profile/components/ProfileInfo';
-import ContactInfo from 'src/scenes/Applicant/Profile/components/ContactInfo';
+import CompanyInfo from '@/scenes/Company/CompanyProfile/Components/CompanyInfo';
+import ContactInfo from '@/scenes/Company/CompanyProfile/Components/ContactInfo';
 
+import s from './companyprofile.module.scss';
 import {
   initialValues,
   type NestedOnSubmit,
   type SettingFormValuesType,
 } from './data';
-import s from './profile.module.scss';
 
 // s
 
 const formSteps = [
   {
     name: 'Profile',
-    component: (props: any) => <ProfileInfo {...props} />,
+    component: (props: any) => <CompanyInfo {...props} />,
     schema: '',
     Icon: AccountCircle,
   },
   {
-    name: 'Contact Info',
+    name: 'Company Info',
     component: (props: any) => <ContactInfo {...props} />,
     schema: '',
     Icon: Contacts,
   },
-  {
-    name: 'CV & Experience',
-    component: (props: any) => <CvExperience {...props} />,
-    schema: '',
-    Icon: PendingActions,
-  },
-  {
-    name: 'Account Setting',
-    component: (props: any) => <CvExperience {...props} />,
-    Icon: Settings,
-    disabled: true,
-  } /* {
-    name: 'Done',
-    component: (props: any) => <h1>congradulation </h1>,
-  }, */,
 ];
 
-interface ProfileSettingContextType {
+interface CompanyProfileSettingContextType {
   formik: ReturnType<typeof useFormik<SettingFormValuesType>>;
 }
 
 // create a context for the formik form
-const ProfileSettingContext = React.createContext<ProfileSettingContextType>(
+const ProfileSettingContext = createContext<CompanyProfileSettingContextType>(
   {} as any,
 );
-export const useProfileSettingFormContext = () =>
+export const useCompanyProfileSettingFormContext = () =>
   React.useContext(ProfileSettingContext);
 
-const Profile = () => {
+const CompanyProfile = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [isChanged, setIsChanged] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -283,10 +266,10 @@ const Profile = () => {
     if (
       me.me?.applicant === null ||
       me.me?.applicant === undefined ||
-      me.loading
-    ) {
+      me.loading ||
+      me.error
+    )
       return;
-    }
     reset();
   }, [me.me?.applicant]);
 
@@ -318,7 +301,7 @@ const Profile = () => {
                   <CircularProgress sx={{ position: 'absolute' }} />
                 )}
                 <Typography variant="h6">
-                  {`${me.me?.firstName ?? '-'}  ${me.me?.lastName ?? '-'}`}
+                  {`${me.me?.company?.companyName ?? '-'}`}
                 </Typography>
                 <Typography variant="body2" textAlign="center" color="gray">
                   {me.me?.applicant?.jobPosition ?? '-'}
@@ -332,7 +315,7 @@ const Profile = () => {
                   startIcon={<item.Icon />}
                   color="secondary"
                   key={idx}
-                  disabled={item.disabled}
+                  // disabled={item.disabled}
                   className={clsx([
                     s.tab,
                     currentStep.name === item.name && s.active,
@@ -430,4 +413,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default CompanyProfile;

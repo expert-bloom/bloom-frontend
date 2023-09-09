@@ -5,3 +5,22 @@ query GetCompanies {
         logo
     }
 }
+
+query GetSavedApplicants($input: GetSavedApplicantInput!, $skipSavedJobs: Boolean = true, $skipWorkExperience: Boolean = true) {
+    getSavedApplicant(input: $input){
+        ...Applicant
+
+
+        savedJobs @skip(if: $skipSavedJobs) {
+            edges {
+                node {
+                    id
+                }
+            }
+        }
+
+        workExperience @skip(if : $skipWorkExperience) {
+            companyWebsite
+        }
+    }
+}

@@ -11,6 +11,7 @@ const nextConfig = {
       'api.dicebear.com',
       'xsgames.co',
       'd1lmgnqw69ga6t.cloudfront.net',
+      'd3jm3hdd9b8409.cloudfront.net',
     ],
   },
   modularizeImports: {

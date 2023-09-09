@@ -74,8 +74,8 @@ const MarketPlace = () => {
       <div className={s.posts}>
         {posts?.getJobPosts &&
           posts.getJobPosts.slice(0, 3).map((post) => (
-            <>
-              <ButtonBase key={post.id} className={s.post}>
+            <ButtonBase className={s.post} key={post.id}>
+              <Link href="/company/marketplace">
                 <Typography>{post.title}</Typography>
                 <div className={s.stat}>
                   <Chip
@@ -89,15 +89,21 @@ const MarketPlace = () => {
                     variant="outlined"
                   />
                 </div>
-              </ButtonBase>
-            </>
+              </Link>
+            </ButtonBase>
           ))}
       </div>
 
       <CardActions>
-        <Button size="small" disabled>
-          See More
-        </Button>
+        {posts?.getJobPosts && posts?.getJobPosts?.length > 0 ? (
+          <Link href="/company/marketplace">
+            <Button size="small">See More</Button>
+          </Link>
+        ) : (
+          <Link href="/post">
+            <Button size="small">Create Job Post</Button>
+          </Link>
+        )}
       </CardActions>
     </Card>
   );

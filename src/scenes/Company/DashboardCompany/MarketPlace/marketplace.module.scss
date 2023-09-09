@@ -38,8 +38,21 @@
         flex-flow: column;
         align-items: flex-start;
         gap: .5rem;
-        padding: 1rem;
         text-align: left;
+        width: 100%;
+
+        //border: 1px solid #000;
+
+        & :first-child{
+          //border: 1px solid #000
+          //border-bottom: 1px solid gray;
+        }
+
+        a{
+          width: 100%;
+          padding: 1rem;
+        }
+
 
         .stat{
           display: flex;
