@@ -158,13 +158,7 @@ const CompanyProfile = () => {
           variables: {
             input: {
               accountId: session?.user?.id ?? '',
-              account: {
-                ...accountInput,
-              },
-              applicant: {
-                ...(applicantInput as any),
-              },
-            },
+            } as any,
           },
           refetchQueries: [MeDocument],
         });

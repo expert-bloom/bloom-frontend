@@ -10,7 +10,6 @@ import FixedLayer from '@/components/commons/FixedLayer';
 import Applicant from '@/components/Layout/Applicant';
 import LayoutEmpty from '@/components/Layout/LayoutEmpty';
 import { MotionParent } from '@/components/MotionItems';
-import { useTransitionFix } from '@/utils';
 import LayoutCompany from 'src/components/Layout/Company';
 
 const useRoleLayout = (pathname: string) => {

@@ -117,7 +117,7 @@ export default function TopNavBar({ pageProps }: any) {
 
               <div className={clsx([s.links])}>
                 <Link
-                  href="/post"
+                  href="/company/post"
                   className={clsx([
                     s.link,
                     router.pathname === '/post' && s.active,

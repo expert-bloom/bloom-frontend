@@ -1,6 +1,5 @@
 import React from 'react';
-import s from '../signup.module.scss';
-import { Button, Chip, Typography } from '@mui/material';
+
 import {
   AccountCircleTwoTone,
   Badge,
@@ -8,10 +7,14 @@ import {
   RadioButtonChecked,
   RadioButtonUnchecked,
 } from '@mui/icons-material';
-import { useFormikContext } from 'formik';
-import { type RegisterFormValuesType } from '@/scenes/Auth/SignUp';
+import { Button, Chip, Typography } from '@mui/material';
 import clsx from 'clsx';
+import { useFormikContext } from 'formik';
+
 import { AccountType } from '@/graphql/client/gql/schema';
+import { type RegisterFormValuesType } from '@/scenes/Auth/SignUp';
+
+import s from '../signup.module.scss';
 
 const aType = [
   {

@@ -12,6 +12,7 @@ import {
 import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 
+import { useResponseErrorHandler } from '@/components/commons/FixedLayer/ProfileView';
 import { MoButton } from '@/components/MoButton';
 import { useGetJobPostsQuery } from '@/graphql/client/gql/schema';
 import { useAppStore } from '@/lib/store';
@@ -25,22 +26,14 @@ const JobList = () => {
   const jopPostsPayload = useGetJobPostsQuery();
   const { data: posts, loading } = jopPostsPayload;
 
-  console.log('posts : ', jopPostsPayload);
-
-  // access the store
-  const selectedDayOfWeek = useAppStore((state) => state.setJobPostDetailId);
-
   const { filteredJobs, clearFilters, filters, hasFilters } = useFilters(
     posts?.getJobPosts ?? [],
   );
 
-  console.log('filteredJobs : ', filteredJobs);
-
-  useEffect(() => {
-    if (jopPostsPayload.error) {
-      toast.error('Something wrong showing job-posts');
-    }
-  }, [jopPostsPayload]);
+  useResponseErrorHandler(
+    jopPostsPayload.error,
+    'Something wrong showing job-posts',
+  );
 
   return (
     <div className={s.container}>

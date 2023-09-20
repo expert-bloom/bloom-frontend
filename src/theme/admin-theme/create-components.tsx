@@ -61,6 +61,10 @@ export function createComponents(config: { palette: PaletteOptions }) {
         standardWarning: {
           border: '2px solid #F79009',
         },
+
+        standardInfo: {
+          border: '1px solid #06AED4',
+        },
       },
     },
 

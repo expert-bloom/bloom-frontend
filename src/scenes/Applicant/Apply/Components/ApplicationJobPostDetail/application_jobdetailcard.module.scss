@@ -1,0 +1,60 @@
+@use '@/styles/index.scss' as s;
+
+.job_card {
+  position: relative;
+  padding: 3rem;
+  text-align: left;
+  display: flex;
+  flex-flow: column;
+  gap: 1rem;
+  transition: background-color .2s ease-in-out;
+
+  border: 1px solid #eaeaea;
+  border-radius: 2rem;
+
+
+
+
+  & :local {
+    .title_div {
+      display: flex;
+      gap: 3rem;
+      align-items: flex-start;
+      justify-content: space-between;
+
+      .bookmark {
+        position: absolute;
+        right: 1.5rem;
+        top: 1.5rem;
+        z-index: 999;
+      }
+    }
+
+    .title {
+      margin-top: 2rem;
+    }
+
+    .desc {
+      font-weight: 300;
+    }
+
+    .detail {
+      color: gray;
+      font-weight: 300;
+      letter-spacing: 0.04vmax;
+      font-size: .85rem;
+    }
+
+    .tags {
+      display: flex;
+      align-items: center;
+      gap: .3rem;
+
+      .chips{
+        background-color: rgba(s.$clrs-accent, .1);
+        border: thin solid rgba(s.$clrs-accent, .1);
+      }
+    }
+  }
+
+}

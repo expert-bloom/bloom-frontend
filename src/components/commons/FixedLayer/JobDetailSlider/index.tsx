@@ -112,6 +112,7 @@ const JobDetail = () => {
           <DetailContent
             isLoading={jobPost.loading}
             jobPost={jobPost.data?.getJobPost}
+            onCloseJobDetail={onClose}
           />
         </MotionChild>
       </MotionParent>

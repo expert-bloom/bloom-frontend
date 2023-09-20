@@ -1,7 +1,8 @@
 // include the prop type of MuiButton
 import React from 'react';
-import { motion } from 'framer-motion';
+
 import { LoadingButton } from '@mui/lab';
+import { motion } from 'framer-motion';
 
 // create
 
@@ -43,6 +44,7 @@ export const MoButton: React.FC<MotionButtonType> = ({
         variant="contained"
         color="primary"
         size="large"
+        fullWidth
         {...props}
       >
         {children}

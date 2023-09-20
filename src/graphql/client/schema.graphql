@@ -511,6 +511,17 @@ input UpdateProfileInput {
     account: AccountUpdateInput
     accountId: String!
     applicant: ApplicantUpdateInput
+    availablilty: [Aval!]!
+}
+
+input Aval {
+    dayOfWeek: String!
+    timeRage: [TimeRage!]!
+}
+
+input TimeRage {
+    from: String!
+    to: String!
 }
 
 input WorkExperienceInput {
@@ -523,3 +534,5 @@ input WorkExperienceInput {
     skills: [String!]!
     startDate: DateTime!
 }
+
+

@@ -41,14 +41,15 @@ const transition = {
 interface Props {
   isLoading: boolean;
   jobPost: JobPost | null | undefined;
+  onCloseJobDetail: () => void;
 }
 
-const DetailContent = ({ jobPost, isLoading }: Props) => {
+const DetailContent = ({ jobPost, isLoading, onCloseJobDetail }: Props) => {
   return (
     <SimpleBar style={{ maxHeight: '100vh' }}>
       <MotionChild className={s.content} transition={transition}>
         <header>
-          <IconButton>
+          <IconButton onClick={onCloseJobDetail}>
             <Close />
           </IconButton>
 
@@ -154,9 +155,14 @@ const DetailContent = ({ jobPost, isLoading }: Props) => {
 
                 <div className={s.job_action}>
                   <div className={s.apply}>
-                    <MoButton fullWidth variant="contained">
-                      Apply Now
-                    </MoButton>
+                    <Link
+                      href={`/applicant/apply/${jobPost.id}`}
+                      onClick={onCloseJobDetail}
+                    >
+                      <MoButton fullWidth variant="contained">
+                        Apply Now
+                      </MoButton>
+                    </Link>
 
                     <MoButton
                       fullWidth

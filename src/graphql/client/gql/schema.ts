@@ -250,6 +250,11 @@ export type AuthPayload = PayloadError & {
   errors: Array<Error>;
 };
 
+export type Aval = {
+  dayOfWeek: Scalars['String']['input'];
+  timeRage: Array<TimeRage>;
+};
+
 export type Company = Node & {
   account: Account;
   companyName: Maybe<Scalars['String']['output']>;
@@ -591,10 +596,16 @@ export type SignUpInput = {
   password: Scalars['String']['input'];
 };
 
+export type TimeRage = {
+  from: Scalars['String']['input'];
+  to: Scalars['String']['input'];
+};
+
 export type UpdateProfileInput = {
   account?: InputMaybe<AccountUpdateInput>;
   accountId: Scalars['String']['input'];
   applicant?: InputMaybe<ApplicantUpdateInput>;
+  availablilty: Array<Aval>;
 };
 
 export type WorkExperience = {

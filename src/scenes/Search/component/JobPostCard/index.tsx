@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import React, { useEffect, useState, useTransition } from 'react';
 
-import { Bookmark, LocationOn, WarningAmber } from '@mui/icons-material';
+import { Bookmark, LocationOn } from '@mui/icons-material';
 import { LoadingButton } from '@mui/lab';
 import { Chip, Stack, Typography } from '@mui/material';
 import moment from 'moment';
@@ -25,7 +25,7 @@ interface Props {
 }
 
 const JobPostCard = ({ post }: Props) => {
-  const selectedDayOfWeek = useAppStore((state) => state.setJobPostDetailId);
+  const setJobPostDetailId = useAppStore((state) => state.setJobPostDetailId);
 
   const me = useMe();
   const [saveJob, savePayload] = useSaveJobPostMutation();
@@ -58,7 +58,7 @@ const JobPostCard = ({ post }: Props) => {
     <div
       className={s.job_card}
       onClick={() => {
-        selectedDayOfWeek({
+        setJobPostDetailId({
           jobPostId: post.id,
         });
       }}

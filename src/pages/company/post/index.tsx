@@ -1,5 +1,6 @@
 import React from 'react';
-import CreateJobPost from 'src/scenes/CreateJobPost';
+
+import CreateJobPost from '@/scenes/CreateJobPost';
 
 const PostAJob = () => {
   return <CreateJobPost />;
