@@ -1,6 +1,12 @@
 import React from 'react';
 
-import { AccountCircle, Dashboard, Handshake, Save } from '@mui/icons-material';
+import {
+  AccountCircle,
+  Dashboard,
+  Event,
+  Handshake,
+  Save,
+} from '@mui/icons-material';
 import {
   Avatar,
   Button,
@@ -72,6 +78,11 @@ const links = [
     name: 'Explore Jobs',
     href: '/search',
     Icon: Handshake,
+  },
+  {
+    name: 'My Interviews',
+    href: '/applicant/my-interviews',
+    Icon: Event,
   },
   {
     name: 'Profile',

@@ -83,6 +83,7 @@
           min-height: initial;
           padding-top: 1.2rem;
           padding-bottom: 1.2rem;
+          display: flex;
 
           &:hover {
             p {
@@ -106,6 +107,7 @@
           text-transform: capitalize;
           transition: color 0.17s ease-out;
           margin-top: .4rem;
+          line-height: 100%;
 
           &::after {
             content: '';

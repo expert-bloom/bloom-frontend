@@ -1,9 +1,9 @@
-// middleware.ts
-import type { NextRequest } from 'next/server';
-import { NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 
-const secret = process.env.NEXTAUTH_SECRET;
+import { AccountType } from '@/graphql/client/gql/schema';
+
+/* const secret = process.env.NEXTAUTH_SECRET;
 
 export async function middleware(request: NextRequest) {
   const token = await getToken({ req: request, secret });
@@ -24,9 +24,52 @@ export async function middleware(request: NextRequest) {
   }
 
   return NextResponse.next();
+} */
+
+const secret = process.env.NEXTAUTH_SECRET;
+
+export async function middleware(request: NextRequest) {
+  const token: any = await getToken({ req: request, secret });
+
+  console.log(
+    'middleware token ------------------------------- : ',
+    JSON.stringify(token, null, 2),
+    'pathname',
+    request.nextUrl.pathname,
+  );
+
+  if (request.nextUrl.pathname === '/' && token?.id) {
+    if (token?.accountType === 'APPLICANT') {
+      return NextResponse.redirect(
+        new URL('/applicant/dashboard', request.url),
+      );
+    }
+
+    if (token?.accountType === 'COMPANY') {
+      return NextResponse.redirect(new URL('/company/dashboard', request.url));
+    }
+  }
+
+  if (
+    request.nextUrl.pathname.startsWith('/applicant') &&
+    token?.accountType !== 'APPLICANT'
+  ) {
+    return NextResponse.redirect(new URL('/404', request.url));
+  }
+
+  if (
+    request.nextUrl.pathname.startsWith('/company') &&
+    token?.accountType !== 'COMPANY'
+  ) {
+    return NextResponse.redirect(new URL('/404', request.url));
+  }
+
+  return NextResponse.next();
 }
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ['/dashboard/:path*', '/post-job/:path*'],
+  matcher: ['/', '/applicant/:path*', '/company/:path*'],
 };
+
+// See "Matching Paths" below to learn more
