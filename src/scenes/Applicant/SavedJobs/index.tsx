@@ -4,7 +4,7 @@ import { Alert, AlertTitle, CircularProgress, Typography } from '@mui/material';
 import Link from 'next/link';
 
 import useMe from '@/hooks/useMe';
-import JobPostCard from '@/scenes/Search/component/JobPostCard';
+import JobPostCard from '@/scenes/JobList/component/JobPostCard';
 
 import s from './savedjobs.module.scss';
 
@@ -36,7 +36,7 @@ const SavedJobs = () => {
               <Alert>
                 <AlertTitle>No Job-Posts</AlertTitle>
                 You have no saved jobs,{' '}
-                <Link href="/search">
+                <Link href="/src/pages/jobs">
                   <b>explore here</b>
                 </Link>
               </Alert>

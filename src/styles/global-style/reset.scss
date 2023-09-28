@@ -81,6 +81,30 @@ body {
     font-family: 'SofiaProSoft', sans-serif;
   }
 
+  @keyframes spin {
+    0% {
+      stroke-dasharray: 1 98;
+      stroke-dashoffset: -105;
+    }
+    50% {
+      stroke-dasharray: 80 10;
+      stroke-dashoffset: -160;
+    }
+    100% {
+      stroke-dasharray: 1 98;
+      stroke-dashoffset: -300;
+    }
+  }
+
+  #spinner {
+    //display: none;
+    transform-origin: center;
+    animation-name: spin;
+    animation-duration: 1.2s;
+    //animation-timing-function: cubic-bezier;
+    animation-iteration-count: infinite;
+  }
+
 }
 
 * {

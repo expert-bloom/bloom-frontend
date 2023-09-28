@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import {
   AccountCircle,
   BusinessCenter,
-  CalendarToday,
   MonetizationOn,
   PendingActions,
   Place,
@@ -24,15 +23,13 @@ import {
 } from '@mui/material';
 import clsx from 'clsx';
 import { AnimatePresence, motion } from 'framer-motion';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 
-import { useResponseErrorHandler } from '@/components/commons/FixedLayer/ProfileView';
 import { MotionParent } from '@/components/MotionItems';
-import {
-  type JobPost,
-  useGetApplicantsQuery,
-  useGetJobPostsQuery,
-} from '@/graphql/client/gql/schema';
+import { type JobPost, useGetJobPostsQuery } from '@/graphql/client/gql/schema';
 import useMe from '@/hooks/useMe';
+import { useResponseErrorHandler } from '@/hooks/useResponseErrorHandler';
 
 import s from './myinterviews.module.scss';
 
@@ -65,6 +62,7 @@ const myInterviewItems = [
 
 const MyInterviews = () => {
   const { me } = useMe();
+  const router = useRouter();
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [page, setPage] = useState(1);
   const [activeStep, setActiveStep] = useState(0);
@@ -138,71 +136,81 @@ const MyInterviews = () => {
                   <List className={s.list}>
                     {applications.map((post, idx) => {
                       return (
-                        <ListItem
-                          key={idx}
-                          className={s.list_item}
-                          secondaryAction={
-                            <Stack direction="row" alignItems="center"></Stack>
-                          }
-                          onClick={() => {
-                            return null;
-                          }}
+                        <Link
+                          href={`/applicant/my-interviews/application/${post.id}`}
+                          key={post.id}
                         >
-                          <ListItemButton className={s.list_item_btn}>
-                            <ListItemIcon>
-                              <Avatar
-                                className={s.avatar}
-                                // src={applicant?.account.image}
-                              />
-                            </ListItemIcon>
-                            <ListItemText
-                              primary={
-                                <Typography
-                                  variant="h6"
-                                  color="gray"
-                                  fontWeight="600"
-                                  className={s.title}
-                                >
-                                  {post.title}
-                                </Typography>
-                              }
-                              secondary={
-                                <Stack className={s.secondary}>
-                                  <div className={s.detail}>
-                                    <div className={s.detail_item}>
-                                      <BusinessCenter fontSize="small" />
-                                      <Typography variant="body2">
-                                        Unknown
-                                      </Typography>
-                                    </div>
-                                    -
-                                    <div className={s.detail_item}>
-                                      <MonetizationOn fontSize="small" />
-                                      <Typography variant="body2">
-                                        12k /mo
-                                      </Typography>
-                                    </div>
-                                    -
-                                    <div className={s.detail_item}>
-                                      <Place fontSize="small" />
-                                      <Typography variant="body2">
-                                        USA
-                                      </Typography>
-                                    </div>
-                                  </div>
-
+                          <ListItem
+                            key={idx}
+                            className={s.list_item}
+                            secondaryAction={
+                              <Stack
+                                direction="row"
+                                alignItems="center"
+                              ></Stack>
+                            }
+                            onClick={() => {
+                              // void router.push(
+                              //   '/applicant/my-interviews/application/1',
+                              // );
+                            }}
+                          >
+                            <ListItemButton className={s.list_item_btn}>
+                              <ListItemIcon>
+                                <Avatar
+                                  className={s.avatar}
+                                  // src={applicant?.account.image}
+                                />
+                              </ListItemIcon>
+                              <ListItemText
+                                primary={
                                   <Typography
-                                    className={s.skills}
-                                    fontWeight={300}
-                                    variant="body2"
+                                    variant="h6"
+                                    color="gray"
+                                    fontWeight="600"
+                                    className={s.title}
                                   >
-                                    {post.description.slice(0, 200)}
+                                    {post.title}
                                   </Typography>
-                                </Stack>
-                              }
-                            />
-                          </ListItemButton>
-                        </ListItem>
+                                }
+                                secondary={
+                                  <Stack className={s.secondary}>
+                                    <div className={s.detail}>
+                                      <div className={s.detail_item}>
+                                        <BusinessCenter fontSize="small" />
+                                        <Typography variant="body2">
+                                          Unknown
+                                        </Typography>
+                                      </div>
+                                      -
+                                      <div className={s.detail_item}>
+                                        <MonetizationOn fontSize="small" />
+                                        <Typography variant="body2">
+                                          12k /mo
+                                        </Typography>
+                                      </div>
+                                      -
+                                      <div className={s.detail_item}>
+                                        <Place fontSize="small" />
+                                        <Typography variant="body2">
+                                          USA
+                                        </Typography>
+                                      </div>
+                                    </div>
+
+                                    <Typography
+                                      className={s.skills}
+                                      fontWeight={300}
+                                      variant="body2"
+                                    >
+                                      {post.description.slice(0, 200)}
+                                    </Typography>
+                                  </Stack>
+                                }
+                              />
+                            </ListItemButton>
+                          </ListItem>
+                        </Link>
                       );
                     })}
                   </List>

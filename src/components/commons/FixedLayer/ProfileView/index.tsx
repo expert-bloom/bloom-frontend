@@ -10,6 +10,7 @@ import {
   type GetApplicantQuery,
   useGetApplicantQuery,
 } from '@/graphql/client/gql/schema';
+import { useResponseErrorHandler } from '@/hooks/useResponseErrorHandler';
 import { useAppStore } from '@/lib/store';
 
 import DetailContent from './components/DetailContent';
@@ -72,30 +73,6 @@ const menuVariants: { variants: Variants } & Record<string, any> = {
     ease: [0.6, 0.01, 0, 0.9],
   },
 };
-
-// a hook that handle apollo response error, it log the error and show toast
-export function useResponseErrorHandler(
-  error: ApolloError | undefined,
-  message: string,
-  options?: {
-    isShowToast?: boolean;
-  },
-) {
-  const { isShowToast = true } = options ?? {};
-
-  useEffect(() => {
-    if (error) {
-      console.error(error);
-      if (isShowToast) {
-        toast.error(
-          message ||
-            error.message ||
-            'Something went wrong, please try again later',
-        );
-      }
-    }
-  }, [error]);
-}
 
 const ProfileDetail = () => {
   const { profileDetail, setProfileDetail } = useAppStore();

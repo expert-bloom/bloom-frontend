@@ -1,14 +1,16 @@
+import { useEffect } from 'react';
+
 import { useSession } from 'next-auth/react';
 
-import { useResponseErrorHandler } from '@/components/commons/FixedLayer/ProfileView';
 import { useMeQuery } from '@/graphql/client/gql/schema';
+import { useResponseErrorHandler } from '@/hooks/useResponseErrorHandler';
 
 function useMe() {
   const { data: session } = useSession();
 
   const mePayload = useMeQuery({
     skip: !session?.user?.id,
-    nextFetchPolicy: 'network-only',
+    nextFetchPolicy: 'cache-and-network',
     variables: {
       input: {
         accountId: session?.user?.id as string,
@@ -17,7 +19,10 @@ function useMe() {
   });
   const { data, loading, error } = mePayload;
 
-  // console.log('mePayload: ', mePayload);
+  useEffect(() => {
+    console.log('mePayload: ', mePayload);
+    console.log('me: ', mePayload.data?.me);
+  }, [mePayload]);
 
   useResponseErrorHandler(error, 'Error getting me !');
 

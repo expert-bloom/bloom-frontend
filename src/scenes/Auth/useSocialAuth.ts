@@ -1,7 +1,9 @@
 import { useRef } from 'react';
-import { capitalize } from '@/utils';
-import { type AccountType } from '@/graphql/client/gql/schema';
+
 import Cookies from 'js-cookie';
+
+import { type AccountType } from '@/graphql/client/gql/schema';
+import { capitalize } from '@/utils';
 
 export default function useSocialAuth() {
   const windowRef = useRef<Window | null>(null);
@@ -47,7 +49,7 @@ export default function useSocialAuth() {
     Cookies.set('clientType', clientType ?? '-');
 
     popupCenter(
-      `/auth/sign-in/?social=${social}`,
+      `/auth/social-sign-in/?social=${social}`,
       `${capitalize(social)} Sign In`,
     );
   };

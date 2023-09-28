@@ -76,7 +76,7 @@ const links = [
   },
   {
     name: 'Explore Jobs',
-    href: '/search',
+    href: '/jobs',
     Icon: Handshake,
   },
   {

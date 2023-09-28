@@ -76,7 +76,7 @@ const getOptions: (req: NextApiRequest) => NextAuthOptions = (req) => ({
         account?.provider === 'google' ||
         account?.provider === 'github'
       ) {
-        const redirectUrl = '/auth/sign-in';
+        const redirectUrl = '/auth/social-sign-in';
         const clientType: any = req.cookies.clientType;
         const authType: any = req.cookies.authType;
 
@@ -282,8 +282,8 @@ const getOptions: (req: NextApiRequest) => NextAuthOptions = (req) => ({
   },
   pages: {
     signOut: undefined,
-    error: '/auth/sign-in',
-    signIn: '/auth/sign-in',
+    error: '/auth/social-sign-in',
+    signIn: '/auth/social-sign-in',
   },
   providers: [
     // custom credentials provider

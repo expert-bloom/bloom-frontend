@@ -1,5 +1,6 @@
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -75,14 +76,10 @@ export type AccountPayload = {
 
 export enum AccountSortField {
   /** Sort users by created at. */
-  CreatedAt = 'CREATED_AT',
-  /** Sort users by email. */
-  Email = 'EMAIL',
-  /** Sort users by first name. */
-  FirstName = 'FIRST_NAME',
-  /** Sort users by last modified at. */
-  LastModifiedAt = 'LAST_MODIFIED_AT',
-  /** Sort users by last name. */
+  CreatedAt = 'CREATED_AT' /** Sort users by email. */,
+  Email = 'EMAIL' /** Sort users by first name. */,
+  FirstName = 'FIRST_NAME' /** Sort users by last modified at. */,
+  LastModifiedAt = 'LAST_MODIFIED_AT' /** Sort users by last name. */,
   LastName = 'LAST_NAME',
 }
 
@@ -126,6 +123,7 @@ export type Applicant = Node & {
   about: Maybe<Scalars['String']['output']>;
   accomplishment: Maybe<Scalars['String']['output']>;
   account: Account;
+  applications: ApplicationConnections;
   education: Maybe<Scalars['String']['output']>;
   englishLevel: Maybe<EnglishLevel>;
   experienceYear: Maybe<Scalars['Int']['output']>;
@@ -144,6 +142,13 @@ export type Applicant = Node & {
   skillLevel: Maybe<ExperienceLevel>;
   skills: Maybe<Array<Scalars['String']['output']>>;
   workExperience: Array<WorkExperience>;
+};
+
+export type ApplicantApplicationsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type ApplicantSavedJobsArgs = {
@@ -169,17 +174,14 @@ export type ApplicantAppliedJobPostEdge = {
 };
 
 export type ApplicantConnection = {
-  edges: Array<ApplicantEdge>;
-  /** Pagination data for this connection. */
-  pageInfo: PageInfo;
-  /** A total count of items in the collection. */
+  edges: Array<ApplicantEdge> /** Pagination data for this connection. */;
+  pageInfo: PageInfo /** A total count of items in the collection. */;
   totalCount: Maybe<Scalars['Int']['output']>;
 };
 
 export type ApplicantEdge = {
   /** A cursor for use in pagination. */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge. */
+  cursor: Scalars['String']['output'] /** The item at the end of the edge. */;
   node: Applicant;
 };
 
@@ -225,6 +227,35 @@ export type ApplicantUpdateInput = {
   workExperience?: InputMaybe<Array<WorkExperienceInput>>;
 };
 
+export type Application = Node & {
+  applicantId: Scalars['String']['output'];
+  attachment: Maybe<Scalars['String']['output']>;
+  coverLetter: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  jobPostId: Scalars['String']['output'];
+  resume: Scalars['String']['output'];
+  status: ApplicationStatus;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type ApplicationConnections = {
+  edges: Array<ApplicationEdge>;
+  pageInfo: PageInfo;
+};
+
+export type ApplicationEdge = {
+  cursor: Scalars['String']['output'];
+  node: Application;
+};
+
+export enum ApplicationStatus {
+  Accepted = 'ACCEPTED',
+  Interview = 'INTERVIEW',
+  Pending = 'PENDING',
+  Rejected = 'REJECTED',
+}
+
 export type AuthAccountPayload = {
   accountType: AccountType;
   createdAt: Scalars['DateTime']['output'];
@@ -248,11 +279,6 @@ export type AuthApplicant = {
 export type AuthPayload = PayloadError & {
   account: Maybe<AuthAccountPayload>;
   errors: Array<Error>;
-};
-
-export type Aval = {
-  dayOfWeek: Scalars['String']['input'];
-  timeRage: Array<TimeRage>;
 };
 
 export type Company = Node & {
@@ -501,8 +527,7 @@ export type OAuthSignUpInput = {
 
 export enum OrderDirection {
   /** Specifies an ascending sort order. */
-  Asc = 'ASC',
-  /** Specifies a descending sort order. */
+  Asc = 'ASC' /** Specifies a descending sort order. */,
   Desc = 'DESC',
 }
 
@@ -596,16 +621,10 @@ export type SignUpInput = {
   password: Scalars['String']['input'];
 };
 
-export type TimeRage = {
-  from: Scalars['String']['input'];
-  to: Scalars['String']['input'];
-};
-
 export type UpdateProfileInput = {
   account?: InputMaybe<AccountUpdateInput>;
   accountId: Scalars['String']['input'];
   applicant?: InputMaybe<ApplicantUpdateInput>;
-  availablilty: Array<Aval>;
 };
 
 export type WorkExperience = {
@@ -700,6 +719,19 @@ export type UpdateProfileMutation = {
               interviewQuestions: Array<string>;
               createdAt: any;
               updatedAt: any;
+            };
+          }>;
+        };
+        applications: {
+          edges: Array<{
+            node: {
+              id: string;
+              createdAt: any;
+              status: ApplicationStatus;
+              resume: string;
+              coverLetter: string;
+              applicantId: string;
+              jobPostId: string;
             };
           }>;
         };
@@ -807,6 +839,19 @@ export type AccountPayloadFragmentFragment = {
         };
       }>;
     };
+    applications: {
+      edges: Array<{
+        node: {
+          id: string;
+          createdAt: any;
+          status: ApplicationStatus;
+          resume: string;
+          coverLetter: string;
+          applicantId: string;
+          jobPostId: string;
+        };
+      }>;
+    };
     account: {
       id: string;
       email: string;
@@ -900,6 +945,19 @@ export type FindAccountQuery = {
               interviewQuestions: Array<string>;
               createdAt: any;
               updatedAt: any;
+            };
+          }>;
+        };
+        applications: {
+          edges: Array<{
+            node: {
+              id: string;
+              createdAt: any;
+              status: ApplicationStatus;
+              resume: string;
+              coverLetter: string;
+              applicantId: string;
+              jobPostId: string;
             };
           }>;
         };
@@ -999,6 +1057,19 @@ export type MeQuery = {
           };
         }>;
       };
+      applications: {
+        edges: Array<{
+          node: {
+            id: string;
+            createdAt: any;
+            status: ApplicationStatus;
+            resume: string;
+            coverLetter: string;
+            applicantId: string;
+            jobPostId: string;
+          };
+        }>;
+      };
       account: {
         id: string;
         email: string;
@@ -1040,6 +1111,16 @@ export type ApplicantLightFragment = {
   github: string | null;
   linkedin: string | null;
   portfolio: string | null;
+};
+
+export type ApplicationFragmentFragment = {
+  id: string;
+  createdAt: any;
+  status: ApplicationStatus;
+  resume: string;
+  coverLetter: string;
+  applicantId: string;
+  jobPostId: string;
 };
 
 export type ApplicantFragment = {
@@ -1095,6 +1176,19 @@ export type ApplicantFragment = {
         interviewQuestions: Array<string>;
         createdAt: any;
         updatedAt: any;
+      };
+    }>;
+  };
+  applications: {
+    edges: Array<{
+      node: {
+        id: string;
+        createdAt: any;
+        status: ApplicationStatus;
+        resume: string;
+        coverLetter: string;
+        applicantId: string;
+        jobPostId: string;
       };
     }>;
   };
@@ -1407,6 +1501,19 @@ export type GetSavedApplicantsQuery = {
       skills: Array<string>;
       ongoing: boolean;
     }>;
+    applications: {
+      edges: Array<{
+        node: {
+          id: string;
+          createdAt: any;
+          status: ApplicationStatus;
+          resume: string;
+          coverLetter: string;
+          applicantId: string;
+          jobPostId: string;
+        };
+      }>;
+    };
     account: {
       id: string;
       email: string;
@@ -1577,6 +1684,17 @@ export const JopPostFragmentDoc = gql`
     updatedAt
   }
 `;
+export const ApplicationFragmentFragmentDoc = gql`
+  fragment ApplicationFragment on Application {
+    id
+    createdAt
+    status
+    resume
+    coverLetter
+    applicantId
+    jobPostId
+  }
+`;
 export const AccountFragmentFragmentDoc = gql`
   fragment AccountFragment on Account {
     id
@@ -1627,11 +1745,19 @@ export const ApplicantFragmentDoc = gql`
         }
       }
     }
+    applications {
+      edges {
+        node {
+          ...ApplicationFragment
+        }
+      }
+    }
     account {
       ...AccountFragment
     }
   }
   ${JopPostFragmentDoc}
+  ${ApplicationFragmentFragmentDoc}
   ${AccountFragmentFragmentDoc}
 `;
 export const AccountPayloadFragmentFragmentDoc = gql`
@@ -1752,6 +1878,7 @@ export function useUpdateProfileMutation(
     UpdateProfileMutationVariables
   >(UpdateProfileDocument, options);
 }
+
 export type UpdateProfileMutationHookResult = ReturnType<
   typeof useUpdateProfileMutation
 >;
@@ -1803,6 +1930,7 @@ export function useFindAccountQuery(
     options,
   );
 }
+
 export function useFindAccountLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     FindAccountQuery,
@@ -1815,6 +1943,7 @@ export function useFindAccountLazyQuery(
     options,
   );
 }
+
 export type FindAccountQueryHookResult = ReturnType<typeof useFindAccountQuery>;
 export type FindAccountLazyQueryHookResult = ReturnType<
   typeof useFindAccountLazyQuery
@@ -1854,12 +1983,14 @@ export function useMeQuery(
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, options);
 }
+
 export function useMeLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, options);
 }
+
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
@@ -1922,6 +2053,7 @@ export function useGetApplicantsQuery(
     options,
   );
 }
+
 export function useGetApplicantsLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     GetApplicantsQuery,
@@ -1934,6 +2066,7 @@ export function useGetApplicantsLazyQuery(
     options,
   );
 }
+
 export type GetApplicantsQueryHookResult = ReturnType<
   typeof useGetApplicantsQuery
 >;
@@ -2018,6 +2151,7 @@ export function useGetApplicantQuery(
     options,
   );
 }
+
 export function useGetApplicantLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     GetApplicantQuery,
@@ -2030,6 +2164,7 @@ export function useGetApplicantLazyQuery(
     options,
   );
 }
+
 export type GetApplicantQueryHookResult = ReturnType<
   typeof useGetApplicantQuery
 >;
@@ -2087,6 +2222,7 @@ export function useLoginMutation(
     options,
   );
 }
+
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<
@@ -2140,6 +2276,7 @@ export function useSignUpMutation(
     options,
   );
 }
+
 export type SignUpMutationHookResult = ReturnType<typeof useSignUpMutation>;
 export type SignUpMutationResult = Apollo.MutationResult<SignUpMutation>;
 export type SignUpMutationOptions = Apollo.BaseMutationOptions<
@@ -2193,6 +2330,7 @@ export function useSignUpOAuthMutation(
     options,
   );
 }
+
 export type SignUpOAuthMutationHookResult = ReturnType<
   typeof useSignUpOAuthMutation
 >;
@@ -2241,6 +2379,7 @@ export function useSaveApplicantMutation(
     SaveApplicantMutationVariables
   >(SaveApplicantDocument, options);
 }
+
 export type SaveApplicantMutationHookResult = ReturnType<
   typeof useSaveApplicantMutation
 >;
@@ -2287,6 +2426,7 @@ export function useGetCompaniesQuery(
     options,
   );
 }
+
 export function useGetCompaniesLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     GetCompaniesQuery,
@@ -2299,6 +2439,7 @@ export function useGetCompaniesLazyQuery(
     options,
   );
 }
+
 export type GetCompaniesQueryHookResult = ReturnType<
   typeof useGetCompaniesQuery
 >;
@@ -2362,6 +2503,7 @@ export function useGetSavedApplicantsQuery(
     GetSavedApplicantsQueryVariables
   >(GetSavedApplicantsDocument, options);
 }
+
 export function useGetSavedApplicantsLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     GetSavedApplicantsQuery,
@@ -2374,6 +2516,7 @@ export function useGetSavedApplicantsLazyQuery(
     GetSavedApplicantsQueryVariables
   >(GetSavedApplicantsDocument, options);
 }
+
 export type GetSavedApplicantsQueryHookResult = ReturnType<
   typeof useGetSavedApplicantsQuery
 >;
@@ -2430,6 +2573,7 @@ export function useCreateJobPostMutation(
     CreateJobPostMutationVariables
   >(CreateJobPostDocument, options);
 }
+
 export type CreateJobPostMutationHookResult = ReturnType<
   typeof useCreateJobPostMutation
 >;
@@ -2481,6 +2625,7 @@ export function useSaveJobPostMutation(
     options,
   );
 }
+
 export type SaveJobPostMutationHookResult = ReturnType<
   typeof useSaveJobPostMutation
 >;
@@ -2527,6 +2672,7 @@ export function useGetJobPostsQuery(
     options,
   );
 }
+
 export function useGetJobPostsLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     GetJobPostsQuery,
@@ -2539,6 +2685,7 @@ export function useGetJobPostsLazyQuery(
     options,
   );
 }
+
 export type GetJobPostsQueryHookResult = ReturnType<typeof useGetJobPostsQuery>;
 export type GetJobPostsLazyQueryHookResult = ReturnType<
   typeof useGetJobPostsLazyQuery
@@ -2584,6 +2731,7 @@ export function useGetJobPostQuery(
     options,
   );
 }
+
 export function useGetJobPostLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     GetJobPostQuery,
@@ -2596,6 +2744,7 @@ export function useGetJobPostLazyQuery(
     options,
   );
 }
+
 export type GetJobPostQueryHookResult = ReturnType<typeof useGetJobPostQuery>;
 export type GetJobPostLazyQueryHookResult = ReturnType<
   typeof useGetJobPostLazyQuery

@@ -1,13 +1,5 @@
 import React from 'react';
-import s from './footer.module.scss';
-import {
-  Button,
-  Divider,
-  IconButton,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material';
+
 import {
   Android,
   Apple,
@@ -16,9 +8,20 @@ import {
   LinkedIn,
   Twitter,
 } from '@mui/icons-material';
+import {
+  Button,
+  Divider,
+  IconButton,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
 import Image from 'next/image';
-import Logo from '@/public/logo.png';
 import Link from 'next/link';
+
+import Logo from '@/public/logo.png';
+
+import s from './footer.module.scss';
 
 const socials = [
   {
@@ -119,7 +122,7 @@ const Footer = () => {
             </Stack>
           </div>
 
-          <div className={s.row}>
+          <Stack className={s.row}>
             <Typography variant="h6" color="#d0d0d0">
               Keep in touch
             </Typography>
@@ -132,7 +135,7 @@ const Footer = () => {
               sx={{ width: '20rem' }}
             />
             <Button variant="contained">Subscribe</Button>
-          </div>
+          </Stack>
         </div>
 
         <div className={s.contact_link}>

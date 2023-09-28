@@ -1,0 +1,113 @@
+@use '@/styles/index.scss' as s;
+
+.container {
+  width: 100%;
+
+  & :local {
+
+    .wrapper {
+      display: flex;
+      justify-content: space-evenly;
+      width: 100%;
+      padding: 1.6rem;
+      //max-width: 90rem;
+      margin: 1rem auto 0;
+      flex-wrap: wrap;
+
+      //border: 1px solid red;
+
+      @include s.media-breakpoint-up(sm){
+        margin: 4rem auto 0;
+      }
+      //max-width: fit-content;
+
+      header{
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        max-width: 85rem;
+
+        @include s.media-breakpoint-up(sm){
+          margin-bottom: 4rem;
+        }
+
+        //border: 1px solid #000;
+
+        .go_back{
+          border-radius: .5rem;
+          border: 1px solid #ccc;
+          padding: 1rem;
+          margin: .3rem;
+        }
+
+        a{
+          button{
+            display: none;
+
+            @include s.media-breakpoint-up(sm){
+              display: flex;
+            }
+          }
+        }
+      }
+
+      .stepper_container {
+        max-width: 400px;
+
+        //border: 1px solid #000;
+
+        .step {
+          //border: 1px solid #000;
+          .active {
+            //padding-left: .5rem;
+
+            & :global {
+              .MuiStepLabel-labelContainer {
+                background-color: s.$clrs-accent-light;
+                padding: 1rem 0.5rem;
+                border-radius: 0.5rem;
+              }
+            }
+          }
+
+          & :global {
+            .MuiStepLabel-label {
+              font-weight: 900;
+              font-size: 1rem;
+              text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            }
+          }
+        }
+      }
+
+      .action_center {
+        width: 100%;
+        max-width: 38rem;
+        //border: 1px solid #000;
+      }
+
+
+
+    }
+  }
+}
+
+
+.status {
+  margin-top: 0.3rem;
+
+  & :local {
+    .chip {
+      span {
+        font-size: 0.75rem;
+        font-family: s.$fonts-sofia-pro-soft;
+        margin-bottom: 0;
+        //line-height: 90%;
+        margin-top: 0.2rem;
+        font-weight: 400;
+      }
+    }
+  }
+}

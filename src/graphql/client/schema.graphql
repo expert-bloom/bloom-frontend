@@ -82,6 +82,7 @@ type Applicant implements Node {
     about: String
     accomplishment: String
     account: Account!
+    applications(after: String, before: String, first: Int, last: Int): ApplicationConnections!
     education: String
     englishLevel: EnglishLevel
     experienceYear: Int
@@ -140,6 +141,28 @@ type ApplicantSavedJobPostConnections {
 type ApplicantSavedJobPostEdge {
     cursor: String!
     node: JobPost!
+}
+
+type Application implements Node {
+    applicantId: String!
+    attachment: String
+    coverLetter: String!
+    createdAt: DateTime!
+    id: ID!
+    jobPostId: String!
+    resume: String!
+    status: ApplicationStatus!
+    updatedAt: DateTime!
+}
+
+type ApplicationConnections {
+    edges: [ApplicationEdge!]!
+    pageInfo: PageInfo!
+}
+
+type ApplicationEdge {
+    cursor: String!
+    node: Application!
 }
 
 type AuthAccountPayload {
@@ -284,6 +307,13 @@ enum AccountType {
     AFFILIATE
     APPLICANT
     COMPANY
+}
+
+enum ApplicationStatus {
+    ACCEPTED
+    INTERVIEW
+    PENDING
+    REJECTED
 }
 
 enum EnglishLevel {
@@ -511,17 +541,6 @@ input UpdateProfileInput {
     account: AccountUpdateInput
     accountId: String!
     applicant: ApplicantUpdateInput
-    availablilty: [Aval!]!
-}
-
-input Aval {
-    dayOfWeek: String!
-    timeRage: [TimeRage!]!
-}
-
-input TimeRage {
-    from: String!
-    to: String!
 }
 
 input WorkExperienceInput {
@@ -534,5 +553,3 @@ input WorkExperienceInput {
     skills: [String!]!
     startDate: DateTime!
 }
-
-

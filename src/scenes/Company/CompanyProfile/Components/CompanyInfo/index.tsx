@@ -27,7 +27,7 @@ import {
   type StepProps,
 } from '@/scenes/Applicant/Profile/data';
 import { useCompanyProfileSettingFormContext } from '@/scenes/Company/CompanyProfile';
-import { skillOption } from '@/scenes/CreateJobPost/JobRequirement';
+import { skillOption } from '@/scenes/Company/CreateJobPost/JobRequirement';
 import { capitalize } from '@/utils';
 
 import s from './profileinfo.module.scss';

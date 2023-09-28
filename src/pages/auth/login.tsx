@@ -1,5 +1,6 @@
 import React from 'react';
-import SignIn from '@/scenes/Auth/SignIn';
+
+import SignIn from 'src/scenes/Auth/Login';
 
 export default function Login() {
   return <SignIn />;

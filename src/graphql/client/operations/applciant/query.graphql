@@ -21,6 +21,16 @@ fragment ApplicantLight on Applicant{
 
 }
 
+fragment ApplicationFragment on Application{
+    id
+    createdAt
+    status
+    resume
+    coverLetter
+    applicantId
+    jobPostId
+}
+
 fragment Applicant on Applicant{
     id
     about
@@ -59,6 +69,14 @@ fragment Applicant on Applicant{
         edges {
             node {
                 ...JopPost
+            }
+        }
+    }
+
+    applications{
+        edges{
+            node{
+                ...ApplicationFragment
             }
         }
     }

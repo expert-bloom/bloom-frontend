@@ -115,36 +115,7 @@ export default function TopNavBar({ pageProps }: any) {
                 </Stack>
               </Link>
 
-              <div className={clsx([s.links])}>
-                <Link
-                  href="/company/post"
-                  className={clsx([
-                    s.link,
-                    router.pathname === '/post' && s.active,
-                  ])}
-                >
-                  <Typography> Post A Job</Typography>
-                </Link>
-
-                <Link
-                  href="/search"
-                  className={clsx([
-                    s.link,
-                    router.pathname === '/job-posts' && s.active,
-                  ])}
-                >
-                  <Typography>Find Work</Typography>
-                </Link>
-                <Link
-                  href="/"
-                  className={clsx([
-                    s.link,
-                    router.pathname === '/talents' && s.active,
-                  ])}
-                >
-                  <Typography>Find Talent</Typography>
-                </Link>
-              </div>
+              <div className={clsx([s.links])}></div>
 
               {data != null ? (
                 <Tooltip title="Profile">

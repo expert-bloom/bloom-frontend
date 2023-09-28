@@ -53,7 +53,7 @@ const DetailContent = ({ jobPost, isLoading, onCloseJobDetail }: Props) => {
             <Close />
           </IconButton>
 
-          <Link href="/">
+          <Link href={`/jobs/${jobPost?.id ?? ''}`} target="_blank">
             <Button startIcon={<Launch />}>Open job in a new window</Button>
           </Link>
         </header>

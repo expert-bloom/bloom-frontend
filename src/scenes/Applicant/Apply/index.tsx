@@ -1,16 +1,15 @@
 import React from 'react';
 
 import { Subject } from '@mui/icons-material';
-import { LoadingButton } from '@mui/lab';
 import { Alert, FormLabel, Stack, TextField, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import { matchIsValidTel, MuiTelInput } from 'mui-tel-input';
 import { useRouter } from 'next/router';
 
-import { useResponseErrorHandler } from '@/components/commons/FixedLayer/ProfileView';
 import { MoButton } from '@/components/MoButton';
 import { useGetJobPostsQuery } from '@/graphql/client/gql/schema';
 import useMe from '@/hooks/useMe';
+import { useResponseErrorHandler } from '@/hooks/useResponseErrorHandler';
 import ApplicationJobPostDetail from '@/scenes/Applicant/Apply/Components/ApplicationJobPostDetail';
 import ResumeFile from '@/scenes/Applicant/Apply/Components/Resumefile';
 

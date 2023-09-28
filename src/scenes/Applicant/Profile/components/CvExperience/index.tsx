@@ -40,7 +40,7 @@ import {
   type StepProps,
   type WorkExperienceFormValuesType,
 } from '@/scenes/Applicant/Profile/data';
-import { skillOption } from '@/scenes/CreateJobPost/JobRequirement';
+import { skillOption } from '@/scenes/Company/CreateJobPost/JobRequirement';
 
 import s from './cv.module.scss';
 

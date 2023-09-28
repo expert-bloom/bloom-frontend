@@ -38,6 +38,20 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname,
   );
 
+  if (request.nextUrl.pathname.startsWith('/auth') && token?.accountType) {
+    if (token?.accountType === 'APPLICANT') {
+      return NextResponse.redirect(
+        new URL('/applicant/dashboard', request.url),
+      );
+    }
+
+    if (token?.accountType === 'COMPANY') {
+      return NextResponse.redirect(new URL('/company/dashboard', request.url));
+    }
+
+    return NextResponse.redirect(new URL('/404', request.url));
+  }
+
   if (request.nextUrl.pathname === '/' && token?.id) {
     if (token?.accountType === 'APPLICANT') {
       return NextResponse.redirect(
@@ -69,7 +83,13 @@ export async function middleware(request: NextRequest) {
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ['/', '/applicant/:path*', '/company/:path*'],
+  matcher: [
+    '/',
+    '/applicant/:path*',
+    '/company/:path*',
+    '/auth/login',
+    '/auth/register',
+  ],
 };
 
 // See "Matching Paths" below to learn more
