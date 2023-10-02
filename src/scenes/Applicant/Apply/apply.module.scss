@@ -21,23 +21,39 @@
         padding: 3rem;
         display: flex;
         flex-flow: column;
-        gap: 1rem;
+        gap: 1.5rem;
         border: 1px solid #eaeaea;
         border-radius: 2rem;
 
-        & > :first-child{
+        & > :first-child {
           margin-bottom: 2rem;
         }
 
       }
 
-      .submit{
-        max-width: 17rem;
-        button{
+      .submit {
+        max-width: 15rem;
+        margin-top: 2rem;
+
+        button {
           font-size: 1.1rem;
           font-weight: 400;
         }
       }
+
+      .file_pond_wrap {
+        //margin-top: 1.5rem;
+
+        & :global {
+          .filepond--root {
+            margin-bottom: 0;
+          }
+        }
+      }
+
+
     }
   }
 }
+
+

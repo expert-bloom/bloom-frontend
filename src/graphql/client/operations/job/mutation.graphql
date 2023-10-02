@@ -9,8 +9,23 @@ mutation CreateJobPost($input: CreateJobPostInput!) {
     }
 }
 
+mutation CreateJobApplication($input: CreateApplicationInput!) {
+    createApplication(input: $input) {
+        errors {
+            message
+        }
+
+        application {
+            id
+            applicantId
+            jobPostId
+            createdAt
+        }
+    }
+}
+
 mutation SaveJobPost($input: SaveJobPostInput!) {
     saveJobPost(input: $input) {
-        ...JopPost
+        ...JopPostFragment
     }
 }

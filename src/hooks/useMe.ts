@@ -20,8 +20,10 @@ function useMe() {
   const { data, loading, error } = mePayload;
 
   useEffect(() => {
-    console.log('mePayload: ', mePayload);
-    console.log('me: ', mePayload.data?.me);
+    if (error) {
+      console.log('mePayload: ', mePayload);
+      console.log('me: ', mePayload.data?.me);
+    }
   }, [mePayload]);
 
   useResponseErrorHandler(error, 'Error getting me !');

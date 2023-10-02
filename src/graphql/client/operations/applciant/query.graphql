@@ -24,11 +24,16 @@ fragment ApplicantLight on Applicant{
 fragment ApplicationFragment on Application{
     id
     createdAt
+    updatedAt
     status
     resume
     coverLetter
     applicantId
     jobPostId
+
+    jobPost {
+     ...JopPostFragment
+    }
 }
 
 fragment Applicant on Applicant{
@@ -68,15 +73,7 @@ fragment Applicant on Applicant{
     savedJobs {
         edges {
             node {
-                ...JopPost
-            }
-        }
-    }
-
-    applications{
-        edges{
-            node{
-                ...ApplicationFragment
+                ...JopPostFragment
             }
         }
     }
@@ -157,7 +154,7 @@ query GetApplicant($input: GetApplicantInput!){
         savedJobs {
             edges {
                 node {
-                    ...JopPost
+                    ...JopPostFragment
                 }
             }
         }
@@ -165,5 +162,16 @@ query GetApplicant($input: GetApplicantInput!){
         account{
             ...AccountFragment
         }
+    }
+}
+
+
+query GetJobApplications($input: GetJobApplicationsInput!){
+    getJobApplications(input: $input){
+          edges {
+            node {
+                ...ApplicationFragment
+            }
+          }
     }
 }

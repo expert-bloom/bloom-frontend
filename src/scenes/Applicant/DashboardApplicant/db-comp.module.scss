@@ -9,6 +9,7 @@
   & :local{
 
     .wrapper{
+      padding: 1.5rem;
 
       @include s.media-breakpoint-up(md){
         max-width: 85rem;

@@ -1,4 +1,4 @@
-fragment JopPost on JobPost{
+fragment JopPostFragment on JobPost{
     id
     title
     applicationDeadline
@@ -26,13 +26,13 @@ fragment JopPost on JobPost{
 
 query GetJobPosts($input: JopPostFilterInput ){
     getJobPosts(input: $input){
-        ...JopPost
+        ...JopPostFragment
     }
 }
 
 query GetJobPost($input: GetJobPostInput!){
     getJobPost(input: $input){
-        ...JopPost
+        ...JopPostFragment
     }
 }
 

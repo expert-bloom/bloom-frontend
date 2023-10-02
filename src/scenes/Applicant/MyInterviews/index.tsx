@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import {
   AccountCircle,
   BusinessCenter,
+  CalendarTodayRounded,
   MonetizationOn,
   PendingActions,
   Place,
@@ -12,6 +13,7 @@ import {
   AlertTitle,
   Avatar,
   Button,
+  Chip,
   List,
   ListItem,
   ListItemButton,
@@ -23,11 +25,17 @@ import {
 } from '@mui/material';
 import clsx from 'clsx';
 import { AnimatePresence, motion } from 'framer-motion';
+import moment from 'moment/moment';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import { MotionParent } from '@/components/MotionItems';
-import { type JobPost, useGetJobPostsQuery } from '@/graphql/client/gql/schema';
+import {
+  type Application,
+  type JobPost,
+  useGetJobApplicationsQuery,
+  useGetJobPostsQuery,
+} from '@/graphql/client/gql/schema';
 import useMe from '@/hooks/useMe';
 import { useResponseErrorHandler } from '@/hooks/useResponseErrorHandler';
 
@@ -72,16 +80,24 @@ const MyInterviews = () => {
     },
   );
 
-  const [applications, setApplications] = useState<JobPost[] | undefined>();
+  const [currentPageApplications, setCurrentPageApplications] =
+    useState<Application[]>();
 
-  const jopPostsPayload = useGetJobPostsQuery();
-  const { error, data } = jopPostsPayload;
+  const jobApplications = useGetJobApplicationsQuery({
+    skip: !me?.applicant?.id,
+    variables: {
+      input: {
+        applicantId: me?.applicant?.id ?? '',
+      },
+    },
+  });
+  const { error, data: applications } = jobApplications;
 
-  console.log('jobposts payload  :', jopPostsPayload);
+  console.log('jobposts payload  :', jobApplications);
 
   useResponseErrorHandler(
     error,
-    'An error occurred while fetching best matches',
+    'An error occurred while getting job applications',
   );
 
   useEffect(() => {
@@ -91,12 +107,22 @@ const MyInterviews = () => {
   useEffect(() => {
     // handle the pagination
 
-    if (jopPostsPayload.loading || !data?.getJobPosts) return;
+    if (
+      jobApplications.loading ||
+      !applications ||
+      !applications.getJobApplications
+    )
+      return;
 
     const start = (page - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    setApplications(data?.getJobPosts.slice(start, end));
-  }, [page, itemsPerPage, jopPostsPayload]);
+    setCurrentPageApplications(
+      applications.getJobApplications.edges
+        .filter((e) => e.node !== null)
+        .map((edge) => edge.node as Application)
+        .slice(start, end),
+    );
+  }, [page, itemsPerPage, jobApplications]);
 
   return (
     <div className={s.container}>
@@ -131,14 +157,27 @@ const MyInterviews = () => {
 
           <AnimatePresence mode="wait">
             <MotionParent className={s.animator} key={currentTab.name}>
-              {applications && applications.length > 0 ? (
+              {currentPageApplications && currentPageApplications.length > 0 ? (
                 <>
                   <List className={s.list}>
-                    {applications.map((post, idx) => {
+                    {currentPageApplications.map((applciation, idx) => {
+                      if (!applciation.jobPost)
+                        return (
+                          <Alert className={s.alert}>
+                            <AlertTitle>
+                              <Typography variant="h4">
+                                Job Post deleted or not found
+                              </Typography>
+                            </AlertTitle>
+                          </Alert>
+                        );
+
+                      const post = applciation.jobPost;
+
                       return (
                         <Link
-                          href={`/applicant/my-interviews/application/${post.id}`}
-                          key={post.id}
+                          href={`/applicant/my-interviews/application/${applciation.id}`}
+                          key={applciation.id}
                         >
                           <ListItem
                             key={idx}
@@ -157,21 +196,49 @@ const MyInterviews = () => {
                           >
                             <ListItemButton className={s.list_item_btn}>
                               <ListItemIcon>
-                                <Avatar
-                                  className={s.avatar}
-                                  // src={applicant?.account.image}
-                                />
+                                <Stack
+                                  gap="1rem"
+                                  alignItems="center"
+                                  justifyContent="center"
+                                >
+                                  <Avatar
+                                    className={s.avatar}
+                                    // src={applicant?.account.image}
+                                  />
+                                  <Stack textAlign="center">
+                                    <Typography variant="h6">
+                                      Company name
+                                    </Typography>
+                                  </Stack>
+                                </Stack>
                               </ListItemIcon>
                               <ListItemText
                                 primary={
-                                  <Typography
-                                    variant="h6"
-                                    color="gray"
-                                    fontWeight="600"
-                                    className={s.title}
+                                  <Stack
+                                    direction="row"
+                                    justifyContent="space-between"
                                   >
-                                    {post.title}
-                                  </Typography>
+                                    <Typography
+                                      variant="h6"
+                                      color="gray"
+                                      fontWeight="400"
+                                      className={s.title}
+                                    >
+                                      {post.title}
+                                    </Typography>
+
+                                    <Chip
+                                      label={moment(
+                                        applciation.createdAt,
+                                      ).format('DD MMM YYYY, hh:mm A')}
+                                      variant="outlined"
+                                      size="small"
+                                      sx={{ px: '.2rem', color: 'gray' }}
+                                      icon={
+                                        <CalendarTodayRounded color="disabled" />
+                                      }
+                                    />
+                                  </Stack>
                                 }
                                 secondary={
                                   <Stack className={s.secondary}>
@@ -199,11 +266,16 @@ const MyInterviews = () => {
                                     </div>
 
                                     <Typography
-                                      className={s.skills}
+                                      className={s.desc}
                                       fontWeight={300}
                                       variant="body2"
                                     >
-                                      {post.description.slice(0, 200)}
+                                      {post.description.slice(0, 100)}
+                                    </Typography>
+
+                                    <Typography>
+                                      You shared your contacts with the job-post
+                                      owner.
                                     </Typography>
                                   </Stack>
                                 }
@@ -219,8 +291,8 @@ const MyInterviews = () => {
                     className={s.pagination}
                     count={
                       Math.ceil(
-                        (jopPostsPayload.data?.getJobPosts?.length ?? 0) /
-                          itemsPerPage,
+                        (jobApplications.data?.getJobApplications.edges
+                          ?.length ?? 0) / itemsPerPage,
                       ) ?? 0
                     }
                     variant="outlined"

@@ -89,6 +89,9 @@
       }
 
       .list{
+        //gap: .4rem;
+        display: flex;
+        flex-flow: column;
         //margin-top: 4rem;
         //padding: 1rem;
 
@@ -110,19 +113,27 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            margin-bottom: .5rem;
+            //font-weight: 600;
+
+            //border: 1px solid #000;
             //margin-bottom: .5rem;
           }
 
           .list_item_btn{
             padding: 1rem;
+            //border: 1px solid #000;
+            gap: 4rem;
+            padding-left: 2rem;
+            //align-items: flex-start;
           }
 
           .avatar{
             // use box-shadow to create border for image
             box-shadow: 0 0 0 3px #e3e3e3;
-            height: 6rem;
-            width: 6rem;
-            margin-right: 1.5rem;
+            height: 5rem;
+            width: 5rem;
+            //margin-right: 1.5rem;
           }
 
           .detail {
@@ -130,6 +141,7 @@
             align-items: center;
             gap: 1rem;
             margin-top: .25rem;
+
 
             .detail_item{
               display: flex;
@@ -143,6 +155,11 @@
               color: black;
             }
           }
+
+          .desc{
+            margin-top: .5rem;
+          }
+
 
           .skills {
             display: flex;
