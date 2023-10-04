@@ -17,7 +17,7 @@
       //border: 1px solid red;
 
       @include s.media-breakpoint-up(sm){
-        margin: 4rem auto 0;
+        //margin: 4rem auto 0;
       }
       //max-width: fit-content;
 
@@ -30,7 +30,7 @@
         max-width: 85rem;
 
         @include s.media-breakpoint-up(sm){
-          margin-bottom: 4rem;
+          margin-bottom: 3rem;
         }
 
         //border: 1px solid #000;
@@ -38,7 +38,7 @@
         .go_back{
           border-radius: .5rem;
           border: 1px solid #ccc;
-          padding: 1rem;
+          padding: .6rem;
           margin: .3rem;
         }
 
@@ -84,11 +84,94 @@
 
       .action_center {
         width: 100%;
-        max-width: 38rem;
+        max-width: 43rem;
         //border: 1px solid #000;
+        //padding: .5rem;
       }
 
 
+      .list_item {
+        border: 1px solid #e7e7e7;
+        border-radius: .5rem;
+        padding: 0;
+
+        & > :first-child{
+          padding: 1rem;
+        }
+
+        .title{
+          max-width: 50ch;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          margin-left: .2rem;
+          //margin-bottom: .5rem;
+          //font-weight: 600;
+
+          //border: 1px solid #000;
+          //margin-bottom: .5rem;
+        }
+
+        .list_item_btn{
+          //border: 1px solid #000;
+          //gap: 1.5rem;
+          //padding: 1rem;
+          align-items: flex-start;
+
+          //border: 1px solid #000;
+        }
+
+        .avatar{
+          // use box-shadow to create border for image
+          box-shadow: 0 0 0 3px #e3e3e3;
+          height: 2rem;
+          width: 2rem;
+          margin-top: .4rem;
+          //margin-right: 1.5rem;
+        }
+
+        .detail {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          margin-top: .25rem;
+
+          .detail_item{
+            display: flex;
+            gap: .3rem;
+            align-items: center;
+          }
+
+          p{
+            margin-top: .2rem;
+            font-weight: 300;
+            color: black;
+          }
+        }
+
+        .desc{
+          margin-top: .5rem;
+        }
+
+
+        .skills {
+          display: flex;
+          flex-wrap: wrap;
+          max-width: 44rem;
+          gap: .3rem;
+          align-items: center;
+          margin-top: .5rem;
+
+        }
+
+      }
+
+      .proposal{
+        margin-top: 2rem;
+        display: flex;
+        flex-flow: column;
+        gap: 1rem;
+      }
 
     }
   }

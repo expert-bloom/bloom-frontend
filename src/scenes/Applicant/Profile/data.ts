@@ -65,6 +65,7 @@ export const initialValues = {
 
     // CV & Experience
     resume: '' as string | undefined | null,
+    introVideo: '' as string | undefined | null,
     workExperience: [] as WorkExperienceFormValuesType[],
   },
 };

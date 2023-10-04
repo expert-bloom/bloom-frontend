@@ -68,7 +68,9 @@ const MarketPlace = () => {
             </Typography>
 
             <Button size="large" variant="outlined">
-              <Link href="/company/post">Create Your First Job Post</Link>
+              <Link href="/company/create-job-post">
+                Create Your First Job Post
+              </Link>
             </Button>
           </Alert>
         </CardContent>

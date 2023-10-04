@@ -4,6 +4,7 @@ import {
   AccountCircle,
   Contacts,
   EditRounded,
+  LocalOffer,
   PendingActions,
   Settings,
   WorkOutlineTwoTone,
@@ -12,6 +13,7 @@ import {
 import { LoadingButton } from '@mui/lab';
 import {
   Button,
+  CircularProgress,
   FormLabel,
   ListItemText,
   MenuItem,
@@ -20,14 +22,23 @@ import {
 } from '@mui/material';
 import clsx from 'clsx';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useErrorHandler } from 'next/dist/client/components/react-dev-overlay/internal/helpers/use-error-handler';
+import Link from 'next/link';
 import { BsFillJournalBookmarkFill } from 'react-icons/bs';
 
 import { MotionParent } from '@/components/MotionItems';
-import { useGetJobPostsQuery } from '@/graphql/client/gql/schema';
+import {
+  useGetCompaniesQuery,
+  useGetCompanyJobPostsQuery,
+  useGetJobPostsQuery,
+} from '@/graphql/client/gql/schema';
 import useMe from '@/hooks/useMe';
+import { useResponseErrorHandler } from '@/hooks/useResponseErrorHandler';
+import { useAppStore } from '@/lib/store';
 import AppliedApplicants from '@/scenes/Company/MarketPlace/AppliedApplicants';
 import BestMatch from '@/scenes/Company/MarketPlace/BestMatch';
 import InterviewApplicants from '@/scenes/Company/MarketPlace/InterviewApplicants';
+import Offers from '@/scenes/Company/MarketPlace/Offers';
 import SavedApplicants from '@/scenes/Company/MarketPlace/SavedApplicants';
 
 import s from './marketplace.module.scss';
@@ -57,21 +68,29 @@ const marketPlaceItems = [
     Icon: Contacts,
   },
   {
+    name: 'Interview',
+    component: (props: any) => <InterviewApplicants {...props} />,
+    Icon: Settings,
+  },
+  {
+    name: 'Offers',
+    component: (props: any) => <Offers {...props} />,
+    Icon: LocalOffer,
+  },
+  {
     name: 'Saved',
     component: (props: any) => <SavedApplicants {...props} />,
     schema: '',
     Icon: PendingActions,
   },
-  {
-    name: 'Interview',
-    component: (props: any) => <InterviewApplicants {...props} />,
-    Icon: Settings,
-  },
 ];
 
 const MarketPlace = () => {
-  const { me } = useMe();
-  const [selectedJobPost, setSelectedJobPost] = React.useState<string>('');
+  const { me, loading: meLoading } = useMe();
+  const [selectedJobPostId, setSelectedJobPostId] = React.useState<string>('');
+  const setAppStoreJobPostId = useAppStore(
+    (state) => state.setSelectedJobPostId,
+  );
 
   const [activeStep, setActiveStep] = useState(0);
   const [currentTab, setCurrentTab] = useState<typeof marketPlaceItems[number]>(
@@ -80,7 +99,16 @@ const MarketPlace = () => {
     },
   );
 
-  const jobPostPayload = useGetJobPostsQuery({
+  /*  const jobPostPayload = useGetJobPostsQuery({
+      skip: !me?.company?.id,
+      variables: {
+        input: {
+          companyId: me?.company?.id ?? '',
+        },
+      },
+    }); */
+
+  const jobPostPayload = useGetCompanyJobPostsQuery({
     skip: !me?.company?.id,
     variables: {
       input: {
@@ -88,11 +116,56 @@ const MarketPlace = () => {
       },
     },
   });
-  const posts = jobPostPayload.data?.getJobPosts;
+
+  useResponseErrorHandler(
+    jobPostPayload.error,
+    'Something went wrong loading marketplace',
+  );
 
   useEffect(() => {
     setCurrentTab({ ...marketPlaceItems[activeStep] });
   }, [activeStep]);
+
+  useEffect(() => {
+    if (
+      jobPostPayload.loading ||
+      meLoading ||
+      !jobPostPayload.data?.getCompanyJobPosts.payload
+    )
+      return;
+
+    if (!selectedJobPostId) {
+      setSelectedJobPostId(
+        jobPostPayload.data?.getCompanyJobPosts.payload[0].jobPost?.id,
+      );
+    }
+  }, [jobPostPayload]);
+
+  useEffect(() => {
+    if (selectedJobPostId) {
+      setAppStoreJobPostId(selectedJobPostId);
+    }
+  }, [selectedJobPostId]);
+
+  if (
+    jobPostPayload.loading ||
+    meLoading ||
+    !jobPostPayload.data?.getCompanyJobPosts
+  ) {
+    return (
+      <div className={s.container}>
+        <div className={s.wrapper}>
+          <div className={s.loading}>
+            <CircularProgress />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const posts = jobPostPayload.data?.getCompanyJobPosts.payload.map(
+    (jp) => jp.jobPost,
+  );
 
   return (
     <div className={s.container}>
@@ -101,45 +174,59 @@ const MarketPlace = () => {
           <Stack gap={0.5} flex="1" justifyContent="space-between">
             <FormLabel>Select Job Post</FormLabel>
 
-            <Select
-              value={selectedJobPost}
-              onChange={(e) => {
-                setSelectedJobPost(e.target.value);
-              }}
-              MenuProps={MenuProps}
-              renderValue={(selected) => (
-                <Stack direction="row" alignItems="center" gap=".5rem">
-                  <WorkTwoTone color="primary" />
-                  <ListItemText
-                    className={s.selected}
-                    sx={{ py: '.4rem' }}
-                    primary={
-                      posts?.find((post) => post.id === selected)?.title ??
-                      'Select Job Post'
-                    }
-                  />
-                </Stack>
-              )}
-            >
-              {jobPostPayload.data?.getJobPosts.map((job, idx) => (
-                <MenuItem value={job.id} key={idx}>
-                  <Stack direction="row" alignItems="center" gap="1rem">
-                    <WorkTwoTone />
-                    <ListItemText sx={{ py: '.4rem' }} primary={job.title} />
+            <Stack direction="row" gap="1rem" alignItems="center">
+              <Select
+                className={s.select}
+                value={selectedJobPostId}
+                onChange={(e) => {
+                  setSelectedJobPostId(e.target.value);
+                }}
+                MenuProps={MenuProps}
+                renderValue={(selected) => (
+                  <Stack direction="row" alignItems="center" gap=".5rem">
+                    <WorkTwoTone color="primary" />
+                    <ListItemText
+                      className={s.selected}
+                      // sx={{ py: '.4rem' }}
+                      primary={
+                        posts?.find((post) => post.id === selected)?.title ??
+                        'Select Job Post'
+                      }
+                    />
                   </Stack>
-                </MenuItem>
-              ))}
-            </Select>
-          </Stack>
+                )}
+              >
+                {posts.map((job, idx) => (
+                  <MenuItem value={job.id} key={idx}>
+                    <Stack direction="row" alignItems="center" gap="1rem">
+                      <WorkTwoTone color="disabled" />
+                      <ListItemText sx={{ py: '.4rem' }} primary={job.title} />
+                    </Stack>
+                  </MenuItem>
+                ))}
+              </Select>
 
-          <LoadingButton
-            // size="small"
-            variant="outlined"
-            color="primary"
-            startIcon={<EditRounded />}
-          >
-            Edit Post
-          </LoadingButton>
+              <Link
+                href={`/company/edit-job-post/${selectedJobPostId}`}
+                onClick={(e) => {
+                  if (!selectedJobPostId) {
+                    e.preventDefault();
+                  }
+                }}
+              >
+                <LoadingButton
+                  // size="small"
+                  variant="outlined"
+                  color="primary"
+                  startIcon={<EditRounded />}
+                  disabled={!selectedJobPostId}
+                  sx={{ borderRadius: '.5rem' }}
+                >
+                  Edit Post
+                </LoadingButton>
+              </Link>
+            </Stack>
+          </Stack>
         </header>
 
         <div className={s.content}>

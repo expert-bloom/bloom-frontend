@@ -1,12 +1,7 @@
 /* eslint-disable @typescript-eslint/no-misused-promises,@typescript-eslint/prefer-nullish-coalescing,@typescript-eslint/restrict-template-expressions */
 import React, { useEffect, useRef } from 'react';
 
-import {
-  AddCircle,
-  CalendarMonth,
-  DateRangeSharp,
-  ExpandMore,
-} from '@mui/icons-material';
+import { AddCircle, CalendarMonth, ExpandMore } from '@mui/icons-material';
 import {
   Accordion,
   AccordionDetails,
@@ -30,6 +25,7 @@ import { DatePicker } from '@mui/x-date-pickers';
 import { useFormik } from 'formik';
 import moment from 'moment';
 import { toast } from 'react-hot-toast';
+import YouTube from 'react-youtube';
 
 import useMe from '@/hooks/useMe';
 import FilePond from '@/lib/filePong';
@@ -57,6 +53,7 @@ const initialExperience: WorkExperienceFormValuesType = {
 
 const ProfileInfo = ({ stepUtil }: StepProps) => {
   const { formik } = useProfileSettingFormContext();
+  const [showPreview, setShowPreview] = React.useState(false);
   const filePond = useRef<FilePond>(null);
   const me = useMe();
   const { uploadToS3 } = usePresignedUpload();
@@ -168,6 +165,16 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
       void filePond.current?.addFile(me.me?.applicant?.resume ?? '');
     }
   }, [me.me?.applicant?.resume]);
+
+  const onReady = (event: any) => {
+    // Access the player instance
+    const player = event.target;
+  };
+
+  const onError = (error: any) => {
+    console.error('YouTube Player Error:', error);
+    toast.error('Error loading Intro video');
+  };
 
   return (
     <div className={s.container}>
@@ -296,6 +303,47 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
                 },
               }}
             />
+          </div>
+        </fieldset>
+
+        <fieldset className={s.wrap}>
+          <legend>Introduction Video</legend>
+          <div className={s.intro_vid}>
+            <Stack spacing={0.5} flex="1" style={{ width: '100%' }}>
+              <FormLabel>Link to your YouTube video</FormLabel>
+              <TextField
+                name="applicant.introVideo"
+                fullWidth
+                placeholder="Ex. https://www.youtube.com/watch?v=1234567890"
+                onChange={formik.handleChange}
+                value={formik.values.applicant.introVideo}
+                error={Boolean(formik.errors.applicant?.introVideo)}
+                helperText={formik.errors.applicant?.introVideo as string}
+              />
+              <FormControlLabel
+                control={<Checkbox />}
+                label="Preivew"
+                disabled={
+                  !formik.values.applicant.introVideo ||
+                  formik.values.applicant.introVideo === '' ||
+                  Boolean(formik.errors.applicant?.introVideo)
+                }
+                onChange={(e, checked) => {
+                  setShowPreview(checked);
+                }}
+              />
+            </Stack>
+
+            {showPreview && formik.values.applicant.introVideo && (
+              <YouTube
+                videoId={formik.values.applicant.introVideo}
+                style={{ width: '100%' }}
+                className={s.vid}
+                iframeClassName="intro_vid_iframe"
+                onReady={onReady}
+                onError={onError}
+              />
+            )}
           </div>
         </fieldset>
 

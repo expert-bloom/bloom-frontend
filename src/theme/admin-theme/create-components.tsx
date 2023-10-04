@@ -202,7 +202,8 @@ export function createComponents(config: { palette: PaletteOptions }) {
           fontWeight: 500,
           lineHeight: '24px',
           '&::placeholder': {
-            color: palette.text.secondary,
+            // color: palette.text.secondary,
+            color: 'red',
           },
         },
       },
@@ -252,6 +253,9 @@ export function createComponents(config: { palette: PaletteOptions }) {
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
+          '::placeholder': {
+            color: 'red',
+          },
           '&:hover': {
             backgroundColor: palette.action.hover,
             [`& .${outlinedInputClasses.notchedOutline}`]: {
@@ -276,6 +280,10 @@ export function createComponents(config: { palette: PaletteOptions }) {
           fontSize: 14,
           fontWeight: 500,
           lineHeight: '24px',
+          '&::placeholder': {
+            // color: palette.text.secondary,
+            color: 'red',
+          },
         },
         notchedOutline: {
           borderColor: palette.neutral[200],
@@ -356,6 +364,13 @@ export function createComponents(config: { palette: PaletteOptions }) {
     MuiTextField: {
       defaultProps: {
         variant: 'filled',
+      },
+      styleOverrides: {
+        root: {
+          '::placeholder': {
+            color: 'red',
+          },
+        },
       },
     },
   };

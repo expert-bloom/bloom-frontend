@@ -24,7 +24,7 @@ fragment AccountPayloadFragment on AccountPayload{
     phone
 
     applicant{
-        ...Applicant
+        ...ApplicantFragment
     }
 
     company {

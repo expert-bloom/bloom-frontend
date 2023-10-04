@@ -1,0 +1,112 @@
+@use '@/styles/index' as s;
+
+.container {
+  width: 100%;
+  min-height: 100vh;
+  margin-top: 1.5rem;
+
+  //border: 1px solid #000;
+
+  & :local {
+
+    .list {
+      //margin-top: 4rem;
+      //padding: 1rem;
+
+
+      border-radius: 1.2rem;
+
+      & > :not(:last-child) {
+        margin-bottom: .8rem;
+        //border-bottom: 1px solid #e7e7e7;
+      }
+
+      .list_item {
+        position: relative;
+        border: 1px solid #e7e7e7;
+        border-radius: .5rem;
+        padding: 0;
+
+        & :global{
+          .MuiListItemSecondaryAction-root{
+            //top: 20%;
+            //bottom: 20%;
+            //top: 0;
+
+            //border: 1px solid #000;
+            bottom: 0%;
+
+          }
+        }
+
+
+        .list_item_btn {
+          padding: 1.5rem 2rem;
+          align-items: flex-start;
+
+        }
+
+        .avatar {
+          // use box-shadow to create border for image
+          box-shadow: 0 0 0 3px #e3e3e3, 0 0 0 4px #c5c2c2;
+          height: 6.5rem;
+          width: 6.5rem;
+          margin-right: 1.5rem;
+        }
+
+        .cover_letter {
+          //border: 1px solid #000;
+          max-width: 70ch;
+          font-weight: 300;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          width: 100%;
+          margin-top: .5rem;
+        }
+
+        .detail {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          margin-top: .25rem;
+
+          .detail_item {
+            display: flex;
+            gap: .3rem;
+            align-items: center;
+          }
+
+          p {
+            margin-top: .2rem;
+            font-weight: 300;
+            color: black;
+          }
+        }
+
+        .skills {
+          display: flex;
+          flex-wrap: wrap;
+          max-width: 44rem;
+          gap: .3rem;
+          align-items: center;
+          margin-top: .5rem;
+
+          //border: 1px solid #000;
+        }
+
+      }
+
+    }
+
+    .not_found {
+      //min-height: 26vmax;
+    }
+
+    .pagination {
+      margin-top: 2rem;
+      margin-left: auto;
+      width: max-content;
+    }
+  }
+}

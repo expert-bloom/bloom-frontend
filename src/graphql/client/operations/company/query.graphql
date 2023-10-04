@@ -8,7 +8,7 @@ query GetCompanies {
 
 query GetSavedApplicants($input: GetSavedApplicantInput!, $skipSavedJobs: Boolean = true, $skipWorkExperience: Boolean = true) {
     getSavedApplicant(input: $input){
-        ...Applicant
+        ...ApplicantFragment
 
 
         savedJobs @skip(if: $skipSavedJobs) {
@@ -21,6 +21,35 @@ query GetSavedApplicants($input: GetSavedApplicantInput!, $skipSavedJobs: Boolea
 
         workExperience @skip(if : $skipWorkExperience) {
             companyWebsite
+        }
+    }
+}
+
+
+query GetCompanyJobPosts($input: GetCompanyJobPostsInput! ){
+    getCompanyJobPosts(input: $input){
+        errors {
+            message
+        }
+
+        payload {
+            jobPost {
+                ...JopPostFragment
+            }
+
+            applicationsWithApplicant {
+                application {
+                    ...ApplicationFragment
+                }
+
+                applicant {
+                    ...ApplicantFragment
+
+                    savedJobs @skip(if: true) {
+                        __typename
+                    }
+                }
+            }
         }
     }
 }

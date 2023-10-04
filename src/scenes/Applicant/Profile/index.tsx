@@ -144,6 +144,17 @@ const Profile = () => {
           phone: 'invalid phone number',
         };
       }
+
+      if (values.applicant.introVideo) {
+        // check the introVideo is a youtube link
+        const youtubeRegex =
+          /^(https?:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/g;
+        if (!youtubeRegex.test(values.applicant.introVideo))
+          error.applicant = {
+            ...error.applicant,
+            introVideo: 'invalid intro video link, please check again',
+          };
+      }
       return error;
     },
     onSubmit: async (values, helpers) => {
@@ -256,6 +267,7 @@ const Profile = () => {
         salaryExpectation: applicant.salaryExpectation ?? ('' as any),
         skills: applicant.skills ?? [],
         resume: applicant.resume ?? '',
+        introVideo: applicant.introVideo ?? '',
         github: applicant.github ?? '',
         linkedin: applicant.linkedin ?? '',
         portfolio: applicant.portfolio ?? '',

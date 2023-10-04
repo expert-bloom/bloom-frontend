@@ -21,22 +21,7 @@ fragment ApplicantLight on Applicant{
 
 }
 
-fragment ApplicationFragment on Application{
-    id
-    createdAt
-    updatedAt
-    status
-    resume
-    coverLetter
-    applicantId
-    jobPostId
-
-    jobPost {
-     ...JopPostFragment
-    }
-}
-
-fragment Applicant on Applicant{
+fragment ApplicantFragment on Applicant{
     id
     about
     jobPosition
@@ -47,12 +32,15 @@ fragment Applicant on Applicant{
     otherLanguages
     accomplishment
 
-
     skillLevel
     skills
     experienceYear
+    education
+    languages
+    gender
 
     resume
+    introVideo
     github
     linkedin
     portfolio
@@ -66,15 +54,23 @@ fragment Applicant on Applicant{
         companyWebsite
         skills
         ongoing
-
-        __typename
     }
 
     savedJobs {
         edges {
+            cursor
             node {
                 ...JopPostFragment
+
             }
+        }
+
+
+        pageInfo {
+            hasNextPage
+            hasPreviousPage
+            endCursor
+            startCursor
         }
     }
 
@@ -83,6 +79,32 @@ fragment Applicant on Applicant{
     }
 
 }
+
+
+fragment ApplicationFragment on Application{
+    id
+    createdAt
+    updatedAt
+    status
+    resume
+    coverLetter
+    applicantId
+    jobPostId
+    attachment
+
+    jobPost {
+        ...JopPostFragment
+    }
+
+    interview {
+        id
+    }
+
+    offer {
+        id
+    }
+}
+
 
 query GetApplicants($input: GetApplicantsInput!){
     getApplicants(input: $input){
@@ -165,13 +187,12 @@ query GetApplicant($input: GetApplicantInput!){
     }
 }
 
-
 query GetJobApplications($input: GetJobApplicationsInput!){
     getJobApplications(input: $input){
-          edges {
+        edges {
             node {
                 ...ApplicationFragment
             }
-          }
+        }
     }
 }

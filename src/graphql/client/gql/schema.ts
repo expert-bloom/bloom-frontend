@@ -132,6 +132,7 @@ export type Applicant = Node & {
   gender: Maybe<Scalars['String']['output']>;
   github: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
+  introVideo: Maybe<Scalars['String']['output']>;
   jobPosition: Maybe<Scalars['String']['output']>;
   languages: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   linkedin: Maybe<Scalars['String']['output']>;
@@ -140,7 +141,7 @@ export type Applicant = Node & {
   portfolio: Maybe<Scalars['String']['output']>;
   resume: Maybe<Scalars['String']['output']>;
   salaryExpectation: Maybe<Scalars['Int']['output']>;
-  savedJobs: ApplicantSavedJobPostConnections;
+  savedJobs: Maybe<ApplicantSavedJobPostConnections>;
   skillLevel: Maybe<ExperienceLevel>;
   skills: Maybe<Array<Scalars['String']['output']>>;
   workExperience: Array<WorkExperience>;
@@ -214,6 +215,7 @@ export type ApplicantUpdateInput = {
   englishLevel?: InputMaybe<EnglishLevel>;
   experienceYear?: InputMaybe<Scalars['Int']['input']>;
   github?: InputMaybe<Scalars['String']['input']>;
+  introVideo?: InputMaybe<Scalars['String']['input']>;
   jobPosition?: InputMaybe<Scalars['String']['input']>;
   linkedin?: InputMaybe<Scalars['String']['input']>;
   location?: InputMaybe<Scalars['String']['input']>;
@@ -231,8 +233,10 @@ export type Application = Node & {
   coverLetter: Scalars['String']['output'];
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
+  interview: Maybe<Interview>;
   jobPost: Maybe<JobPost>;
   jobPostId: Scalars['String']['output'];
+  offer: Maybe<Offer>;
   resume: Scalars['String']['output'];
   status: ApplicationStatus;
   updatedAt: Scalars['DateTime']['output'];
@@ -259,6 +263,11 @@ export enum ApplicationStatus {
   Pending = 'PENDING',
   Rejected = 'REJECTED',
 }
+
+export type ApplicationsWithApplicant = {
+  applicant: Applicant;
+  application: Application;
+};
 
 export type AuthAccountPayload = {
   accountType: AccountType;
@@ -293,9 +302,20 @@ export type Company = Node & {
   savedApplicants: Array<Applicant>;
 };
 
+export type CompanyJobPostsPayload = {
+  applicationsWithApplicant: Array<ApplicationsWithApplicant>;
+  jobPost: JobPost;
+};
+
+export type CompanyJobPostsResponse = {
+  errors: Array<Error>;
+  payload: Array<CompanyJobPostsPayload>;
+};
+
 export type CreateApplicationInput = {
   applicantId: Scalars['String']['input'];
   attachment?: InputMaybe<Scalars['String']['input']>;
+  companyId: Scalars['String']['input'];
   coverLetter: Scalars['String']['input'];
   email: Scalars['String']['input'];
   jobPostId: Scalars['String']['input'];
@@ -331,6 +351,43 @@ export type CreateJobPostInput = {
   skills: Array<Scalars['String']['input']>;
   title: Scalars['String']['input'];
   vacancy: Scalars['Int']['input'];
+};
+
+export type CreateJobPostResponse = {
+  errors: Array<Error>;
+  jobPost: Maybe<JobPost>;
+};
+
+export type EditJobPostFilter = {
+  companyId: Scalars['String']['input'];
+  jobPostId: Scalars['String']['input'];
+};
+
+export type EditJobPostInput = {
+  editedData: EditJobPostInputData;
+  filter: EditJobPostFilter;
+};
+
+export type EditJobPostInputData = {
+  applicationDeadline?: InputMaybe<Scalars['DateTime']['input']>;
+  category?: InputMaybe<Array<Scalars['String']['input']>>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  englishLevel?: InputMaybe<EnglishLevel>;
+  experienceLevel?: InputMaybe<ExperienceLevel>;
+  interviewQuestions?: InputMaybe<Array<Scalars['String']['input']>>;
+  isVisible?: InputMaybe<Scalars['Boolean']['input']>;
+  jobExperience?: InputMaybe<Scalars['Int']['input']>;
+  jobSite?: InputMaybe<JobSite>;
+  jobType?: InputMaybe<JobType>;
+  location?: InputMaybe<Scalars['String']['input']>;
+  otherLanguages?: InputMaybe<Array<Scalars['String']['input']>>;
+  qualifications?: InputMaybe<Array<Scalars['String']['input']>>;
+  salary?: InputMaybe<Array<Scalars['Int']['input']>>;
+  salaryType?: InputMaybe<SalaryType>;
+  skills?: InputMaybe<Array<Scalars['String']['input']>>;
+  title?: InputMaybe<Scalars['String']['input']>;
+  vacancy?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export enum EnglishLevel {
@@ -385,6 +442,10 @@ export type GetApplicationsInput = {
   orderBy?: InputMaybe<Array<ApplicantOrdering>>;
 };
 
+export type GetCompanyJobPostsInput = {
+  companyId: Scalars['String']['input'];
+};
+
 export type GetJobApplicationsInput = {
   after?: InputMaybe<Scalars['String']['input']>;
   applicantId: Scalars['String']['input'];
@@ -413,9 +474,34 @@ export type IAccount = {
   phone: Maybe<Scalars['String']['output']>;
 };
 
+export type Interview = Node & {
+  answerText: Maybe<Scalars['String']['output']>;
+  answerVideo: Maybe<Scalars['String']['output']>;
+  applicantId: Scalars['String']['output'];
+  attachment: Maybe<Scalars['String']['output']>;
+  companyId: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  deadline: Maybe<Scalars['DateTime']['output']>;
+  description: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  jobApplicationId: Maybe<Scalars['String']['output']>;
+  jobPostId: Scalars['String']['output'];
+  status: Maybe<InterviewStatus>;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export enum InterviewStatus {
+  Accepted = 'ACCEPTED',
+  Pending = 'PENDING',
+  Refused = 'REFUSED',
+  Rejected = 'REJECTED',
+  Responded = 'RESPONDED',
+}
+
 export type JobPost = Node & {
   applicationDeadline: Scalars['DateTime']['output'];
   category: Array<Scalars['String']['output']>;
+  companyId: Scalars['String']['output'];
   createdAt: Scalars['DateTime']['output'];
   description: Scalars['String']['output'];
   email: Scalars['String']['output'];
@@ -436,11 +522,6 @@ export type JobPost = Node & {
   title: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   vacancy: Scalars['Int']['output'];
-};
-
-export type JobPostCreate = {
-  errors: Array<Error>;
-  jobPost: Maybe<JobPost>;
 };
 
 export enum JobSite {
@@ -470,9 +551,10 @@ export type MeInput = {
 };
 
 export type Mutation = {
+  EditJobPost: CreateJobPostResponse;
   applicantProfileUpdate: AccountUpdate;
   createApplication: CreateApplicationPayload;
-  createJobPost: JobPostCreate;
+  createJobPost: CreateJobPostResponse;
   logIn: AuthPayload;
   profileUpdate: AccountUpdate;
   saveApplicant: Maybe<Scalars['Boolean']['output']>;
@@ -480,6 +562,10 @@ export type Mutation = {
   sayHi: Scalars['String']['output'];
   signUp: AuthPayload;
   signUpOAuth: AuthPayload;
+};
+
+export type MutationEditJobPostArgs = {
+  input: EditJobPostInput;
 };
 
 export type MutationApplicantProfileUpdateArgs = {
@@ -566,6 +652,29 @@ export type OAuthSignUpInput = {
   account: OAuthAccountInput;
 };
 
+export type Offer = Node & {
+  answerText: Maybe<Scalars['String']['output']>;
+  answerVideo: Maybe<Scalars['String']['output']>;
+  applicantId: Scalars['String']['output'];
+  companyId: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  deadline: Maybe<Scalars['DateTime']['output']>;
+  description: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  jobApplicationId: Maybe<Scalars['String']['output']>;
+  jobPostId: Scalars['String']['output'];
+  status: Maybe<OfferStatus>;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export enum OfferStatus {
+  Accepted = 'ACCEPTED',
+  Pending = 'PENDING',
+  Refused = 'REFUSED',
+  Rejected = 'REJECTED',
+  Responded = 'RESPONDED',
+}
+
 export enum OrderDirection {
   /** Specifies an ascending sort order. */
   Asc = 'ASC',
@@ -589,6 +698,7 @@ export type Query = {
   getApplicant: Maybe<Applicant>;
   getApplicants: Maybe<ApplicantConnection>;
   getCompanies: Array<Company>;
+  getCompanyJobPosts: CompanyJobPostsResponse;
   getJobApplications: ApplicationConnections;
   getJobPost: Maybe<JobPost>;
   getJobPosts: Array<JobPost>;
@@ -608,6 +718,10 @@ export type QueryGetApplicantArgs = {
 
 export type QueryGetApplicantsArgs = {
   input: GetApplicantsInput;
+};
+
+export type QueryGetCompanyJobPostsArgs = {
+  input: GetCompanyJobPostsInput;
 };
 
 export type QueryGetJobApplicationsArgs = {
@@ -726,12 +840,15 @@ export type UpdateProfileMutation = {
         skillLevel: ExperienceLevel | null;
         skills: Array<string> | null;
         experienceYear: number | null;
+        education: string | null;
+        languages: Array<string | null> | null;
+        gender: string | null;
         resume: string | null;
+        introVideo: string | null;
         github: string | null;
         linkedin: string | null;
         portfolio: string | null;
         workExperience: Array<{
-          __typename: 'WorkExperience';
           companyName: string;
           position: string;
           startDate: any;
@@ -743,6 +860,7 @@ export type UpdateProfileMutation = {
         }>;
         savedJobs: {
           edges: Array<{
+            cursor: string;
             node: {
               id: string;
               title: string;
@@ -764,11 +882,18 @@ export type UpdateProfileMutation = {
               skills: Array<string>;
               qualifications: Array<string>;
               interviewQuestions: Array<string>;
+              companyId: string;
               createdAt: any;
               updatedAt: any;
             };
           }>;
-        };
+          pageInfo: {
+            hasNextPage: boolean;
+            hasPreviousPage: boolean;
+            endCursor: string | null;
+            startCursor: string | null;
+          };
+        } | null;
         account: {
           id: string;
           email: string;
@@ -830,12 +955,15 @@ export type AccountPayloadFragmentFragment = {
     skillLevel: ExperienceLevel | null;
     skills: Array<string> | null;
     experienceYear: number | null;
+    education: string | null;
+    languages: Array<string | null> | null;
+    gender: string | null;
     resume: string | null;
+    introVideo: string | null;
     github: string | null;
     linkedin: string | null;
     portfolio: string | null;
     workExperience: Array<{
-      __typename: 'WorkExperience';
       companyName: string;
       position: string;
       startDate: any;
@@ -847,6 +975,7 @@ export type AccountPayloadFragmentFragment = {
     }>;
     savedJobs: {
       edges: Array<{
+        cursor: string;
         node: {
           id: string;
           title: string;
@@ -868,11 +997,18 @@ export type AccountPayloadFragmentFragment = {
           skills: Array<string>;
           qualifications: Array<string>;
           interviewQuestions: Array<string>;
+          companyId: string;
           createdAt: any;
           updatedAt: any;
         };
       }>;
-    };
+      pageInfo: {
+        hasNextPage: boolean;
+        hasPreviousPage: boolean;
+        endCursor: string | null;
+        startCursor: string | null;
+      };
+    } | null;
     account: {
       id: string;
       email: string;
@@ -926,12 +1062,15 @@ export type FindAccountQuery = {
         skillLevel: ExperienceLevel | null;
         skills: Array<string> | null;
         experienceYear: number | null;
+        education: string | null;
+        languages: Array<string | null> | null;
+        gender: string | null;
         resume: string | null;
+        introVideo: string | null;
         github: string | null;
         linkedin: string | null;
         portfolio: string | null;
         workExperience: Array<{
-          __typename: 'WorkExperience';
           companyName: string;
           position: string;
           startDate: any;
@@ -943,6 +1082,7 @@ export type FindAccountQuery = {
         }>;
         savedJobs: {
           edges: Array<{
+            cursor: string;
             node: {
               id: string;
               title: string;
@@ -964,11 +1104,18 @@ export type FindAccountQuery = {
               skills: Array<string>;
               qualifications: Array<string>;
               interviewQuestions: Array<string>;
+              companyId: string;
               createdAt: any;
               updatedAt: any;
             };
           }>;
-        };
+          pageInfo: {
+            hasNextPage: boolean;
+            hasPreviousPage: boolean;
+            endCursor: string | null;
+            startCursor: string | null;
+          };
+        } | null;
         account: {
           id: string;
           email: string;
@@ -1022,12 +1169,15 @@ export type MeQuery = {
       skillLevel: ExperienceLevel | null;
       skills: Array<string> | null;
       experienceYear: number | null;
+      education: string | null;
+      languages: Array<string | null> | null;
+      gender: string | null;
       resume: string | null;
+      introVideo: string | null;
       github: string | null;
       linkedin: string | null;
       portfolio: string | null;
       workExperience: Array<{
-        __typename: 'WorkExperience';
         companyName: string;
         position: string;
         startDate: any;
@@ -1039,6 +1189,7 @@ export type MeQuery = {
       }>;
       savedJobs: {
         edges: Array<{
+          cursor: string;
           node: {
             id: string;
             title: string;
@@ -1060,11 +1211,18 @@ export type MeQuery = {
             skills: Array<string>;
             qualifications: Array<string>;
             interviewQuestions: Array<string>;
+            companyId: string;
             createdAt: any;
             updatedAt: any;
           };
         }>;
-      };
+        pageInfo: {
+          hasNextPage: boolean;
+          hasPreviousPage: boolean;
+          endCursor: string | null;
+          startCursor: string | null;
+        };
+      } | null;
       account: {
         id: string;
         email: string;
@@ -1108,42 +1266,7 @@ export type ApplicantLightFragment = {
   portfolio: string | null;
 };
 
-export type ApplicationFragmentFragment = {
-  id: string;
-  createdAt: any;
-  updatedAt: any;
-  status: ApplicationStatus;
-  resume: string;
-  coverLetter: string;
-  applicantId: string;
-  jobPostId: string;
-  jobPost: {
-    id: string;
-    title: string;
-    applicationDeadline: any;
-    description: string;
-    location: string;
-    salary: Array<number>;
-    salaryType: SalaryType;
-    jobType: JobType;
-    category: Array<string>;
-    vacancy: number;
-    email: string;
-    jobSite: JobSite;
-    isVisible: boolean;
-    jobExperience: number;
-    experienceLevel: ExperienceLevel;
-    englishLevel: EnglishLevel;
-    otherLanguages: Array<string>;
-    skills: Array<string>;
-    qualifications: Array<string>;
-    interviewQuestions: Array<string>;
-    createdAt: any;
-    updatedAt: any;
-  } | null;
-};
-
-export type ApplicantFragment = {
+export type ApplicantFragmentFragment = {
   id: string;
   about: string | null;
   jobPosition: string | null;
@@ -1156,12 +1279,15 @@ export type ApplicantFragment = {
   skillLevel: ExperienceLevel | null;
   skills: Array<string> | null;
   experienceYear: number | null;
+  education: string | null;
+  languages: Array<string | null> | null;
+  gender: string | null;
   resume: string | null;
+  introVideo: string | null;
   github: string | null;
   linkedin: string | null;
   portfolio: string | null;
   workExperience: Array<{
-    __typename: 'WorkExperience';
     companyName: string;
     position: string;
     startDate: any;
@@ -1173,6 +1299,7 @@ export type ApplicantFragment = {
   }>;
   savedJobs: {
     edges: Array<{
+      cursor: string;
       node: {
         id: string;
         title: string;
@@ -1194,11 +1321,18 @@ export type ApplicantFragment = {
         skills: Array<string>;
         qualifications: Array<string>;
         interviewQuestions: Array<string>;
+        companyId: string;
         createdAt: any;
         updatedAt: any;
       };
     }>;
-  };
+    pageInfo: {
+      hasNextPage: boolean;
+      hasPreviousPage: boolean;
+      endCursor: string | null;
+      startCursor: string | null;
+    };
+  } | null;
   account: {
     id: string;
     email: string;
@@ -1211,6 +1345,45 @@ export type ApplicantFragment = {
     createdAt: any;
     phone: string | null;
   };
+};
+
+export type ApplicationFragmentFragment = {
+  id: string;
+  createdAt: any;
+  updatedAt: any;
+  status: ApplicationStatus;
+  resume: string;
+  coverLetter: string;
+  applicantId: string;
+  jobPostId: string;
+  attachment: string | null;
+  jobPost: {
+    id: string;
+    title: string;
+    applicationDeadline: any;
+    description: string;
+    location: string;
+    salary: Array<number>;
+    salaryType: SalaryType;
+    jobType: JobType;
+    category: Array<string>;
+    vacancy: number;
+    email: string;
+    jobSite: JobSite;
+    isVisible: boolean;
+    jobExperience: number;
+    experienceLevel: ExperienceLevel;
+    englishLevel: EnglishLevel;
+    otherLanguages: Array<string>;
+    skills: Array<string>;
+    qualifications: Array<string>;
+    interviewQuestions: Array<string>;
+    companyId: string;
+    createdAt: any;
+    updatedAt: any;
+  } | null;
+  interview: { id: string } | null;
+  offer: { id: string } | null;
 };
 
 export type GetApplicantsQueryVariables = Exact<{
@@ -1310,11 +1483,12 @@ export type GetApplicantQuery = {
           skills: Array<string>;
           qualifications: Array<string>;
           interviewQuestions: Array<string>;
+          companyId: string;
           createdAt: any;
           updatedAt: any;
         };
       }>;
-    };
+    } | null;
     account: {
       id: string;
       email: string;
@@ -1346,6 +1520,7 @@ export type GetJobApplicationsQuery = {
         coverLetter: string;
         applicantId: string;
         jobPostId: string;
+        attachment: string | null;
         jobPost: {
           id: string;
           title: string;
@@ -1367,9 +1542,12 @@ export type GetJobApplicationsQuery = {
           skills: Array<string>;
           qualifications: Array<string>;
           interviewQuestions: Array<string>;
+          companyId: string;
           createdAt: any;
           updatedAt: any;
         } | null;
+        interview: { id: string } | null;
+        offer: { id: string } | null;
       };
     }>;
   };
@@ -1510,12 +1688,17 @@ export type GetSavedApplicantsQuery = {
     skillLevel: ExperienceLevel | null;
     skills: Array<string> | null;
     experienceYear: number | null;
+    education: string | null;
+    languages: Array<string | null> | null;
+    gender: string | null;
     resume: string | null;
+    introVideo: string | null;
     github: string | null;
     linkedin: string | null;
     portfolio: string | null;
     savedJobs?: {
       edges: Array<{
+        cursor: string;
         node: {
           id: string;
           title: string;
@@ -1537,13 +1720,19 @@ export type GetSavedApplicantsQuery = {
           skills: Array<string>;
           qualifications: Array<string>;
           interviewQuestions: Array<string>;
+          companyId: string;
           createdAt: any;
           updatedAt: any;
         };
       }>;
-    };
+      pageInfo: {
+        hasNextPage: boolean;
+        hasPreviousPage: boolean;
+        endCursor: string | null;
+        startCursor: string | null;
+      };
+    } | null;
     workExperience?: Array<{
-      __typename: 'WorkExperience';
       companyWebsite: string | null;
       companyName: string;
       position: string;
@@ -1566,6 +1755,164 @@ export type GetSavedApplicantsQuery = {
       phone: string | null;
     };
   }>;
+};
+
+export type GetCompanyJobPostsQueryVariables = Exact<{
+  input: GetCompanyJobPostsInput;
+}>;
+
+export type GetCompanyJobPostsQuery = {
+  getCompanyJobPosts: {
+    errors: Array<{ message: string }>;
+    payload: Array<{
+      jobPost: {
+        id: string;
+        title: string;
+        applicationDeadline: any;
+        description: string;
+        location: string;
+        salary: Array<number>;
+        salaryType: SalaryType;
+        jobType: JobType;
+        category: Array<string>;
+        vacancy: number;
+        email: string;
+        jobSite: JobSite;
+        isVisible: boolean;
+        jobExperience: number;
+        experienceLevel: ExperienceLevel;
+        englishLevel: EnglishLevel;
+        otherLanguages: Array<string>;
+        skills: Array<string>;
+        qualifications: Array<string>;
+        interviewQuestions: Array<string>;
+        companyId: string;
+        createdAt: any;
+        updatedAt: any;
+      };
+      applicationsWithApplicant: Array<{
+        application: {
+          id: string;
+          createdAt: any;
+          updatedAt: any;
+          status: ApplicationStatus;
+          resume: string;
+          coverLetter: string;
+          applicantId: string;
+          jobPostId: string;
+          attachment: string | null;
+          jobPost: {
+            id: string;
+            title: string;
+            applicationDeadline: any;
+            description: string;
+            location: string;
+            salary: Array<number>;
+            salaryType: SalaryType;
+            jobType: JobType;
+            category: Array<string>;
+            vacancy: number;
+            email: string;
+            jobSite: JobSite;
+            isVisible: boolean;
+            jobExperience: number;
+            experienceLevel: ExperienceLevel;
+            englishLevel: EnglishLevel;
+            otherLanguages: Array<string>;
+            skills: Array<string>;
+            qualifications: Array<string>;
+            interviewQuestions: Array<string>;
+            companyId: string;
+            createdAt: any;
+            updatedAt: any;
+          } | null;
+          interview: { id: string } | null;
+          offer: { id: string } | null;
+        };
+        applicant: {
+          id: string;
+          about: string | null;
+          jobPosition: string | null;
+          salaryExpectation: number | null;
+          WorkExperienceYears: number | null;
+          location: string | null;
+          englishLevel: EnglishLevel | null;
+          otherLanguages: Array<string | null> | null;
+          accomplishment: string | null;
+          skillLevel: ExperienceLevel | null;
+          skills: Array<string> | null;
+          experienceYear: number | null;
+          education: string | null;
+          languages: Array<string | null> | null;
+          gender: string | null;
+          resume: string | null;
+          introVideo: string | null;
+          github: string | null;
+          linkedin: string | null;
+          portfolio: string | null;
+          savedJobs?: {
+            __typename: 'ApplicantSavedJobPostConnections';
+            edges: Array<{
+              cursor: string;
+              node: {
+                id: string;
+                title: string;
+                applicationDeadline: any;
+                description: string;
+                location: string;
+                salary: Array<number>;
+                salaryType: SalaryType;
+                jobType: JobType;
+                category: Array<string>;
+                vacancy: number;
+                email: string;
+                jobSite: JobSite;
+                isVisible: boolean;
+                jobExperience: number;
+                experienceLevel: ExperienceLevel;
+                englishLevel: EnglishLevel;
+                otherLanguages: Array<string>;
+                skills: Array<string>;
+                qualifications: Array<string>;
+                interviewQuestions: Array<string>;
+                companyId: string;
+                createdAt: any;
+                updatedAt: any;
+              };
+            }>;
+            pageInfo: {
+              hasNextPage: boolean;
+              hasPreviousPage: boolean;
+              endCursor: string | null;
+              startCursor: string | null;
+            };
+          } | null;
+          workExperience: Array<{
+            companyName: string;
+            position: string;
+            startDate: any;
+            endDate: any | null;
+            accomplishment: string;
+            companyWebsite: string | null;
+            skills: Array<string>;
+            ongoing: boolean;
+          }>;
+          account: {
+            id: string;
+            email: string;
+            emailVerified: any | null;
+            accountType: AccountType;
+            image: string;
+            firstName: string;
+            fullName: string;
+            lastName: string;
+            createdAt: any;
+            phone: string | null;
+          };
+        };
+      }>;
+    }>;
+  };
 };
 
 export type CreateJobPostMutationVariables = Exact<{
@@ -1621,6 +1968,7 @@ export type SaveJobPostMutation = {
     skills: Array<string>;
     qualifications: Array<string>;
     interviewQuestions: Array<string>;
+    companyId: string;
     createdAt: any;
     updatedAt: any;
   } | null;
@@ -1647,6 +1995,7 @@ export type JopPostFragmentFragment = {
   skills: Array<string>;
   qualifications: Array<string>;
   interviewQuestions: Array<string>;
+  companyId: string;
   createdAt: any;
   updatedAt: any;
 };
@@ -1677,6 +2026,7 @@ export type GetJobPostsQuery = {
     skills: Array<string>;
     qualifications: Array<string>;
     interviewQuestions: Array<string>;
+    companyId: string;
     createdAt: any;
     updatedAt: any;
   }>;
@@ -1708,6 +2058,7 @@ export type GetJobPostQuery = {
     skills: Array<string>;
     qualifications: Array<string>;
     interviewQuestions: Array<string>;
+    companyId: string;
     createdAt: any;
     updatedAt: any;
   } | null;
@@ -1735,6 +2086,7 @@ export const JopPostFragmentFragmentDoc = gql`
     skills
     qualifications
     interviewQuestions
+    companyId
     createdAt
     updatedAt
   }
@@ -1753,8 +2105,8 @@ export const AccountFragmentFragmentDoc = gql`
     phone
   }
 `;
-export const ApplicantFragmentDoc = gql`
-  fragment Applicant on Applicant {
+export const ApplicantFragmentFragmentDoc = gql`
+  fragment ApplicantFragment on Applicant {
     id
     about
     jobPosition
@@ -1767,7 +2119,11 @@ export const ApplicantFragmentDoc = gql`
     skillLevel
     skills
     experienceYear
+    education
+    languages
+    gender
     resume
+    introVideo
     github
     linkedin
     portfolio
@@ -1780,13 +2136,19 @@ export const ApplicantFragmentDoc = gql`
       companyWebsite
       skills
       ongoing
-      __typename
     }
     savedJobs {
       edges {
+        cursor
         node {
           ...JopPostFragment
         }
+      }
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        endCursor
+        startCursor
       }
     }
     account {
@@ -1808,7 +2170,7 @@ export const AccountPayloadFragmentFragmentDoc = gql`
     createdAt
     phone
     applicant {
-      ...Applicant
+      ...ApplicantFragment
     }
     company {
       id
@@ -1826,7 +2188,7 @@ export const AccountPayloadFragmentFragmentDoc = gql`
       id
     }
   }
-  ${ApplicantFragmentDoc}
+  ${ApplicantFragmentFragmentDoc}
 `;
 export const ApplicantLightFragmentDoc = gql`
   fragment ApplicantLight on Applicant {
@@ -1858,8 +2220,15 @@ export const ApplicationFragmentFragmentDoc = gql`
     coverLetter
     applicantId
     jobPostId
+    attachment
     jobPost {
       ...JopPostFragment
+    }
+    interview {
+      id
+    }
+    offer {
+      id
     }
   }
   ${JopPostFragmentFragmentDoc}
@@ -2557,7 +2926,7 @@ export const GetSavedApplicantsDocument = gql`
     $skipWorkExperience: Boolean = true
   ) {
     getSavedApplicant(input: $input) {
-      ...Applicant
+      ...ApplicantFragment
       savedJobs @skip(if: $skipSavedJobs) {
         edges {
           node {
@@ -2570,7 +2939,7 @@ export const GetSavedApplicantsDocument = gql`
       }
     }
   }
-  ${ApplicantFragmentDoc}
+  ${ApplicantFragmentFragmentDoc}
 `;
 
 /**
@@ -2624,6 +2993,85 @@ export type GetSavedApplicantsLazyQueryHookResult = ReturnType<
 export type GetSavedApplicantsQueryResult = Apollo.QueryResult<
   GetSavedApplicantsQuery,
   GetSavedApplicantsQueryVariables
+>;
+export const GetCompanyJobPostsDocument = gql`
+  query GetCompanyJobPosts($input: GetCompanyJobPostsInput!) {
+    getCompanyJobPosts(input: $input) {
+      errors {
+        message
+      }
+      payload {
+        jobPost {
+          ...JopPostFragment
+        }
+        applicationsWithApplicant {
+          application {
+            ...ApplicationFragment
+          }
+          applicant {
+            ...ApplicantFragment
+            savedJobs @skip(if: true) {
+              __typename
+            }
+          }
+        }
+      }
+    }
+  }
+  ${JopPostFragmentFragmentDoc}
+  ${ApplicationFragmentFragmentDoc}
+  ${ApplicantFragmentFragmentDoc}
+`;
+
+/**
+ * __useGetCompanyJobPostsQuery__
+ *
+ * To run a query within a React component, call `useGetCompanyJobPostsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCompanyJobPostsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCompanyJobPostsQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetCompanyJobPostsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetCompanyJobPostsQuery,
+    GetCompanyJobPostsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetCompanyJobPostsQuery,
+    GetCompanyJobPostsQueryVariables
+  >(GetCompanyJobPostsDocument, options);
+}
+export function useGetCompanyJobPostsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetCompanyJobPostsQuery,
+    GetCompanyJobPostsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetCompanyJobPostsQuery,
+    GetCompanyJobPostsQueryVariables
+  >(GetCompanyJobPostsDocument, options);
+}
+export type GetCompanyJobPostsQueryHookResult = ReturnType<
+  typeof useGetCompanyJobPostsQuery
+>;
+export type GetCompanyJobPostsLazyQueryHookResult = ReturnType<
+  typeof useGetCompanyJobPostsLazyQuery
+>;
+export type GetCompanyJobPostsQueryResult = Apollo.QueryResult<
+  GetCompanyJobPostsQuery,
+  GetCompanyJobPostsQueryVariables
 >;
 export const CreateJobPostDocument = gql`
   mutation CreateJobPost($input: CreateJobPostInput!) {

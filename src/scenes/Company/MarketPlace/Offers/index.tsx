@@ -100,7 +100,7 @@ const MarketPlace = () => {
           // variant="fullWidth"
         >
           <Tab label="Requested" />
-          <Tab label="Responded" />
+          <Tab label="Accepted" />
           <Tab label="Refused" />
         </Tabs>
       </header>

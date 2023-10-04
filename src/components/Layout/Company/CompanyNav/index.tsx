@@ -5,6 +5,7 @@ import {
   Dashboard,
   Handshake,
   Logout,
+  WorkHistory,
 } from '@mui/icons-material';
 import {
   Avatar,
@@ -68,7 +69,7 @@ const navVariants = {
 const navTransition = {
   duration: 1,
   ease: [0.6, 0.01, 0, 0.9],
-  delay: 1,
+  // delay: 1,
 };
 
 const links = [
@@ -78,14 +79,19 @@ const links = [
     Icon: Dashboard,
   },
   {
+    name: 'Create Job-Post',
+    href: '/company/create-job-post',
+    Icon: CreateNewFolderRounded,
+  },
+  {
     name: 'Marketplace',
     href: '/company/marketplace',
     Icon: Handshake,
   },
   {
-    name: 'Create Post',
-    href: '/post',
-    Icon: CreateNewFolderRounded,
+    name: 'Workforce',
+    href: '/company/workforce',
+    Icon: WorkHistory,
   },
 ];
 

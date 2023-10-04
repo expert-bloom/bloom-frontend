@@ -88,6 +88,7 @@ type Applicant implements Node {
     gender: String
     github: String
     id: ID!
+    introVideo: String
     jobPosition: String
     languages: [String]
     linkedin: String
@@ -96,7 +97,7 @@ type Applicant implements Node {
     portfolio: String
     resume: String
     salaryExpectation: Int
-    savedJobs(after: String, before: String, first: Int, last: Int): ApplicantSavedJobPostConnections!
+    savedJobs(after: String, before: String, first: Int, last: Int): ApplicantSavedJobPostConnections
     skillLevel: ExperienceLevel
     skills: [String!]
     workExperience: [WorkExperience!]!
@@ -148,8 +149,10 @@ type Application implements Node {
     coverLetter: String!
     createdAt: DateTime!
     id: ID!
+    interview: Interview
     jobPost: JobPost
     jobPostId: String!
+    offer: Offer
     resume: String!
     status: ApplicationStatus!
     updatedAt: DateTime!
@@ -163,6 +166,11 @@ type ApplicationConnections {
 type ApplicationEdge {
     cursor: String!
     node: Application!
+}
+
+type ApplicationsWithApplicant {
+    applicant: Applicant!
+    application: Application!
 }
 
 type AuthAccountPayload {
@@ -198,9 +206,24 @@ type Company implements Node {
     savedApplicants: [Applicant!]!
 }
 
+type CompanyJobPostsPayload {
+    applicationsWithApplicant: [ApplicationsWithApplicant!]!
+    jobPost: JobPost!
+}
+
+type CompanyJobPostsResponse {
+    errors: [Error!]!
+    payload: [CompanyJobPostsPayload!]!
+}
+
 type CreateApplicationPayload implements PayloadError {
     application: Application
     errors: [Error!]!
+}
+
+type CreateJobPostResponse {
+    errors: [Error!]!
+    jobPost: JobPost
 }
 
 type Error {
@@ -212,9 +235,26 @@ type FindOnePayload implements PayloadError {
     errors: [Error!]!
 }
 
+type Interview implements Node {
+    answerText: String
+    answerVideo: String
+    applicantId: String!
+    attachment: String
+    companyId: String!
+    createdAt: DateTime!
+    deadline: DateTime
+    description: String!
+    id: ID!
+    jobApplicationId: String
+    jobPostId: String!
+    status: InterviewStatus
+    updatedAt: DateTime!
+}
+
 type JobPost implements Node {
     applicationDeadline: DateTime!
     category: [String!]!
+    companyId: String!
     createdAt: DateTime!
     description: String!
     email: String!
@@ -237,15 +277,11 @@ type JobPost implements Node {
     vacancy: Int!
 }
 
-type JobPostCreate {
-    errors: [Error!]!
-    jobPost: JobPost
-}
-
 type Mutation {
+    EditJobPost(input: EditJobPostInput!): CreateJobPostResponse!
     applicantProfileUpdate(input: ApplicantProfileUpdateInput!): AccountUpdate!
     createApplication(input: CreateApplicationInput!): CreateApplicationPayload!
-    createJobPost(input: CreateJobPostInput!): JobPostCreate!
+    createJobPost(input: CreateJobPostInput!): CreateJobPostResponse!
     logIn(input: LoginInput!): AuthPayload!
     profileUpdate(input: UpdateProfileInput!): AccountUpdate!
     saveApplicant(input: SaveApplicantInput!): Boolean
@@ -265,6 +301,21 @@ type OAuth {
     tokenType: String!
 }
 
+type Offer implements Node {
+    answerText: String
+    answerVideo: String
+    applicantId: String!
+    companyId: String!
+    createdAt: DateTime!
+    deadline: DateTime
+    description: String!
+    id: ID!
+    jobApplicationId: String
+    jobPostId: String!
+    status: OfferStatus
+    updatedAt: DateTime!
+}
+
 type PageInfo {
     endCursor: String
     hasNextPage: Boolean!
@@ -277,6 +328,7 @@ type Query {
     getApplicant(input: GetApplicantInput!): Applicant
     getApplicants(input: GetApplicantsInput!): ApplicantConnection
     getCompanies: [Company!]!
+    getCompanyJobPosts(input: GetCompanyJobPostsInput!): CompanyJobPostsResponse!
     getJobApplications(input: GetJobApplicationsInput!): ApplicationConnections!
     getJobPost(input: GetJobPostInput!): JobPost
     getJobPosts(input: JopPostFilterInput): [JobPost!]!
@@ -344,6 +396,14 @@ enum Gender {
     OTHER
 }
 
+enum InterviewStatus {
+    ACCEPTED
+    PENDING
+    REFUSED
+    REJECTED
+    RESPONDED
+}
+
 enum JobSite {
     HYBRID
     ONSITE
@@ -355,6 +415,14 @@ enum JobType {
     FULL_TIME
     INTERNSHIP
     PART_TIME
+}
+
+enum OfferStatus {
+    ACCEPTED
+    PENDING
+    REFUSED
+    REJECTED
+    RESPONDED
 }
 
 enum OrderDirection {
@@ -415,6 +483,7 @@ input ApplicantUpdateInput {
     englishLevel: EnglishLevel
     experienceYear: Int
     github: String
+    introVideo: String
     jobPosition: String
     linkedin: String
     location: String
@@ -434,6 +503,7 @@ input ApplicationFilter {
 input CreateApplicationInput {
     applicantId: String!
     attachment: String
+    companyId: String!
     coverLetter: String!
     email: String!
     jobPostId: String!
@@ -466,6 +536,38 @@ input CreateJobPostInput {
     vacancy: Int!
 }
 
+input EditJobPostFilter {
+    companyId: String!
+    jobPostId: String!
+}
+
+input EditJobPostInput {
+    editedData: EditJobPostInputData!
+    filter: EditJobPostFilter!
+}
+
+input EditJobPostInputData {
+    applicationDeadline: DateTime
+    category: [String!]
+    description: String
+    email: String
+    englishLevel: EnglishLevel
+    experienceLevel: ExperienceLevel
+    interviewQuestions: [String!]
+    isVisible: Boolean
+    jobExperience: Int
+    jobSite: JobSite
+    jobType: JobType
+    location: String
+    otherLanguages: [String!]
+    qualifications: [String!]
+    salary: [Int!]
+    salaryType: SalaryType
+    skills: [String!]
+    title: String
+    vacancy: Int
+}
+
 input GetApplicantInput {
     id: String!
 }
@@ -486,6 +588,10 @@ input GetApplicationsInput {
     first: Int
     last: Int
     orderBy: [ApplicantOrdering!]
+}
+
+input GetCompanyJobPostsInput {
+    companyId: String!
 }
 
 input GetJobApplicationsInput {

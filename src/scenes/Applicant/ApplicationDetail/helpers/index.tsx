@@ -43,7 +43,7 @@ const Congratulation = () => {
 
 export const stepsData = [
   {
-    title: 'Company Registration Form',
+    title: 'Your Application',
     desc: `and learn how to enhance your ads using features like ad extensions.
                   If you run into any problems with your ads, find out how to tell if`,
     valueEnum: 'company_registration_form',
@@ -59,7 +59,7 @@ export const stepsData = [
     },
   },
   {
-    title: 'Memorandum Of Association',
+    title: 'Interview',
     desc: `and learn how to enhance your ads using features like ad extensions.
                   If you run into any problems with your ads, find out how to tell if`,
     valueEnum: 'memorandum_of_association',
@@ -123,5 +123,5 @@ export function getStatusTextAndColor(statusData: any) {
       break;
   }
 
-  return { label: status, color };
+  return statusLabel;
 }

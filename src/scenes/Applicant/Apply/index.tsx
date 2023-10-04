@@ -5,6 +5,7 @@ import { Subject } from '@mui/icons-material';
 import {
   Alert,
   Checkbox,
+  CircularProgress,
   FormControlLabel,
   FormLabel,
   Stack,
@@ -66,9 +67,21 @@ export const useJobPostApplicationContext = () =>
 
 const Apply = () => {
   // access the id from the url
+  const router = useRouter();
+  const { id: jobPostId } = router.query;
+
+  const jopPostsPayload = useGetJobPostsQuery();
+  const { data: posts, loading } = jopPostsPayload;
+
+  const selectedJobPost = posts?.getJobPosts?.find(
+    (post) => post.id === jobPostId,
+  );
+
   const resumeFilePond = useRef<FilePond>(null);
   const attachmentFilePond = useRef<FilePond>(null);
   const [createApplication] = useCreateJobApplicationMutation();
+
+  const { me, loading: meLoading } = useMe();
 
   const [initialValues, setInitialValues] = React.useState<ApplyProps>({
     phone: '',
@@ -78,14 +91,11 @@ const Apply = () => {
     attachment: '',
   });
 
-  const router = useRouter();
-  const { me, loading: meLoading } = useMe();
-
   const formik = useFormik<ApplyProps>({
     enableReinitialize: true,
     initialValues,
     onSubmit: async (values, formikHelpers) => {
-      if (formik.isSubmitting) return null;
+      if (!selectedJobPost || meLoading) return null;
 
       const newValue = await onResumeSubmit(values, formikHelpers);
 
@@ -100,12 +110,13 @@ const Apply = () => {
           variables: {
             input: {
               applicantId: me?.applicant?.id ?? '',
+              companyId: selectedJobPost.companyId,
               attachment: newValue.attachment,
               coverLetter: newValue.coverLetter,
               email: newValue.email,
               phone: newValue.phone,
               resume: newValue.resume,
-              jobPostId: router.query.id as string,
+              jobPostId: jobPostId as string,
             },
           },
         });
@@ -123,11 +134,7 @@ const Apply = () => {
       }
     },
   });
-
   const { values, handleChange } = formik;
-
-  const jopPostsPayload = useGetJobPostsQuery();
-  const { data: posts, loading } = jopPostsPayload;
 
   const onResumeSubmit = async (
     values: typeof formik.values,
@@ -209,6 +216,22 @@ const Apply = () => {
     });
   }, [me]);
 
+  if (meLoading || jopPostsPayload.loading) {
+    return (
+      <div className={s.container}>
+        <div className={s.wrapper}>
+          <div className={s.loader}>
+            <CircularProgress />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!selectedJobPost) {
+    return <div className={s.container} />;
+  }
+
   return (
     <JobApplicationFormContext.Provider
       value={{ formik, resumeFilePond, attachmentFilePond }}
@@ -217,13 +240,7 @@ const Apply = () => {
         <div className={s.wrapper}>
           <Typography variant="h4">Submit a Job Proposal</Typography>
 
-          <ApplicationJobPostDetail
-            post={
-              posts?.getJobPosts?.find(
-                (post) => post.id === router.query.id,
-              ) as any
-            }
-          />
+          <ApplicationJobPostDetail post={selectedJobPost} />
 
           <form onSubmit={formik.handleSubmit} className={s.your_info}>
             <Typography variant="h4">Your Info</Typography>
