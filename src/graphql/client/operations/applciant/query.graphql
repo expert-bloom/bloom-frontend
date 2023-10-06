@@ -81,6 +81,39 @@ fragment ApplicantFragment on Applicant{
 }
 
 
+fragment InterviewFragment on Interview{
+    id
+    companyId
+    jobPostId
+    applicantId
+    jobApplicationId
+    attachment
+    answerVideo
+    answerText
+    status
+    description
+    deadline
+
+    createdAt
+    updatedAt
+}
+
+fragment OfferFragment on Offer{
+    id
+    companyId
+    jobPostId
+    applicantId
+    jobApplicationId
+    answerVideo
+    answerText
+    status
+    description
+    deadline
+
+    createdAt
+    updatedAt
+}
+
 fragment ApplicationFragment on Application{
     id
     createdAt
@@ -92,16 +125,17 @@ fragment ApplicationFragment on Application{
     jobPostId
     attachment
 
+
     jobPost {
         ...JopPostFragment
     }
 
     interview {
-        id
+        ...InterviewFragment
     }
 
     offer {
-        id
+        ...OfferFragment
     }
 }
 

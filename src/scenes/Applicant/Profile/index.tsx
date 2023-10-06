@@ -272,12 +272,16 @@ const Profile = () => {
         linkedin: applicant.linkedin ?? '',
         portfolio: applicant.portfolio ?? '',
 
+        /*
         // filter out the __typename from the workExperience
         workExperience: applicant.workExperience.map((item) => {
           // eslint-disable-next-line @typescript-eslint/naming-convention
           const { __typename, ...rest } = item;
+
           return rest;
         }),
+        */
+        workExperience: applicant.workExperience,
       },
     };
 

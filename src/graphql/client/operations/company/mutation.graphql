@@ -1,3 +1,10 @@
 mutation SaveApplicant($input: SaveApplicantInput!) {
     saveApplicant(input: $input)
 }
+
+
+mutation SendInterviewRequest($input: SendInterviewRequestInput!) {
+    sendInterviewRequest(input: $input){
+        ...InterviewFragment
+    }
+}

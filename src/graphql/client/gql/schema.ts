@@ -228,6 +228,7 @@ export type ApplicantUpdateInput = {
 };
 
 export type Application = Node & {
+  applicant: Maybe<Applicant>;
   applicantId: Scalars['String']['output'];
   attachment: Maybe<Scalars['String']['output']>;
   coverLetter: Scalars['String']['output'];
@@ -253,7 +254,9 @@ export type ApplicationEdge = {
 };
 
 export type ApplicationFilter = {
+  applicantId?: InputMaybe<Scalars['String']['input']>;
   ids?: InputMaybe<Array<Scalars['String']['input']>>;
+  jobPostId?: InputMaybe<Scalars['String']['input']>;
   status?: InputMaybe<ApplicationStatus>;
 };
 
@@ -263,11 +266,6 @@ export enum ApplicationStatus {
   Pending = 'PENDING',
   Rejected = 'REJECTED',
 }
-
-export type ApplicationsWithApplicant = {
-  applicant: Applicant;
-  application: Application;
-};
 
 export type AuthAccountPayload = {
   accountType: AccountType;
@@ -302,14 +300,9 @@ export type Company = Node & {
   savedApplicants: Array<Applicant>;
 };
 
-export type CompanyJobPostsPayload = {
-  applicationsWithApplicant: Array<ApplicationsWithApplicant>;
-  jobPost: JobPost;
-};
-
 export type CompanyJobPostsResponse = {
   errors: Array<Error>;
-  payload: Array<CompanyJobPostsPayload>;
+  jobPosts: Array<JobPost>;
 };
 
 export type CreateApplicationInput = {
@@ -351,11 +344,6 @@ export type CreateJobPostInput = {
   skills: Array<Scalars['String']['input']>;
   title: Scalars['String']['input'];
   vacancy: Scalars['Int']['input'];
-};
-
-export type CreateJobPostResponse = {
-  errors: Array<Error>;
-  jobPost: Maybe<JobPost>;
 };
 
 export type EditJobPostFilter = {
@@ -433,25 +421,17 @@ export type GetApplicantsInput = {
   orderBy?: InputMaybe<Array<ApplicantOrdering>>;
 };
 
-export type GetApplicationsInput = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<ApplicationFilter>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<Array<ApplicantOrdering>>;
-};
-
 export type GetCompanyJobPostsInput = {
   companyId: Scalars['String']['input'];
 };
 
 export type GetJobApplicationsInput = {
   after?: InputMaybe<Scalars['String']['input']>;
-  applicantId: Scalars['String']['input'];
   before?: InputMaybe<Scalars['String']['input']>;
+  filter?: InputMaybe<ApplicationFilter>;
   first?: InputMaybe<Scalars['Int']['input']>;
   last?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<Array<ApplicantOrdering>>;
 };
 
 export type GetJobPostInput = {
@@ -492,10 +472,10 @@ export type Interview = Node & {
 
 export enum InterviewStatus {
   Accepted = 'ACCEPTED',
+  ApplicantRefused = 'APPLICANT_REFUSED',
+  ApplicantResponded = 'APPLICANT_RESPONDED',
   Pending = 'PENDING',
-  Refused = 'REFUSED',
   Rejected = 'REJECTED',
-  Responded = 'RESPONDED',
 }
 
 export type JobPost = Node & {
@@ -522,6 +502,11 @@ export type JobPost = Node & {
   title: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   vacancy: Scalars['Int']['output'];
+};
+
+export type JobPostResponse = {
+  errors: Array<Error>;
+  jobPost: Maybe<JobPost>;
 };
 
 export enum JobSite {
@@ -551,15 +536,17 @@ export type MeInput = {
 };
 
 export type Mutation = {
-  EditJobPost: CreateJobPostResponse;
+  EditJobPost: JobPostResponse;
   applicantProfileUpdate: AccountUpdate;
   createApplication: CreateApplicationPayload;
-  createJobPost: CreateJobPostResponse;
+  createJobPost: JobPostResponse;
   logIn: AuthPayload;
+  offerApplicant: Scalars['String']['output'];
   profileUpdate: AccountUpdate;
   saveApplicant: Maybe<Scalars['Boolean']['output']>;
   saveJobPost: Maybe<JobPost>;
   sayHi: Scalars['String']['output'];
+  sendInterviewRequest: Maybe<Interview>;
   signUp: AuthPayload;
   signUpOAuth: AuthPayload;
 };
@@ -584,6 +571,10 @@ export type MutationLogInArgs = {
   input: LoginInput;
 };
 
+export type MutationOfferApplicantArgs = {
+  input: SendInterviewRequestInput;
+};
+
 export type MutationProfileUpdateArgs = {
   input: UpdateProfileInput;
 };
@@ -594,6 +585,10 @@ export type MutationSaveApplicantArgs = {
 
 export type MutationSaveJobPostArgs = {
   input: SaveJobPostInput;
+};
+
+export type MutationSendInterviewRequestArgs = {
+  input: SendInterviewRequestInput;
 };
 
 export type MutationSignUpArgs = {
@@ -669,10 +664,8 @@ export type Offer = Node & {
 
 export enum OfferStatus {
   Accepted = 'ACCEPTED',
+  ApplicantRefused = 'APPLICANT_REFUSED',
   Pending = 'PENDING',
-  Refused = 'REFUSED',
-  Rejected = 'REJECTED',
-  Responded = 'RESPONDED',
 }
 
 export enum OrderDirection {
@@ -769,6 +762,12 @@ export type SaveJobPostInput = {
 
 export type SavedJobPostsInput = {
   accountId: Scalars['String']['input'];
+};
+
+export type SendInterviewRequestInput = {
+  applicationId: Scalars['String']['input'];
+  date?: InputMaybe<Scalars['DateTime']['input']>;
+  description: Scalars['String']['input'];
 };
 
 export type SignUpInput = {
@@ -1347,6 +1346,37 @@ export type ApplicantFragmentFragment = {
   };
 };
 
+export type InterviewFragmentFragment = {
+  id: string;
+  companyId: string;
+  jobPostId: string;
+  applicantId: string;
+  jobApplicationId: string | null;
+  attachment: string | null;
+  answerVideo: string | null;
+  answerText: string | null;
+  status: InterviewStatus | null;
+  description: string;
+  deadline: any | null;
+  createdAt: any;
+  updatedAt: any;
+};
+
+export type OfferFragmentFragment = {
+  id: string;
+  companyId: string;
+  jobPostId: string;
+  applicantId: string;
+  jobApplicationId: string | null;
+  answerVideo: string | null;
+  answerText: string | null;
+  status: OfferStatus | null;
+  description: string;
+  deadline: any | null;
+  createdAt: any;
+  updatedAt: any;
+};
+
 export type ApplicationFragmentFragment = {
   id: string;
   createdAt: any;
@@ -1382,8 +1412,35 @@ export type ApplicationFragmentFragment = {
     createdAt: any;
     updatedAt: any;
   } | null;
-  interview: { id: string } | null;
-  offer: { id: string } | null;
+  interview: {
+    id: string;
+    companyId: string;
+    jobPostId: string;
+    applicantId: string;
+    jobApplicationId: string | null;
+    attachment: string | null;
+    answerVideo: string | null;
+    answerText: string | null;
+    status: InterviewStatus | null;
+    description: string;
+    deadline: any | null;
+    createdAt: any;
+    updatedAt: any;
+  } | null;
+  offer: {
+    id: string;
+    companyId: string;
+    jobPostId: string;
+    applicantId: string;
+    jobApplicationId: string | null;
+    answerVideo: string | null;
+    answerText: string | null;
+    status: OfferStatus | null;
+    description: string;
+    deadline: any | null;
+    createdAt: any;
+    updatedAt: any;
+  } | null;
 };
 
 export type GetApplicantsQueryVariables = Exact<{
@@ -1546,8 +1603,35 @@ export type GetJobApplicationsQuery = {
           createdAt: any;
           updatedAt: any;
         } | null;
-        interview: { id: string } | null;
-        offer: { id: string } | null;
+        interview: {
+          id: string;
+          companyId: string;
+          jobPostId: string;
+          applicantId: string;
+          jobApplicationId: string | null;
+          attachment: string | null;
+          answerVideo: string | null;
+          answerText: string | null;
+          status: InterviewStatus | null;
+          description: string;
+          deadline: any | null;
+          createdAt: any;
+          updatedAt: any;
+        } | null;
+        offer: {
+          id: string;
+          companyId: string;
+          jobPostId: string;
+          applicantId: string;
+          jobApplicationId: string | null;
+          answerVideo: string | null;
+          answerText: string | null;
+          status: OfferStatus | null;
+          description: string;
+          deadline: any | null;
+          createdAt: any;
+          updatedAt: any;
+        } | null;
       };
     }>;
   };
@@ -1658,6 +1742,28 @@ export type SaveApplicantMutationVariables = Exact<{
 
 export type SaveApplicantMutation = { saveApplicant: boolean | null };
 
+export type SendInterviewRequestMutationVariables = Exact<{
+  input: SendInterviewRequestInput;
+}>;
+
+export type SendInterviewRequestMutation = {
+  sendInterviewRequest: {
+    id: string;
+    companyId: string;
+    jobPostId: string;
+    applicantId: string;
+    jobApplicationId: string | null;
+    attachment: string | null;
+    answerVideo: string | null;
+    answerText: string | null;
+    status: InterviewStatus | null;
+    description: string;
+    deadline: any | null;
+    createdAt: any;
+    updatedAt: any;
+  } | null;
+};
+
 export type GetCompaniesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetCompaniesQuery = {
@@ -1764,71 +1870,51 @@ export type GetCompanyJobPostsQueryVariables = Exact<{
 export type GetCompanyJobPostsQuery = {
   getCompanyJobPosts: {
     errors: Array<{ message: string }>;
-    payload: Array<{
-      jobPost: {
+    jobPosts: Array<{
+      id: string;
+      title: string;
+      applicationDeadline: any;
+      description: string;
+      location: string;
+      salary: Array<number>;
+      salaryType: SalaryType;
+      jobType: JobType;
+      category: Array<string>;
+      vacancy: number;
+      email: string;
+      jobSite: JobSite;
+      isVisible: boolean;
+      jobExperience: number;
+      experienceLevel: ExperienceLevel;
+      englishLevel: EnglishLevel;
+      otherLanguages: Array<string>;
+      skills: Array<string>;
+      qualifications: Array<string>;
+      interviewQuestions: Array<string>;
+      companyId: string;
+      createdAt: any;
+      updatedAt: any;
+    }>;
+  };
+};
+
+export type GetCompanyJobApplicationsQueryVariables = Exact<{
+  input: GetJobApplicationsInput;
+}>;
+
+export type GetCompanyJobApplicationsQuery = {
+  getJobApplications: {
+    edges: Array<{
+      node: {
         id: string;
-        title: string;
-        applicationDeadline: any;
-        description: string;
-        location: string;
-        salary: Array<number>;
-        salaryType: SalaryType;
-        jobType: JobType;
-        category: Array<string>;
-        vacancy: number;
-        email: string;
-        jobSite: JobSite;
-        isVisible: boolean;
-        jobExperience: number;
-        experienceLevel: ExperienceLevel;
-        englishLevel: EnglishLevel;
-        otherLanguages: Array<string>;
-        skills: Array<string>;
-        qualifications: Array<string>;
-        interviewQuestions: Array<string>;
-        companyId: string;
         createdAt: any;
         updatedAt: any;
-      };
-      applicationsWithApplicant: Array<{
-        application: {
-          id: string;
-          createdAt: any;
-          updatedAt: any;
-          status: ApplicationStatus;
-          resume: string;
-          coverLetter: string;
-          applicantId: string;
-          jobPostId: string;
-          attachment: string | null;
-          jobPost: {
-            id: string;
-            title: string;
-            applicationDeadline: any;
-            description: string;
-            location: string;
-            salary: Array<number>;
-            salaryType: SalaryType;
-            jobType: JobType;
-            category: Array<string>;
-            vacancy: number;
-            email: string;
-            jobSite: JobSite;
-            isVisible: boolean;
-            jobExperience: number;
-            experienceLevel: ExperienceLevel;
-            englishLevel: EnglishLevel;
-            otherLanguages: Array<string>;
-            skills: Array<string>;
-            qualifications: Array<string>;
-            interviewQuestions: Array<string>;
-            companyId: string;
-            createdAt: any;
-            updatedAt: any;
-          } | null;
-          interview: { id: string } | null;
-          offer: { id: string } | null;
-        };
+        status: ApplicationStatus;
+        resume: string;
+        coverLetter: string;
+        applicantId: string;
+        jobPostId: string;
+        attachment: string | null;
         applicant: {
           id: string;
           about: string | null;
@@ -1850,8 +1936,17 @@ export type GetCompanyJobPostsQuery = {
           github: string | null;
           linkedin: string | null;
           portfolio: string | null;
-          savedJobs?: {
-            __typename: 'ApplicantSavedJobPostConnections';
+          workExperience: Array<{
+            companyName: string;
+            position: string;
+            startDate: any;
+            endDate: any | null;
+            accomplishment: string;
+            companyWebsite: string | null;
+            skills: Array<string>;
+            ongoing: boolean;
+          }>;
+          savedJobs: {
             edges: Array<{
               cursor: string;
               node: {
@@ -1887,16 +1982,6 @@ export type GetCompanyJobPostsQuery = {
               startCursor: string | null;
             };
           } | null;
-          workExperience: Array<{
-            companyName: string;
-            position: string;
-            startDate: any;
-            endDate: any | null;
-            accomplishment: string;
-            companyWebsite: string | null;
-            skills: Array<string>;
-            ongoing: boolean;
-          }>;
           account: {
             id: string;
             email: string;
@@ -1909,8 +1994,62 @@ export type GetCompanyJobPostsQuery = {
             createdAt: any;
             phone: string | null;
           };
-        };
-      }>;
+        } | null;
+        jobPost: {
+          id: string;
+          title: string;
+          applicationDeadline: any;
+          description: string;
+          location: string;
+          salary: Array<number>;
+          salaryType: SalaryType;
+          jobType: JobType;
+          category: Array<string>;
+          vacancy: number;
+          email: string;
+          jobSite: JobSite;
+          isVisible: boolean;
+          jobExperience: number;
+          experienceLevel: ExperienceLevel;
+          englishLevel: EnglishLevel;
+          otherLanguages: Array<string>;
+          skills: Array<string>;
+          qualifications: Array<string>;
+          interviewQuestions: Array<string>;
+          companyId: string;
+          createdAt: any;
+          updatedAt: any;
+        } | null;
+        interview: {
+          id: string;
+          companyId: string;
+          jobPostId: string;
+          applicantId: string;
+          jobApplicationId: string | null;
+          attachment: string | null;
+          answerVideo: string | null;
+          answerText: string | null;
+          status: InterviewStatus | null;
+          description: string;
+          deadline: any | null;
+          createdAt: any;
+          updatedAt: any;
+        } | null;
+        offer: {
+          id: string;
+          companyId: string;
+          jobPostId: string;
+          applicantId: string;
+          jobApplicationId: string | null;
+          answerVideo: string | null;
+          answerText: string | null;
+          status: OfferStatus | null;
+          description: string;
+          deadline: any | null;
+          createdAt: any;
+          updatedAt: any;
+        } | null;
+      };
     }>;
   };
 };
@@ -2210,6 +2349,39 @@ export const ApplicantLightFragmentDoc = gql`
     portfolio
   }
 `;
+export const InterviewFragmentFragmentDoc = gql`
+  fragment InterviewFragment on Interview {
+    id
+    companyId
+    jobPostId
+    applicantId
+    jobApplicationId
+    attachment
+    answerVideo
+    answerText
+    status
+    description
+    deadline
+    createdAt
+    updatedAt
+  }
+`;
+export const OfferFragmentFragmentDoc = gql`
+  fragment OfferFragment on Offer {
+    id
+    companyId
+    jobPostId
+    applicantId
+    jobApplicationId
+    answerVideo
+    answerText
+    status
+    description
+    deadline
+    createdAt
+    updatedAt
+  }
+`;
 export const ApplicationFragmentFragmentDoc = gql`
   fragment ApplicationFragment on Application {
     id
@@ -2225,13 +2397,15 @@ export const ApplicationFragmentFragmentDoc = gql`
       ...JopPostFragment
     }
     interview {
-      id
+      ...InterviewFragment
     }
     offer {
-      id
+      ...OfferFragment
     }
   }
   ${JopPostFragmentFragmentDoc}
+  ${InterviewFragmentFragmentDoc}
+  ${OfferFragmentFragmentDoc}
 `;
 export const AuthAccountFragmentFragmentDoc = gql`
   fragment AuthAccountFragment on AuthAccountPayload {
@@ -2860,6 +3034,57 @@ export type SaveApplicantMutationOptions = Apollo.BaseMutationOptions<
   SaveApplicantMutation,
   SaveApplicantMutationVariables
 >;
+export const SendInterviewRequestDocument = gql`
+  mutation SendInterviewRequest($input: SendInterviewRequestInput!) {
+    sendInterviewRequest(input: $input) {
+      ...InterviewFragment
+    }
+  }
+  ${InterviewFragmentFragmentDoc}
+`;
+export type SendInterviewRequestMutationFn = Apollo.MutationFunction<
+  SendInterviewRequestMutation,
+  SendInterviewRequestMutationVariables
+>;
+
+/**
+ * __useSendInterviewRequestMutation__
+ *
+ * To run a mutation, you first call `useSendInterviewRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendInterviewRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendInterviewRequestMutation, { data, loading, error }] = useSendInterviewRequestMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSendInterviewRequestMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SendInterviewRequestMutation,
+    SendInterviewRequestMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    SendInterviewRequestMutation,
+    SendInterviewRequestMutationVariables
+  >(SendInterviewRequestDocument, options);
+}
+export type SendInterviewRequestMutationHookResult = ReturnType<
+  typeof useSendInterviewRequestMutation
+>;
+export type SendInterviewRequestMutationResult =
+  Apollo.MutationResult<SendInterviewRequestMutation>;
+export type SendInterviewRequestMutationOptions = Apollo.BaseMutationOptions<
+  SendInterviewRequestMutation,
+  SendInterviewRequestMutationVariables
+>;
 export const GetCompaniesDocument = gql`
   query GetCompanies {
     getCompanies {
@@ -3000,27 +3225,12 @@ export const GetCompanyJobPostsDocument = gql`
       errors {
         message
       }
-      payload {
-        jobPost {
-          ...JopPostFragment
-        }
-        applicationsWithApplicant {
-          application {
-            ...ApplicationFragment
-          }
-          applicant {
-            ...ApplicantFragment
-            savedJobs @skip(if: true) {
-              __typename
-            }
-          }
-        }
+      jobPosts {
+        ...JopPostFragment
       }
     }
   }
   ${JopPostFragmentFragmentDoc}
-  ${ApplicationFragmentFragmentDoc}
-  ${ApplicantFragmentFragmentDoc}
 `;
 
 /**
@@ -3072,6 +3282,73 @@ export type GetCompanyJobPostsLazyQueryHookResult = ReturnType<
 export type GetCompanyJobPostsQueryResult = Apollo.QueryResult<
   GetCompanyJobPostsQuery,
   GetCompanyJobPostsQueryVariables
+>;
+export const GetCompanyJobApplicationsDocument = gql`
+  query GetCompanyJobApplications($input: GetJobApplicationsInput!) {
+    getJobApplications(input: $input) {
+      edges {
+        node {
+          ...ApplicationFragment
+          applicant {
+            ...ApplicantFragment
+          }
+        }
+      }
+    }
+  }
+  ${ApplicationFragmentFragmentDoc}
+  ${ApplicantFragmentFragmentDoc}
+`;
+
+/**
+ * __useGetCompanyJobApplicationsQuery__
+ *
+ * To run a query within a React component, call `useGetCompanyJobApplicationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCompanyJobApplicationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCompanyJobApplicationsQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetCompanyJobApplicationsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetCompanyJobApplicationsQuery,
+    GetCompanyJobApplicationsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetCompanyJobApplicationsQuery,
+    GetCompanyJobApplicationsQueryVariables
+  >(GetCompanyJobApplicationsDocument, options);
+}
+export function useGetCompanyJobApplicationsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetCompanyJobApplicationsQuery,
+    GetCompanyJobApplicationsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetCompanyJobApplicationsQuery,
+    GetCompanyJobApplicationsQueryVariables
+  >(GetCompanyJobApplicationsDocument, options);
+}
+export type GetCompanyJobApplicationsQueryHookResult = ReturnType<
+  typeof useGetCompanyJobApplicationsQuery
+>;
+export type GetCompanyJobApplicationsLazyQueryHookResult = ReturnType<
+  typeof useGetCompanyJobApplicationsLazyQuery
+>;
+export type GetCompanyJobApplicationsQueryResult = Apollo.QueryResult<
+  GetCompanyJobApplicationsQuery,
+  GetCompanyJobApplicationsQueryVariables
 >;
 export const CreateJobPostDocument = gql`
   mutation CreateJobPost($input: CreateJobPostInput!) {

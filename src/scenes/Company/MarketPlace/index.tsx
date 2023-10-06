@@ -130,13 +130,16 @@ const MarketPlace = () => {
     if (
       jobPostPayload.loading ||
       meLoading ||
-      !jobPostPayload.data?.getCompanyJobPosts.payload
+      !jobPostPayload.data?.getCompanyJobPosts
     )
       return;
 
-    if (!selectedJobPostId) {
+    if (
+      !selectedJobPostId &&
+      jobPostPayload.data?.getCompanyJobPosts.jobPosts.length > 0
+    ) {
       setSelectedJobPostId(
-        jobPostPayload.data?.getCompanyJobPosts.payload[0].jobPost?.id,
+        jobPostPayload.data?.getCompanyJobPosts.jobPosts[0].id,
       );
     }
   }, [jobPostPayload]);
@@ -150,7 +153,7 @@ const MarketPlace = () => {
   if (
     jobPostPayload.loading ||
     meLoading ||
-    !jobPostPayload.data?.getCompanyJobPosts
+    !jobPostPayload.data?.getCompanyJobPosts?.jobPosts
   ) {
     return (
       <div className={s.container}>
@@ -163,9 +166,7 @@ const MarketPlace = () => {
     );
   }
 
-  const posts = jobPostPayload.data?.getCompanyJobPosts.payload.map(
-    (jp) => jp.jobPost,
-  );
+  const posts = jobPostPayload.data?.getCompanyJobPosts.jobPosts;
 
   return (
     <div className={s.container}>

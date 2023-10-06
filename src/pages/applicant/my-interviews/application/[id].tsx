@@ -1,9 +1,9 @@
 import React from 'react';
 
-import ApplicationDetail from '@/scenes/Applicant/ApplicationDetail';
+import ApplicationProcess from 'src/scenes/Applicant/ApplicationProcess';
 
 const Application = () => {
-  return <ApplicationDetail />;
+  return <ApplicationProcess />;
 };
 
 export default Application;

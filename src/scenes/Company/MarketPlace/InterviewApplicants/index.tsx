@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import {
   BusinessCenter,
   CalendarToday,
-  Delete,
   MonetizationOn,
   Place,
-  Save,
+  StarOutlineTwoTone,
+  VisibilityOff,
 } from '@mui/icons-material';
 import { LoadingButton } from '@mui/lab';
 import {
@@ -27,127 +27,121 @@ import {
   Tabs,
   Typography,
 } from '@mui/material';
-import { toast } from 'react-hot-toast';
+import moment from 'moment/moment';
 
-import {
-  GetSavedApplicantsDocument,
-  type GetSavedApplicantsQuery,
-  MeDocument,
-  SaveApplicantDocument,
-  useGetSavedApplicantsQuery,
-  useSaveApplicantMutation,
-} from '@/graphql/client/gql/schema';
-import useMe from '@/hooks/useMe';
+import Loader from '@/components/Loader';
+import { useGetCompanyJobApplicationsQuery } from '@/graphql/client/gql/schema';
+import { useResponseErrorHandler } from '@/hooks/useResponseErrorHandler';
 import { useAppStore } from '@/lib/store';
 
 import s from './saved.module.scss';
 
-const MarketPlace = () => {
+const InterviewApplicants = () => {
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
-  const { me } = useMe();
-  const [savedApplicants, setSavedApplicants] = useState<
-    GetSavedApplicantsQuery['getSavedApplicant']
-  >([]);
-  const { setProfileDetail } = useAppStore();
+  const { setApplicantDetail } = useAppStore();
+  const selectedJobPostId = useAppStore((state) => state.selectedJobPostId);
 
-  const savedApplicantsPayload = useGetSavedApplicantsQuery({
-    fetchPolicy: 'network-only',
-    skip: !me?.company?.id,
+  const jobApplications = useGetCompanyJobApplicationsQuery({
+    skip: !selectedJobPostId,
     variables: {
       input: {
-        companyId: me?.company?.id ?? '',
+        filter: {
+          jobPostId: selectedJobPostId,
+        },
       },
     },
   });
+  const { error, data: applications, loading } = jobApplications;
 
-  const [saveApplicant, savedPayload] = useSaveApplicantMutation();
-  const onRemoveSavedApplicant = (applicantId: string) => {
-    void saveApplicant({
-      variables: {
-        input: {
-          companyId: me?.company?.id ?? '',
-          applicantId,
-          save: false,
-        },
-      },
-      refetchQueries: [MeDocument, GetSavedApplicantsDocument],
-    });
-  };
+  useResponseErrorHandler(
+    error,
+    'An error occurred while getting job applications',
+  );
 
-  useEffect(() => {
-    if (savedApplicantsPayload.data?.getSavedApplicant) {
-      setSavedApplicants(savedApplicantsPayload.data.getSavedApplicant);
-    }
+  if (loading) {
+    return (
+      <div className={s.container}>
+        <Loader />
+      </div>
+    );
+  }
 
-    if (savedApplicantsPayload.error) {
-      toast.error(savedApplicantsPayload.error.message);
-    }
-  }, [savedApplicantsPayload]);
+  if (!applications?.getJobApplications) {
+    return null;
+  }
+
+  const applicationsWithApplicant = applications.getJobApplications.edges;
 
   return (
     <div className={s.container}>
-      <header>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          indicatorColor="secondary"
-          textColor="inherit"
-          // variant="fullWidth"
-        >
-          <Tab label="Requested" />
-          <Tab label="Responded" />
-          <Tab label="Refused" />
-        </Tabs>
-      </header>
+      <Tabs
+        value={value}
+        onChange={handleChange}
+        indicatorColor="secondary"
+        textColor="inherit"
+        // variant="fullWidth"
+      >
+        <Tab label="Requested" />
+        <Tab label="Responded" />
+        <Tab label="Refused" />
+      </Tabs>
 
       <List className={s.list}>
-        {[].map((applicant: any, idx) => (
+        {applicationsWithApplicant.map(({ node: application }, idx) => (
           <ListItem
             key={idx}
+            disablePadding
             className={s.list_item}
-            secondaryAction={
-              <Stack direction="row" alignItems="center">
-                <Button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
-                  startIcon={<CalendarToday />}
-                >
-                  Interview
-                </Button>
-                <LoadingButton
-                  loading={savedPayload.loading}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onRemoveSavedApplicant(applicant.id);
-                  }}
-                  startIcon={<Delete />}
-                  color="error"
-                >
-                  Delete
-                </LoadingButton>
-              </Stack>
-            }
             onClick={() => {
-              setProfileDetail({
-                profileId: applicant?.id,
+              setApplicantDetail({
+                selectedApplicationId: application.id,
               });
             }}
+            secondaryAction={
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="flex-end"
+              >
+                <Alert severity="info">
+                  <Typography>{application?.interview?.status}</Typography>
+                </Alert>
+              </Stack>
+            }
           >
             <ListItemButton className={s.list_item_btn}>
               <ListItemIcon>
-                <Avatar className={s.avatar} src={applicant?.account.image} />
+                <Avatar
+                  className={s.avatar}
+                  src={application?.applicant?.account.image}
+                />
               </ListItemIcon>
               <ListItemText
                 primary={
-                  <Typography variant="h6" color="gray" fontWeight="600">
-                    {`${applicant?.account.firstName} ${applicant.account.lastName}`}
-                  </Typography>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="space-between"
+                  >
+                    <Typography variant="h6" color="gray" fontWeight="600">
+                      {`${application?.applicant?.account.firstName} ${application?.applicant?.account.lastName}`}
+                    </Typography>
+                    <Chip
+                      size="small"
+                      variant="outlined"
+                      className={s.chip}
+                      label={
+                        <Typography variant="caption" color="gray">
+                          {moment(application.createdAt).format('MMM DD, YYYY')}
+                        </Typography>
+                      }
+                    />
+                  </Stack>
                 }
                 secondary={
                   <Stack className={s.secondary}>
@@ -155,14 +149,14 @@ const MarketPlace = () => {
                       <div className={s.detail_item}>
                         <BusinessCenter fontSize="small" />
                         <Typography variant="body2">
-                          {applicant.jobPosition}
+                          {application?.applicant?.jobPosition}
                         </Typography>
                       </div>
                       -
                       <div className={s.detail_item}>
                         <MonetizationOn fontSize="small" />
                         <Typography variant="body2">
-                          {applicant.salaryExpectation?.toLocaleString()}
+                          {application?.applicant?.salaryExpectation?.toLocaleString()}
                           /mo
                         </Typography>
                       </div>
@@ -170,14 +164,17 @@ const MarketPlace = () => {
                       <div className={s.detail_item}>
                         <Place fontSize="small" />
                         <Typography variant="body2">
-                          {applicant.location}
+                          {application?.applicant?.location}
                         </Typography>
                       </div>
                     </div>
 
+                    <Typography variant="body1" className={s.cover_letter}>
+                      {application.coverLetter}
+                    </Typography>
+
                     <div className={s.skills}>
-                      skills:
-                      {applicant?.skills
+                      {application?.applicant?.skills
                         ?.slice(0, 5)
                         .map((skill: any, idx: any) => (
                           <>
@@ -198,24 +195,23 @@ const MarketPlace = () => {
         ))}
       </List>
 
-      {true && (
+      {applicationsWithApplicant.length === 0 && (
         <div className={s.not_found}>
           <Alert severity="info">
             <AlertTitle>
-              <Typography variant="h6">No On-Going Interview Yet</Typography>
+              <Typography variant="h6">No Applicant Yet</Typography>
             </AlertTitle>
             <Typography>
-              You do not have any ongoing applicant interviews yet. Click the
-              button below to save
+              You do not have any applicant yet. Click the button below to save
             </Typography>
           </Alert>
         </div>
       )}
 
-      {false && (
+      {applicationsWithApplicant.length > 0 && (
         <Pagination
           className={s.pagination}
-          count={savedApplicants.length}
+          count={applicationsWithApplicant.length}
           variant="outlined"
           shape="rounded"
         />
@@ -224,4 +220,4 @@ const MarketPlace = () => {
   );
 };
 
-export default MarketPlace;
+export default InterviewApplicants;

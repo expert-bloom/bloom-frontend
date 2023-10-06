@@ -9,11 +9,8 @@
 
   & :local {
 
-    .list{
-      //margin-top: 4rem;
-      //padding: 1rem;
-
-
+    .list {
+      margin-top: 2rem;
       border-radius: 1.2rem;
 
       & > :not(:last-child) {
@@ -22,20 +19,56 @@
       }
 
       .list_item {
+        position: relative;
         border: 1px solid #e7e7e7;
         border-radius: .5rem;
-        padding: 0;
+        //padding: 1.5rem;
 
-        .list_item_btn{
-          padding: 1rem;
+
+        & :global {
+          .MuiListItemSecondaryAction-root {
+            //top: 20%;
+            //bottom: 20%;
+
+            bottom: 0;
+            top: initial;
+            transform: translateY(-20%);
+
+          }
         }
 
-        .avatar{
+
+        .list_item_btn {
+          padding: 2rem 2rem 3.5rem;
+          align-items: flex-start;
+
+
+          //border: 1px solid #000;
+
+
+        }
+
+        .avatar {
           // use box-shadow to create border for image
-          box-shadow: 0 0 0 3px #e3e3e3;
-          height: 6rem;
-          width: 6rem;
+          box-shadow: 0 0 0 3px #e3e3e3, 0 0 0 4px #c5c2c2;
+          height: 6.5rem;
+          width: 6.5rem;
           margin-right: 1.5rem;
+        }
+
+        .cover_letter {
+          //border: 1px solid #000;
+          max-width: 70ch;
+          font-weight: 300;
+
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+
+
+          width: 100%;
+          margin-top: .5rem;
         }
 
         .detail {
@@ -44,13 +77,13 @@
           gap: 1rem;
           margin-top: .25rem;
 
-          .detail_item{
+          .detail_item {
             display: flex;
             gap: .3rem;
             align-items: center;
           }
 
-          p{
+          p {
             margin-top: .2rem;
             font-weight: 300;
             color: black;
@@ -59,7 +92,7 @@
 
         .skills {
           display: flex;
-            flex-wrap: wrap;
+          flex-wrap: wrap;
           max-width: 44rem;
           gap: .3rem;
           align-items: center;
@@ -72,11 +105,11 @@
 
     }
 
-    .not_found{
+    .not_found {
       //min-height: 26vmax;
     }
 
-    .pagination{
+    .pagination {
       margin-top: 2rem;
       margin-left: auto;
       width: max-content;

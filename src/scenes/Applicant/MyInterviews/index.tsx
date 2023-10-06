@@ -87,13 +87,15 @@ const MyInterviews = () => {
     skip: !me?.applicant?.id,
     variables: {
       input: {
-        applicantId: me?.applicant?.id ?? '',
+        filter: {
+          applicantId: me?.applicant?.id ?? '',
+        },
       },
     },
   });
   const { error, data: applications } = jobApplications;
 
-  console.log('jobposts payload  :', jobApplications);
+  // console.log('jobposts payload  :', jobApplications);
 
   useResponseErrorHandler(
     error,

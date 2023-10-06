@@ -1,16 +1,11 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import {
   BusinessCenter,
   CalendarToday,
-  Delete,
-  HideImage,
-  LocalOffer,
   MonetizationOn,
   Place,
-  Save,
-  Star,
   StarOutlineTwoTone,
   VisibilityOff,
 } from '@mui/icons-material';
@@ -31,77 +26,63 @@ import {
   Typography,
 } from '@mui/material';
 import moment from 'moment/moment';
-import { toast } from 'react-hot-toast';
 
-import {
-  Application,
-  type ApplicationsWithApplicant,
-  GetSavedApplicantsDocument,
-  type GetSavedApplicantsQuery,
-  MeDocument,
-  SaveApplicantDocument,
-  useGetCompanyJobPostsQuery,
-  useGetSavedApplicantsQuery,
-  useSaveApplicantMutation,
-} from '@/graphql/client/gql/schema';
-import useMe from '@/hooks/useMe';
+import Loader from '@/components/Loader';
+import { useGetCompanyJobApplicationsQuery } from '@/graphql/client/gql/schema';
+import { useResponseErrorHandler } from '@/hooks/useResponseErrorHandler';
 import { useAppStore } from '@/lib/store';
 
 import s from './applied.module.scss';
 
 const MarketPlace = () => {
-  const { me } = useMe();
-  const [savedApplicants, setSavedApplicants] = useState<
-    GetSavedApplicantsQuery['getSavedApplicant']
-  >([]);
-  const { setProfileDetail } = useAppStore();
-  const [applications, setApplications] = useState<ApplicationsWithApplicant[]>(
-    [],
-  );
-
+  const { setApplicantDetail } = useAppStore();
   const selectedJobPostId = useAppStore((state) => state.selectedJobPostId);
-  const jobPostPayload = useGetCompanyJobPostsQuery({
-    skip: !me?.company?.id || !selectedJobPostId,
+
+  const jobApplications = useGetCompanyJobApplicationsQuery({
+    skip: !selectedJobPostId,
     variables: {
       input: {
-        companyId: me?.company?.id ?? '',
+        filter: {
+          jobPostId: selectedJobPostId,
+        },
       },
     },
   });
+  const { error, data: applications, loading } = jobApplications;
 
-  const [saveApplicant, savedPayload] = useSaveApplicantMutation();
+  useResponseErrorHandler(
+    error,
+    'An error occurred while getting job applications',
+  );
 
-  useEffect(() => {
-    if (
-      !selectedJobPostId ||
-      !jobPostPayload.data?.getCompanyJobPosts?.payload ||
-      jobPostPayload.loading
-    ) {
-      return;
-    }
-
-    const payload = jobPostPayload.data?.getCompanyJobPosts?.payload?.find(
-      (job) => job.jobPost?.id === selectedJobPostId,
+  if (loading) {
+    return (
+      <div className={s.container}>
+        <Loader />
+      </div>
     );
+  }
 
-    if (!payload) {
-      toast.error('No job post found with the selected id');
-      return;
-    }
+  if (!applications?.getJobApplications) {
+    return null;
+  }
 
-    setApplications(payload.applicationsWithApplicant as any);
-  }, [selectedJobPostId, jobPostPayload]);
+  const applicationsWithApplicant =
+    applications.getJobApplications.edges.filter(
+      (ja) => ja.node.interview === null,
+    );
 
   return (
     <div className={s.container}>
       <List className={s.list}>
-        {applications.map(({ application, applicant }, idx) => (
+        {applicationsWithApplicant.map(({ node: application }, idx) => (
           <ListItem
             key={idx}
+            disablePadding
             className={s.list_item}
             onClick={() => {
-              setProfileDetail({
-                profileId: application?.id,
+              setApplicantDetail({
+                selectedApplicationId: application.id,
               });
             }}
             secondaryAction={
@@ -127,7 +108,7 @@ const MarketPlace = () => {
                   Offer
                 </Button>
                 <LoadingButton
-                  loading={savedPayload.loading}
+                  // loading={savedPayload.loading}
                   onClick={(e) => {
                     e.stopPropagation();
                   }}
@@ -141,7 +122,10 @@ const MarketPlace = () => {
           >
             <ListItemButton className={s.list_item_btn}>
               <ListItemIcon>
-                <Avatar className={s.avatar} src={applicant?.account.image} />
+                <Avatar
+                  className={s.avatar}
+                  src={application?.applicant?.account.image}
+                />
               </ListItemIcon>
               <ListItemText
                 primary={
@@ -151,7 +135,7 @@ const MarketPlace = () => {
                     justifyContent="space-between"
                   >
                     <Typography variant="h6" color="gray" fontWeight="600">
-                      {`${applicant?.account.firstName} ${applicant?.account.lastName}`}
+                      {`${application?.applicant?.account.firstName} ${application?.applicant?.account.lastName}`}
                     </Typography>
                     <Chip
                       size="small"
@@ -171,14 +155,14 @@ const MarketPlace = () => {
                       <div className={s.detail_item}>
                         <BusinessCenter fontSize="small" />
                         <Typography variant="body2">
-                          {applicant?.jobPosition}
+                          {application?.applicant?.jobPosition}
                         </Typography>
                       </div>
                       -
                       <div className={s.detail_item}>
                         <MonetizationOn fontSize="small" />
                         <Typography variant="body2">
-                          {applicant?.salaryExpectation?.toLocaleString()}
+                          {application?.applicant?.salaryExpectation?.toLocaleString()}
                           /mo
                         </Typography>
                       </div>
@@ -186,7 +170,7 @@ const MarketPlace = () => {
                       <div className={s.detail_item}>
                         <Place fontSize="small" />
                         <Typography variant="body2">
-                          {applicant?.location}
+                          {application?.applicant?.location}
                         </Typography>
                       </div>
                     </div>
@@ -196,8 +180,7 @@ const MarketPlace = () => {
                     </Typography>
 
                     <div className={s.skills}>
-                      skills:
-                      {applicant?.skills
+                      {application?.applicant?.skills
                         ?.slice(0, 5)
                         .map((skill: any, idx: any) => (
                           <>
@@ -218,7 +201,7 @@ const MarketPlace = () => {
         ))}
       </List>
 
-      {applications.length === 0 && (
+      {applicationsWithApplicant.length === 0 && (
         <div className={s.not_found}>
           <Alert severity="info">
             <AlertTitle>
@@ -231,10 +214,10 @@ const MarketPlace = () => {
         </div>
       )}
 
-      {applications.length > 0 && (
+      {applicationsWithApplicant.length > 0 && (
         <Pagination
           className={s.pagination}
-          count={savedApplicants.length}
+          count={applicationsWithApplicant.length}
           variant="outlined"
           shape="rounded"
         />

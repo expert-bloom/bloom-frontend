@@ -144,6 +144,7 @@ type ApplicantSavedJobPostEdge {
 }
 
 type Application implements Node {
+    applicant: Applicant
     applicantId: String!
     attachment: String
     coverLetter: String!
@@ -166,11 +167,6 @@ type ApplicationConnections {
 type ApplicationEdge {
     cursor: String!
     node: Application!
-}
-
-type ApplicationsWithApplicant {
-    applicant: Applicant!
-    application: Application!
 }
 
 type AuthAccountPayload {
@@ -206,24 +202,14 @@ type Company implements Node {
     savedApplicants: [Applicant!]!
 }
 
-type CompanyJobPostsPayload {
-    applicationsWithApplicant: [ApplicationsWithApplicant!]!
-    jobPost: JobPost!
-}
-
 type CompanyJobPostsResponse {
     errors: [Error!]!
-    payload: [CompanyJobPostsPayload!]!
+    jobPosts: [JobPost!]!
 }
 
 type CreateApplicationPayload implements PayloadError {
     application: Application
     errors: [Error!]!
-}
-
-type CreateJobPostResponse {
-    errors: [Error!]!
-    jobPost: JobPost
 }
 
 type Error {
@@ -277,16 +263,23 @@ type JobPost implements Node {
     vacancy: Int!
 }
 
+type JobPostResponse {
+    errors: [Error!]!
+    jobPost: JobPost
+}
+
 type Mutation {
-    EditJobPost(input: EditJobPostInput!): CreateJobPostResponse!
+    EditJobPost(input: EditJobPostInput!): JobPostResponse!
     applicantProfileUpdate(input: ApplicantProfileUpdateInput!): AccountUpdate!
     createApplication(input: CreateApplicationInput!): CreateApplicationPayload!
-    createJobPost(input: CreateJobPostInput!): CreateJobPostResponse!
+    createJobPost(input: CreateJobPostInput!): JobPostResponse!
     logIn(input: LoginInput!): AuthPayload!
+    offerApplicant(input: SendInterviewRequestInput!): String!
     profileUpdate(input: UpdateProfileInput!): AccountUpdate!
     saveApplicant(input: SaveApplicantInput!): Boolean
     saveJobPost(input: SaveJobPostInput!): JobPost
     sayHi: String!
+    sendInterviewRequest(input: SendInterviewRequestInput!): Interview
     signUp(input: SignUpInput!): AuthPayload!
     signUpOAuth(input: OAuthSignUpInput!): AuthPayload!
 }
@@ -398,10 +391,10 @@ enum Gender {
 
 enum InterviewStatus {
     ACCEPTED
+    APPLICANT_REFUSED
+    APPLICANT_RESPONDED
     PENDING
-    REFUSED
     REJECTED
-    RESPONDED
 }
 
 enum JobSite {
@@ -419,10 +412,8 @@ enum JobType {
 
 enum OfferStatus {
     ACCEPTED
+    APPLICANT_REFUSED
     PENDING
-    REFUSED
-    REJECTED
-    RESPONDED
 }
 
 enum OrderDirection {
@@ -496,7 +487,9 @@ input ApplicantUpdateInput {
 }
 
 input ApplicationFilter {
+    applicantId: String
     ids: [String!]
+    jobPostId: String
     status: ApplicationStatus
 }
 
@@ -581,25 +574,17 @@ input GetApplicantsInput {
     orderBy: [ApplicantOrdering!]
 }
 
-input GetApplicationsInput {
-    after: String
-    before: String
-    filter: ApplicationFilter
-    first: Int
-    last: Int
-    orderBy: [ApplicantOrdering!]
-}
-
 input GetCompanyJobPostsInput {
     companyId: String!
 }
 
 input GetJobApplicationsInput {
     after: String
-    applicantId: String!
     before: String
+    filter: ApplicationFilter
     first: Int
     last: Int
+    orderBy: [ApplicantOrdering!]
 }
 
 input GetJobPostInput {
@@ -669,6 +654,12 @@ input SaveJobPostInput {
 
 input SavedJobPostsInput {
     accountId: String!
+}
+
+input SendInterviewRequestInput {
+    applicationId: String!
+    date: DateTime
+    description: String!
 }
 
 input SignUpInput {
