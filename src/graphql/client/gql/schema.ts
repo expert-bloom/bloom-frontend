@@ -1,5 +1,6 @@
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -75,14 +76,10 @@ export type AccountPayload = {
 
 export enum AccountSortField {
   /** Sort users by created at. */
-  CreatedAt = 'CREATED_AT',
-  /** Sort users by email. */
-  Email = 'EMAIL',
-  /** Sort users by first name. */
-  FirstName = 'FIRST_NAME',
-  /** Sort users by last modified at. */
-  LastModifiedAt = 'LAST_MODIFIED_AT',
-  /** Sort users by last name. */
+  CreatedAt = 'CREATED_AT' /** Sort users by email. */,
+  Email = 'EMAIL' /** Sort users by first name. */,
+  FirstName = 'FIRST_NAME' /** Sort users by last modified at. */,
+  LastModifiedAt = 'LAST_MODIFIED_AT' /** Sort users by last name. */,
   LastName = 'LAST_NAME',
 }
 
@@ -170,17 +167,14 @@ export type ApplicantAppliedJobPostEdge = {
 };
 
 export type ApplicantConnection = {
-  edges: Array<ApplicantEdge>;
-  /** Pagination data for this connection. */
-  pageInfo: PageInfo;
-  /** A total count of items in the collection. */
+  edges: Array<ApplicantEdge> /** Pagination data for this connection. */;
+  pageInfo: PageInfo /** A total count of items in the collection. */;
   totalCount: Maybe<Scalars['Int']['output']>;
 };
 
 export type ApplicantEdge = {
   /** A cursor for use in pagination. */
-  cursor: Scalars['String']['output'];
-  /** The item at the end of the edge. */
+  cursor: Scalars['String']['output'] /** The item at the end of the edge. */;
   node: Applicant;
 };
 
@@ -233,11 +227,13 @@ export type Application = Node & {
   attachment: Maybe<Scalars['String']['output']>;
   coverLetter: Scalars['String']['output'];
   createdAt: Scalars['DateTime']['output'];
+  email: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   interview: Maybe<Interview>;
   jobPost: Maybe<JobPost>;
   jobPostId: Scalars['String']['output'];
   offer: Maybe<Offer>;
+  phone: Scalars['String']['output'];
   resume: Scalars['String']['output'];
   status: ApplicationStatus;
   updatedAt: Scalars['DateTime']['output'];
@@ -536,23 +532,20 @@ export type MeInput = {
 };
 
 export type Mutation = {
-  EditJobPost: JobPostResponse;
   applicantProfileUpdate: AccountUpdate;
   createApplication: CreateApplicationPayload;
   createJobPost: JobPostResponse;
+  editJobPost: JobPostResponse;
   logIn: AuthPayload;
-  offerApplicant: Scalars['String']['output'];
+  offerApplicant: Maybe<Offer>;
   profileUpdate: AccountUpdate;
+  respondInterview: Maybe<Interview>;
   saveApplicant: Maybe<Scalars['Boolean']['output']>;
   saveJobPost: Maybe<JobPost>;
   sayHi: Scalars['String']['output'];
   sendInterviewRequest: Maybe<Interview>;
   signUp: AuthPayload;
   signUpOAuth: AuthPayload;
-};
-
-export type MutationEditJobPostArgs = {
-  input: EditJobPostInput;
 };
 
 export type MutationApplicantProfileUpdateArgs = {
@@ -567,16 +560,24 @@ export type MutationCreateJobPostArgs = {
   input: CreateJobPostInput;
 };
 
+export type MutationEditJobPostArgs = {
+  input: EditJobPostInput;
+};
+
 export type MutationLogInArgs = {
   input: LoginInput;
 };
 
 export type MutationOfferApplicantArgs = {
-  input: SendInterviewRequestInput;
+  input: OfferApplicantInput;
 };
 
 export type MutationProfileUpdateArgs = {
   input: UpdateProfileInput;
+};
+
+export type MutationRespondInterviewArgs = {
+  input: RespondInterviewInput;
 };
 
 export type MutationSaveApplicantArgs = {
@@ -662,6 +663,13 @@ export type Offer = Node & {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type OfferApplicantInput = {
+  applicantId: Scalars['String']['input'];
+  applicationId: Scalars['String']['input'];
+  date?: InputMaybe<Scalars['DateTime']['input']>;
+  description: Scalars['String']['input'];
+};
+
 export enum OfferStatus {
   Accepted = 'ACCEPTED',
   ApplicantRefused = 'APPLICANT_REFUSED',
@@ -670,8 +678,7 @@ export enum OfferStatus {
 
 export enum OrderDirection {
   /** Specifies an ascending sort order. */
-  Asc = 'ASC',
-  /** Specifies a descending sort order. */
+  Asc = 'ASC' /** Specifies a descending sort order. */,
   Desc = 'DESC',
 }
 
@@ -739,6 +746,13 @@ export type QueryGetSavedJobPostsArgs = {
 
 export type QueryMeArgs = {
   input: MeInput;
+};
+
+export type RespondInterviewInput = {
+  applicantId: Scalars['String']['input'];
+  interviewId: Scalars['String']['input'];
+  interviewVideoUrl?: InputMaybe<Scalars['String']['input']>;
+  refuse?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export enum SalaryType {
@@ -1246,6 +1260,76 @@ export type MeQuery = {
   } | null;
 };
 
+export type SaveJobPostMutationVariables = Exact<{
+  input: SaveJobPostInput;
+}>;
+
+export type SaveJobPostMutation = {
+  saveJobPost: {
+    id: string;
+    title: string;
+    applicationDeadline: any;
+    description: string;
+    location: string;
+    salary: Array<number>;
+    salaryType: SalaryType;
+    jobType: JobType;
+    category: Array<string>;
+    vacancy: number;
+    email: string;
+    jobSite: JobSite;
+    isVisible: boolean;
+    jobExperience: number;
+    experienceLevel: ExperienceLevel;
+    englishLevel: EnglishLevel;
+    otherLanguages: Array<string>;
+    skills: Array<string>;
+    qualifications: Array<string>;
+    interviewQuestions: Array<string>;
+    companyId: string;
+    createdAt: any;
+    updatedAt: any;
+  } | null;
+};
+
+export type RespondToInterviewMutationVariables = Exact<{
+  input: RespondInterviewInput;
+}>;
+
+export type RespondToInterviewMutation = {
+  respondInterview: {
+    id: string;
+    companyId: string;
+    jobPostId: string;
+    applicantId: string;
+    jobApplicationId: string | null;
+    attachment: string | null;
+    answerVideo: string | null;
+    answerText: string | null;
+    status: InterviewStatus | null;
+    description: string;
+    deadline: any | null;
+    createdAt: any;
+    updatedAt: any;
+  } | null;
+};
+
+export type CreateJobApplicationMutationVariables = Exact<{
+  input: CreateApplicationInput;
+}>;
+
+export type CreateJobApplicationMutation = {
+  createApplication: {
+    errors: Array<{ message: string }>;
+    application: {
+      id: string;
+      applicantId: string;
+      jobPostId: string;
+      createdAt: any;
+    } | null;
+  };
+};
+
 export type ApplicantLightFragment = {
   id: string;
   about: string | null;
@@ -1387,6 +1471,8 @@ export type ApplicationFragmentFragment = {
   applicantId: string;
   jobPostId: string;
   attachment: string | null;
+  email: string;
+  phone: string;
   jobPost: {
     id: string;
     title: string;
@@ -1578,6 +1664,8 @@ export type GetJobApplicationsQuery = {
         applicantId: string;
         jobPostId: string;
         attachment: string | null;
+        email: string;
+        phone: string;
         jobPost: {
           id: string;
           title: string;
@@ -1764,6 +1852,49 @@ export type SendInterviewRequestMutation = {
   } | null;
 };
 
+export type SendAnOfferMutationVariables = Exact<{
+  input: OfferApplicantInput;
+}>;
+
+export type SendAnOfferMutation = {
+  offerApplicant: {
+    id: string;
+    companyId: string;
+    jobPostId: string;
+    applicantId: string;
+    jobApplicationId: string | null;
+    answerVideo: string | null;
+    answerText: string | null;
+    status: OfferStatus | null;
+    description: string;
+    deadline: any | null;
+    createdAt: any;
+    updatedAt: any;
+  } | null;
+};
+
+export type CreateJobPostMutationVariables = Exact<{
+  input: CreateJobPostInput;
+}>;
+
+export type CreateJobPostMutation = {
+  createJobPost: {
+    errors: Array<{ message: string }>;
+    jobPost: { id: string } | null;
+  };
+};
+
+export type EditJobPostMutationVariables = Exact<{
+  input: EditJobPostInput;
+}>;
+
+export type EditJobPostMutation = {
+  editJobPost: {
+    errors: Array<{ message: string }>;
+    jobPost: { id: string } | null;
+  };
+};
+
 export type GetCompaniesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetCompaniesQuery = {
@@ -1915,6 +2046,8 @@ export type GetCompanyJobApplicationsQuery = {
         applicantId: string;
         jobPostId: string;
         attachment: string | null;
+        email: string;
+        phone: string;
         applicant: {
           id: string;
           about: string | null;
@@ -2052,65 +2185,6 @@ export type GetCompanyJobApplicationsQuery = {
       };
     }>;
   };
-};
-
-export type CreateJobPostMutationVariables = Exact<{
-  input: CreateJobPostInput;
-}>;
-
-export type CreateJobPostMutation = {
-  createJobPost: {
-    errors: Array<{ message: string }>;
-    jobPost: { id: string } | null;
-  };
-};
-
-export type CreateJobApplicationMutationVariables = Exact<{
-  input: CreateApplicationInput;
-}>;
-
-export type CreateJobApplicationMutation = {
-  createApplication: {
-    errors: Array<{ message: string }>;
-    application: {
-      id: string;
-      applicantId: string;
-      jobPostId: string;
-      createdAt: any;
-    } | null;
-  };
-};
-
-export type SaveJobPostMutationVariables = Exact<{
-  input: SaveJobPostInput;
-}>;
-
-export type SaveJobPostMutation = {
-  saveJobPost: {
-    id: string;
-    title: string;
-    applicationDeadline: any;
-    description: string;
-    location: string;
-    salary: Array<number>;
-    salaryType: SalaryType;
-    jobType: JobType;
-    category: Array<string>;
-    vacancy: number;
-    email: string;
-    jobSite: JobSite;
-    isVisible: boolean;
-    jobExperience: number;
-    experienceLevel: ExperienceLevel;
-    englishLevel: EnglishLevel;
-    otherLanguages: Array<string>;
-    skills: Array<string>;
-    qualifications: Array<string>;
-    interviewQuestions: Array<string>;
-    companyId: string;
-    createdAt: any;
-    updatedAt: any;
-  } | null;
 };
 
 export type JopPostFragmentFragment = {
@@ -2393,6 +2467,8 @@ export const ApplicationFragmentFragmentDoc = gql`
     applicantId
     jobPostId
     attachment
+    email
+    phone
     jobPost {
       ...JopPostFragment
     }
@@ -2473,6 +2549,7 @@ export function useUpdateProfileMutation(
     UpdateProfileMutationVariables
   >(UpdateProfileDocument, options);
 }
+
 export type UpdateProfileMutationHookResult = ReturnType<
   typeof useUpdateProfileMutation
 >;
@@ -2524,6 +2601,7 @@ export function useFindAccountQuery(
     options,
   );
 }
+
 export function useFindAccountLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     FindAccountQuery,
@@ -2536,6 +2614,7 @@ export function useFindAccountLazyQuery(
     options,
   );
 }
+
 export type FindAccountQueryHookResult = ReturnType<typeof useFindAccountQuery>;
 export type FindAccountLazyQueryHookResult = ReturnType<
   typeof useFindAccountLazyQuery
@@ -2575,15 +2654,180 @@ export function useMeQuery(
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, options);
 }
+
 export function useMeLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, options);
 }
+
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const SaveJobPostDocument = gql`
+  mutation SaveJobPost($input: SaveJobPostInput!) {
+    saveJobPost(input: $input) {
+      ...JopPostFragment
+    }
+  }
+  ${JopPostFragmentFragmentDoc}
+`;
+export type SaveJobPostMutationFn = Apollo.MutationFunction<
+  SaveJobPostMutation,
+  SaveJobPostMutationVariables
+>;
+
+/**
+ * __useSaveJobPostMutation__
+ *
+ * To run a mutation, you first call `useSaveJobPostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSaveJobPostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [saveJobPostMutation, { data, loading, error }] = useSaveJobPostMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSaveJobPostMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SaveJobPostMutation,
+    SaveJobPostMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<SaveJobPostMutation, SaveJobPostMutationVariables>(
+    SaveJobPostDocument,
+    options,
+  );
+}
+
+export type SaveJobPostMutationHookResult = ReturnType<
+  typeof useSaveJobPostMutation
+>;
+export type SaveJobPostMutationResult =
+  Apollo.MutationResult<SaveJobPostMutation>;
+export type SaveJobPostMutationOptions = Apollo.BaseMutationOptions<
+  SaveJobPostMutation,
+  SaveJobPostMutationVariables
+>;
+export const RespondToInterviewDocument = gql`
+  mutation RespondToInterview($input: RespondInterviewInput!) {
+    respondInterview(input: $input) {
+      ...InterviewFragment
+    }
+  }
+  ${InterviewFragmentFragmentDoc}
+`;
+export type RespondToInterviewMutationFn = Apollo.MutationFunction<
+  RespondToInterviewMutation,
+  RespondToInterviewMutationVariables
+>;
+
+/**
+ * __useRespondToInterviewMutation__
+ *
+ * To run a mutation, you first call `useRespondToInterviewMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRespondToInterviewMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [respondToInterviewMutation, { data, loading, error }] = useRespondToInterviewMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRespondToInterviewMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    RespondToInterviewMutation,
+    RespondToInterviewMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    RespondToInterviewMutation,
+    RespondToInterviewMutationVariables
+  >(RespondToInterviewDocument, options);
+}
+
+export type RespondToInterviewMutationHookResult = ReturnType<
+  typeof useRespondToInterviewMutation
+>;
+export type RespondToInterviewMutationResult =
+  Apollo.MutationResult<RespondToInterviewMutation>;
+export type RespondToInterviewMutationOptions = Apollo.BaseMutationOptions<
+  RespondToInterviewMutation,
+  RespondToInterviewMutationVariables
+>;
+export const CreateJobApplicationDocument = gql`
+  mutation CreateJobApplication($input: CreateApplicationInput!) {
+    createApplication(input: $input) {
+      errors {
+        message
+      }
+      application {
+        id
+        applicantId
+        jobPostId
+        createdAt
+      }
+    }
+  }
+`;
+export type CreateJobApplicationMutationFn = Apollo.MutationFunction<
+  CreateJobApplicationMutation,
+  CreateJobApplicationMutationVariables
+>;
+
+/**
+ * __useCreateJobApplicationMutation__
+ *
+ * To run a mutation, you first call `useCreateJobApplicationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateJobApplicationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createJobApplicationMutation, { data, loading, error }] = useCreateJobApplicationMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateJobApplicationMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateJobApplicationMutation,
+    CreateJobApplicationMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    CreateJobApplicationMutation,
+    CreateJobApplicationMutationVariables
+  >(CreateJobApplicationDocument, options);
+}
+
+export type CreateJobApplicationMutationHookResult = ReturnType<
+  typeof useCreateJobApplicationMutation
+>;
+export type CreateJobApplicationMutationResult =
+  Apollo.MutationResult<CreateJobApplicationMutation>;
+export type CreateJobApplicationMutationOptions = Apollo.BaseMutationOptions<
+  CreateJobApplicationMutation,
+  CreateJobApplicationMutationVariables
+>;
 export const GetApplicantsDocument = gql`
   query GetApplicants($input: GetApplicantsInput!) {
     getApplicants(input: $input) {
@@ -2643,6 +2887,7 @@ export function useGetApplicantsQuery(
     options,
   );
 }
+
 export function useGetApplicantsLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     GetApplicantsQuery,
@@ -2655,6 +2900,7 @@ export function useGetApplicantsLazyQuery(
     options,
   );
 }
+
 export type GetApplicantsQueryHookResult = ReturnType<
   typeof useGetApplicantsQuery
 >;
@@ -2739,6 +2985,7 @@ export function useGetApplicantQuery(
     options,
   );
 }
+
 export function useGetApplicantLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     GetApplicantQuery,
@@ -2751,6 +2998,7 @@ export function useGetApplicantLazyQuery(
     options,
   );
 }
+
 export type GetApplicantQueryHookResult = ReturnType<
   typeof useGetApplicantQuery
 >;
@@ -2802,6 +3050,7 @@ export function useGetJobApplicationsQuery(
     GetJobApplicationsQueryVariables
   >(GetJobApplicationsDocument, options);
 }
+
 export function useGetJobApplicationsLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     GetJobApplicationsQuery,
@@ -2814,6 +3063,7 @@ export function useGetJobApplicationsLazyQuery(
     GetJobApplicationsQueryVariables
   >(GetJobApplicationsDocument, options);
 }
+
 export type GetJobApplicationsQueryHookResult = ReturnType<
   typeof useGetJobApplicationsQuery
 >;
@@ -2871,6 +3121,7 @@ export function useLoginMutation(
     options,
   );
 }
+
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<
@@ -2924,6 +3175,7 @@ export function useSignUpMutation(
     options,
   );
 }
+
 export type SignUpMutationHookResult = ReturnType<typeof useSignUpMutation>;
 export type SignUpMutationResult = Apollo.MutationResult<SignUpMutation>;
 export type SignUpMutationOptions = Apollo.BaseMutationOptions<
@@ -2977,6 +3229,7 @@ export function useSignUpOAuthMutation(
     options,
   );
 }
+
 export type SignUpOAuthMutationHookResult = ReturnType<
   typeof useSignUpOAuthMutation
 >;
@@ -3025,6 +3278,7 @@ export function useSaveApplicantMutation(
     SaveApplicantMutationVariables
   >(SaveApplicantDocument, options);
 }
+
 export type SaveApplicantMutationHookResult = ReturnType<
   typeof useSaveApplicantMutation
 >;
@@ -3076,6 +3330,7 @@ export function useSendInterviewRequestMutation(
     SendInterviewRequestMutationVariables
   >(SendInterviewRequestDocument, options);
 }
+
 export type SendInterviewRequestMutationHookResult = ReturnType<
   typeof useSendInterviewRequestMutation
 >;
@@ -3084,6 +3339,170 @@ export type SendInterviewRequestMutationResult =
 export type SendInterviewRequestMutationOptions = Apollo.BaseMutationOptions<
   SendInterviewRequestMutation,
   SendInterviewRequestMutationVariables
+>;
+export const SendAnOfferDocument = gql`
+  mutation SendAnOffer($input: OfferApplicantInput!) {
+    offerApplicant(input: $input) {
+      ...OfferFragment
+    }
+  }
+  ${OfferFragmentFragmentDoc}
+`;
+export type SendAnOfferMutationFn = Apollo.MutationFunction<
+  SendAnOfferMutation,
+  SendAnOfferMutationVariables
+>;
+
+/**
+ * __useSendAnOfferMutation__
+ *
+ * To run a mutation, you first call `useSendAnOfferMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendAnOfferMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendAnOfferMutation, { data, loading, error }] = useSendAnOfferMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSendAnOfferMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SendAnOfferMutation,
+    SendAnOfferMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<SendAnOfferMutation, SendAnOfferMutationVariables>(
+    SendAnOfferDocument,
+    options,
+  );
+}
+
+export type SendAnOfferMutationHookResult = ReturnType<
+  typeof useSendAnOfferMutation
+>;
+export type SendAnOfferMutationResult =
+  Apollo.MutationResult<SendAnOfferMutation>;
+export type SendAnOfferMutationOptions = Apollo.BaseMutationOptions<
+  SendAnOfferMutation,
+  SendAnOfferMutationVariables
+>;
+export const CreateJobPostDocument = gql`
+  mutation CreateJobPost($input: CreateJobPostInput!) {
+    createJobPost(input: $input) {
+      errors {
+        message
+      }
+      jobPost {
+        id
+      }
+    }
+  }
+`;
+export type CreateJobPostMutationFn = Apollo.MutationFunction<
+  CreateJobPostMutation,
+  CreateJobPostMutationVariables
+>;
+
+/**
+ * __useCreateJobPostMutation__
+ *
+ * To run a mutation, you first call `useCreateJobPostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateJobPostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createJobPostMutation, { data, loading, error }] = useCreateJobPostMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateJobPostMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateJobPostMutation,
+    CreateJobPostMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    CreateJobPostMutation,
+    CreateJobPostMutationVariables
+  >(CreateJobPostDocument, options);
+}
+
+export type CreateJobPostMutationHookResult = ReturnType<
+  typeof useCreateJobPostMutation
+>;
+export type CreateJobPostMutationResult =
+  Apollo.MutationResult<CreateJobPostMutation>;
+export type CreateJobPostMutationOptions = Apollo.BaseMutationOptions<
+  CreateJobPostMutation,
+  CreateJobPostMutationVariables
+>;
+export const EditJobPostDocument = gql`
+  mutation EditJobPost($input: EditJobPostInput!) {
+    editJobPost(input: $input) {
+      errors {
+        message
+      }
+      jobPost {
+        id
+      }
+    }
+  }
+`;
+export type EditJobPostMutationFn = Apollo.MutationFunction<
+  EditJobPostMutation,
+  EditJobPostMutationVariables
+>;
+
+/**
+ * __useEditJobPostMutation__
+ *
+ * To run a mutation, you first call `useEditJobPostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditJobPostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editJobPostMutation, { data, loading, error }] = useEditJobPostMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useEditJobPostMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    EditJobPostMutation,
+    EditJobPostMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<EditJobPostMutation, EditJobPostMutationVariables>(
+    EditJobPostDocument,
+    options,
+  );
+}
+
+export type EditJobPostMutationHookResult = ReturnType<
+  typeof useEditJobPostMutation
+>;
+export type EditJobPostMutationResult =
+  Apollo.MutationResult<EditJobPostMutation>;
+export type EditJobPostMutationOptions = Apollo.BaseMutationOptions<
+  EditJobPostMutation,
+  EditJobPostMutationVariables
 >;
 export const GetCompaniesDocument = gql`
   query GetCompanies {
@@ -3122,6 +3541,7 @@ export function useGetCompaniesQuery(
     options,
   );
 }
+
 export function useGetCompaniesLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     GetCompaniesQuery,
@@ -3134,6 +3554,7 @@ export function useGetCompaniesLazyQuery(
     options,
   );
 }
+
 export type GetCompaniesQueryHookResult = ReturnType<
   typeof useGetCompaniesQuery
 >;
@@ -3197,6 +3618,7 @@ export function useGetSavedApplicantsQuery(
     GetSavedApplicantsQueryVariables
   >(GetSavedApplicantsDocument, options);
 }
+
 export function useGetSavedApplicantsLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     GetSavedApplicantsQuery,
@@ -3209,6 +3631,7 @@ export function useGetSavedApplicantsLazyQuery(
     GetSavedApplicantsQueryVariables
   >(GetSavedApplicantsDocument, options);
 }
+
 export type GetSavedApplicantsQueryHookResult = ReturnType<
   typeof useGetSavedApplicantsQuery
 >;
@@ -3261,6 +3684,7 @@ export function useGetCompanyJobPostsQuery(
     GetCompanyJobPostsQueryVariables
   >(GetCompanyJobPostsDocument, options);
 }
+
 export function useGetCompanyJobPostsLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     GetCompanyJobPostsQuery,
@@ -3273,6 +3697,7 @@ export function useGetCompanyJobPostsLazyQuery(
     GetCompanyJobPostsQueryVariables
   >(GetCompanyJobPostsDocument, options);
 }
+
 export type GetCompanyJobPostsQueryHookResult = ReturnType<
   typeof useGetCompanyJobPostsQuery
 >;
@@ -3328,6 +3753,7 @@ export function useGetCompanyJobApplicationsQuery(
     GetCompanyJobApplicationsQueryVariables
   >(GetCompanyJobApplicationsDocument, options);
 }
+
 export function useGetCompanyJobApplicationsLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     GetCompanyJobApplicationsQuery,
@@ -3340,6 +3766,7 @@ export function useGetCompanyJobApplicationsLazyQuery(
     GetCompanyJobApplicationsQueryVariables
   >(GetCompanyJobApplicationsDocument, options);
 }
+
 export type GetCompanyJobApplicationsQueryHookResult = ReturnType<
   typeof useGetCompanyJobApplicationsQuery
 >;
@@ -3349,170 +3776,6 @@ export type GetCompanyJobApplicationsLazyQueryHookResult = ReturnType<
 export type GetCompanyJobApplicationsQueryResult = Apollo.QueryResult<
   GetCompanyJobApplicationsQuery,
   GetCompanyJobApplicationsQueryVariables
->;
-export const CreateJobPostDocument = gql`
-  mutation CreateJobPost($input: CreateJobPostInput!) {
-    createJobPost(input: $input) {
-      errors {
-        message
-      }
-      jobPost {
-        id
-      }
-    }
-  }
-`;
-export type CreateJobPostMutationFn = Apollo.MutationFunction<
-  CreateJobPostMutation,
-  CreateJobPostMutationVariables
->;
-
-/**
- * __useCreateJobPostMutation__
- *
- * To run a mutation, you first call `useCreateJobPostMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateJobPostMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createJobPostMutation, { data, loading, error }] = useCreateJobPostMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateJobPostMutation(
-  baseOptions?: Apollo.MutationHookOptions<
-    CreateJobPostMutation,
-    CreateJobPostMutationVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useMutation<
-    CreateJobPostMutation,
-    CreateJobPostMutationVariables
-  >(CreateJobPostDocument, options);
-}
-export type CreateJobPostMutationHookResult = ReturnType<
-  typeof useCreateJobPostMutation
->;
-export type CreateJobPostMutationResult =
-  Apollo.MutationResult<CreateJobPostMutation>;
-export type CreateJobPostMutationOptions = Apollo.BaseMutationOptions<
-  CreateJobPostMutation,
-  CreateJobPostMutationVariables
->;
-export const CreateJobApplicationDocument = gql`
-  mutation CreateJobApplication($input: CreateApplicationInput!) {
-    createApplication(input: $input) {
-      errors {
-        message
-      }
-      application {
-        id
-        applicantId
-        jobPostId
-        createdAt
-      }
-    }
-  }
-`;
-export type CreateJobApplicationMutationFn = Apollo.MutationFunction<
-  CreateJobApplicationMutation,
-  CreateJobApplicationMutationVariables
->;
-
-/**
- * __useCreateJobApplicationMutation__
- *
- * To run a mutation, you first call `useCreateJobApplicationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateJobApplicationMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createJobApplicationMutation, { data, loading, error }] = useCreateJobApplicationMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useCreateJobApplicationMutation(
-  baseOptions?: Apollo.MutationHookOptions<
-    CreateJobApplicationMutation,
-    CreateJobApplicationMutationVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useMutation<
-    CreateJobApplicationMutation,
-    CreateJobApplicationMutationVariables
-  >(CreateJobApplicationDocument, options);
-}
-export type CreateJobApplicationMutationHookResult = ReturnType<
-  typeof useCreateJobApplicationMutation
->;
-export type CreateJobApplicationMutationResult =
-  Apollo.MutationResult<CreateJobApplicationMutation>;
-export type CreateJobApplicationMutationOptions = Apollo.BaseMutationOptions<
-  CreateJobApplicationMutation,
-  CreateJobApplicationMutationVariables
->;
-export const SaveJobPostDocument = gql`
-  mutation SaveJobPost($input: SaveJobPostInput!) {
-    saveJobPost(input: $input) {
-      ...JopPostFragment
-    }
-  }
-  ${JopPostFragmentFragmentDoc}
-`;
-export type SaveJobPostMutationFn = Apollo.MutationFunction<
-  SaveJobPostMutation,
-  SaveJobPostMutationVariables
->;
-
-/**
- * __useSaveJobPostMutation__
- *
- * To run a mutation, you first call `useSaveJobPostMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSaveJobPostMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [saveJobPostMutation, { data, loading, error }] = useSaveJobPostMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useSaveJobPostMutation(
-  baseOptions?: Apollo.MutationHookOptions<
-    SaveJobPostMutation,
-    SaveJobPostMutationVariables
-  >,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useMutation<SaveJobPostMutation, SaveJobPostMutationVariables>(
-    SaveJobPostDocument,
-    options,
-  );
-}
-export type SaveJobPostMutationHookResult = ReturnType<
-  typeof useSaveJobPostMutation
->;
-export type SaveJobPostMutationResult =
-  Apollo.MutationResult<SaveJobPostMutation>;
-export type SaveJobPostMutationOptions = Apollo.BaseMutationOptions<
-  SaveJobPostMutation,
-  SaveJobPostMutationVariables
 >;
 export const GetJobPostsDocument = gql`
   query GetJobPosts($input: JopPostFilterInput) {
@@ -3551,6 +3814,7 @@ export function useGetJobPostsQuery(
     options,
   );
 }
+
 export function useGetJobPostsLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     GetJobPostsQuery,
@@ -3563,6 +3827,7 @@ export function useGetJobPostsLazyQuery(
     options,
   );
 }
+
 export type GetJobPostsQueryHookResult = ReturnType<typeof useGetJobPostsQuery>;
 export type GetJobPostsLazyQueryHookResult = ReturnType<
   typeof useGetJobPostsLazyQuery
@@ -3608,6 +3873,7 @@ export function useGetJobPostQuery(
     options,
   );
 }
+
 export function useGetJobPostLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     GetJobPostQuery,
@@ -3620,6 +3886,7 @@ export function useGetJobPostLazyQuery(
     options,
   );
 }
+
 export type GetJobPostQueryHookResult = ReturnType<typeof useGetJobPostQuery>;
 export type GetJobPostLazyQueryHookResult = ReturnType<
   typeof useGetJobPostLazyQuery

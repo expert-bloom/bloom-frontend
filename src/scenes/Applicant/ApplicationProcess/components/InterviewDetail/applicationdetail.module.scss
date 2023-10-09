@@ -3,6 +3,9 @@
 .container {
   width: 100%;
   max-width: 43rem;
+  display: flex;
+  flex-flow: column;
+  gap: 2rem;
 
   & :local {
 
@@ -21,29 +24,17 @@
         overflow: hidden;
         text-overflow: ellipsis;
         margin-left: .2rem;
-        //margin-bottom: .5rem;
-        //font-weight: 600;
-
-        //border: 1px solid #000;
-        //margin-bottom: .5rem;
       }
 
       .list_item_btn {
-        //border: 1px solid #000;
-        //gap: 1.5rem;
-        //padding: 1rem;
         align-items: flex-start;
-
-        //border: 1px solid #000;
       }
 
       .avatar {
-        // use box-shadow to create border for image
         box-shadow: 0 0 0 3px #e3e3e3;
         height: 2rem;
         width: 2rem;
         margin-top: .4rem;
-        //margin-right: 1.5rem;
       }
 
       .detail {
@@ -67,33 +58,31 @@
 
       .desc {
         margin-top: .5rem;
-
-        // show 3 lines of text and hide the rest with ellipsis
         display: -webkit-box;
-        -webkit-line-clamp: 2;
+        -webkit-line-clamp: 1;
         -webkit-box-orient: vertical;
         overflow: hidden;
 
       }
 
 
-      .skills {
-        display: flex;
-        flex-wrap: wrap;
-        max-width: 44rem;
-        gap: .3rem;
-        align-items: center;
-        margin-top: .5rem;
-
-      }
-
     }
 
-    .proposal {
-      margin-top: 2rem;
+    .question_list {
+      padding: 2rem;
       display: flex;
       flex-flow: column;
-      gap: 1rem;
+      gap: .5rem;
+
+      p {
+        font-weight: 300;
+
+      }
+    }
+
+    .action{
+      display: flex;
+      justify-content: space-evenly;
     }
 
   }

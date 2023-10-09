@@ -88,7 +88,7 @@ const formSteps: FormStepType[] = [
   }, */,
 ];
 
-const initialValues = {
+const initialValuesWithValue = {
   title: 'Dawit' as string,
   description: 'jhlkjhlkjh' as string,
   jobType: 'INTERNSHIP' as JobType,
@@ -107,21 +107,54 @@ const initialValues = {
 
   // requirements
   experience: 3,
-  skillLevel: 'Beginner' as ExperienceLevel,
+  experienceLevel: 'Beginner' as ExperienceLevel,
   skill: [
     {
       label: 'Vue.js',
     },
   ],
   englishLevel: 'FLUENT' as EnglishLevel,
-  otherLanguages: [] as unknown as [{ language: string; level: string }],
+  otherLanguages: [] as unknown as Array<{ language: string; level: string }>,
   qualifications: ['ambitious and passionate'] as string[],
   interviewQuestions: ['what is your name?', 'how old are you'] as string[],
 
   companyId: '' as unknown as string,
 };
 
-export type FormValuesType = typeof initialValues;
+export const initialValuesShape = {
+  title: '' as string,
+  description: '' as string,
+  jobType: '' as JobType,
+  category: [
+    {
+      label: '',
+    },
+  ] as Array<{ label: string }>,
+  vacancy: 88 as number,
+  deadline: new Date(),
+  salaryType: '' as SalaryType,
+  salary: [30] as unknown as [number, number] | number[],
+  jobSite: '' as JobSite,
+  email: '',
+  location: '' as string,
+
+  // requirements
+  experience: 3,
+  experienceLevel: '' as ExperienceLevel,
+  skills: [
+    {
+      label: '',
+    },
+  ],
+  englishLevel: 'FLUENT' as EnglishLevel,
+  otherLanguages: [] as unknown as Array<{ language: string; level: string }>,
+  qualifications: ['ambitious and passionate'] as string[],
+  interviewQuestions: ['what is your name?', 'how old are you'] as string[],
+
+  companyId: '' as unknown as string,
+};
+
+export type EditJoPostValuesType = typeof initialValuesShape;
 
 const PostJob = () => {
   const [dir, setDir] = useState<'RIGHT' | 'LEFT'>();
@@ -220,14 +253,14 @@ const PostJob = () => {
                     location: values.location,
 
                     jobExperience: values.experience,
-                    skills: values.skill.map((c: any) => c.label),
+                    skills: values.skills.map((c: any) => c.label),
                     englishLevel: values.englishLevel,
                     otherLanguages: values.otherLanguages.map(
                       (lang) => `${lang.language} - ${lang.level}`,
                     ),
                     qualifications: values.qualifications,
                     interviewQuestions: values.interviewQuestions,
-                    experienceLevel: values.skillLevel,
+                    experienceLevel: values.experienceLevel,
 
                     isVisible: true,
 
@@ -280,7 +313,7 @@ const PostJob = () => {
                   break;
               }
             }}
-            initialValues={initialValues}
+            initialValues={initialValuesShape}
           >
             {(props) => {
               return (

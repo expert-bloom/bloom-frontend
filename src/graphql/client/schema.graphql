@@ -149,11 +149,13 @@ type Application implements Node {
     attachment: String
     coverLetter: String!
     createdAt: DateTime!
+    email: String!
     id: ID!
     interview: Interview
     jobPost: JobPost
     jobPostId: String!
     offer: Offer
+    phone: String!
     resume: String!
     status: ApplicationStatus!
     updatedAt: DateTime!
@@ -269,13 +271,14 @@ type JobPostResponse {
 }
 
 type Mutation {
-    EditJobPost(input: EditJobPostInput!): JobPostResponse!
     applicantProfileUpdate(input: ApplicantProfileUpdateInput!): AccountUpdate!
     createApplication(input: CreateApplicationInput!): CreateApplicationPayload!
     createJobPost(input: CreateJobPostInput!): JobPostResponse!
+    editJobPost(input: EditJobPostInput!): JobPostResponse!
     logIn(input: LoginInput!): AuthPayload!
-    offerApplicant(input: SendInterviewRequestInput!): String!
+    offerApplicant(input: OfferApplicantInput!): Offer
     profileUpdate(input: UpdateProfileInput!): AccountUpdate!
+    respondInterview(input: RespondInterviewInput!): Interview
     saveApplicant(input: SaveApplicantInput!): Boolean
     saveJobPost(input: SaveJobPostInput!): JobPost
     sayHi: String!
@@ -638,6 +641,20 @@ input OAuthLoginInput {
 input OAuthSignUpInput {
     OAuth: OAuthInput!
     account: OAuthAccountInput!
+}
+
+input OfferApplicantInput {
+    applicantId: String!
+    applicationId: String!
+    date: DateTime
+    description: String!
+}
+
+input RespondInterviewInput {
+    applicantId: String!
+    interviewId: String!
+    interviewVideoUrl: String
+    refuse: Boolean = false
 }
 
 input SaveApplicantInput {

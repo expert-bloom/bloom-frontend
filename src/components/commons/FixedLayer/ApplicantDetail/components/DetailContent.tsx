@@ -9,7 +9,6 @@ import {
   MonetizationOn,
   Place,
   QuestionAnswer,
-  Send,
   StarOutlineTwoTone,
 } from '@mui/icons-material';
 import {
@@ -17,30 +16,28 @@ import {
   AccordionDetails,
   AccordionSummary,
   Alert,
+  AlertTitle,
   Avatar,
   Button,
   Chip,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Divider,
   FormLabel,
   ListItem,
   ListItemIcon,
   ListItemText,
   Stack,
-  TextField,
+  Tooltip,
   Typography,
 } from '@mui/material';
-import { DateTimePicker } from '@mui/x-date-pickers';
 import { capitalize } from 'lodash';
 import moment from 'moment/moment';
+import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 import YouTube from 'react-youtube';
 import SimpleBar from 'simplebar-react';
 
 import Loader from '@/components/Loader';
+import { MoButton } from '@/components/MoButton';
 import { MotionChild } from '@/components/MotionItems';
 import 'simplebar-react/dist/simplebar.min.css';
 import {
@@ -50,6 +47,7 @@ import {
 } from '@/graphql/client/gql/schema';
 import FilePond from '@/lib/filePong';
 import { useAppStore } from '@/lib/store';
+import { getYoutubeIdFromURL } from '@/utils';
 
 import s from '../applican_detail.module.scss';
 
@@ -95,13 +93,19 @@ export const useGetApplication = (jobPostId: string, applicationId: string) => {
 };
 
 const DetailContent = () => {
-  const { applicantDetail, selectedJobPostId, setInterviewPopup } =
-    useAppStore();
+  const {
+    applicantDetail,
+    selectedJobPostId,
+    setAppPopupsState,
+    setApplicantDetail,
+  } = useAppStore();
 
   const { application, isLoading, error } = useGetApplication(
     selectedJobPostId as string,
     applicantDetail.selectedApplicationId as string,
   );
+
+  console.log('application ; ', application);
 
   const profile = application?.applicant;
 
@@ -218,21 +222,53 @@ const DetailContent = () => {
                       </div>
 
                       <div className={s.actions}>
-                        <Button
-                          variant="contained"
-                          disabled={!!application?.interview}
-                          startIcon={<QuestionAnswer />}
-                          onClick={() => {
-                            if (application?.interview) {
-                              toast.error('Interview already scheduled');
-                              return;
-                            }
+                        {application?.jobPost?.interviewQuestions &&
+                        application?.jobPost?.interviewQuestions?.length > 0 ? (
+                          <MoButton
+                            variant="contained"
+                            disabled={Boolean(application?.interview)}
+                            startIcon={<QuestionAnswer />}
+                            onClick={() => {
+                              if (application?.interview) {
+                                toast.error('Interview already scheduled');
+                                return;
+                              }
 
-                            setInterviewPopup({ open: true, isLoading: false });
-                          }}
-                        >
-                          Interview
-                        </Button>
+                              setAppPopupsState({
+                                showSendInterviewPopup: true,
+                                showViewInterviewPopup: false,
+                                selectedApplicationId:
+                                  applicantDetail.selectedApplicationId,
+                                isLoading: false,
+                              });
+                            }}
+                          >
+                            Send Interview Request
+                          </MoButton>
+                        ) : (
+                          <Alert
+                            severity="warning"
+                            sx={{ alignItems: 'center' }}
+                            action={
+                              <Button variant="text" size="small">
+                                <Link
+                                  href={`/company/edit-job-post/${application.jobPostId}`}
+                                  onClick={() => {
+                                    setApplicantDetail({
+                                      selectedApplicationId: null,
+                                      isLoading: false,
+                                    });
+                                  }}
+                                >
+                                  Edit Job-Post
+                                </Link>
+                              </Button>
+                            }
+                          >
+                            No Interview question found
+                          </Alert>
+                        )}
+
                         <Button
                           variant="outlined"
                           startIcon={<StarOutlineTwoTone />}
@@ -254,7 +290,7 @@ const DetailContent = () => {
 
                 {profile.introVideo && (
                   <YouTube
-                    videoId={profile.introVideo}
+                    videoId={getYoutubeIdFromURL(profile.introVideo)}
                     style={{ width: '100%' }}
                     className={s.vid}
                     iframeClassName="intro_vid_iframe"

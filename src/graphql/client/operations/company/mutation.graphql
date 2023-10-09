@@ -8,3 +8,32 @@ mutation SendInterviewRequest($input: SendInterviewRequestInput!) {
         ...InterviewFragment
     }
 }
+
+mutation SendAnOffer($input: OfferApplicantInput!) {
+    offerApplicant(input: $input){
+        ...OfferFragment
+    }
+}
+
+
+mutation CreateJobPost($input: CreateJobPostInput!) {
+    createJobPost(input: $input) {
+        errors {
+            message
+        }
+        jobPost {
+            id
+        }
+    }
+}
+
+mutation EditJobPost($input: EditJobPostInput!) {
+    editJobPost(input: $input) {
+        errors {
+            message
+        }
+        jobPost {
+            id
+        }
+    }
+}

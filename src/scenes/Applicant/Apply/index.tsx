@@ -21,6 +21,7 @@ import { toast } from 'react-hot-toast';
 
 import { MoButton } from '@/components/MoButton';
 import {
+  GetJobApplicationsDocument,
   useCreateJobApplicationMutation,
   useGetJobPostsQuery,
 } from '@/graphql/client/gql/schema';
@@ -107,6 +108,8 @@ const Apply = () => {
 
       try {
         const createApplicationRes = await createApplication({
+          refetchQueries: [GetJobApplicationsDocument],
+          awaitRefetchQueries: true,
           variables: {
             input: {
               applicantId: me?.applicant?.id ?? '',

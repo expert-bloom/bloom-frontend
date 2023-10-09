@@ -29,7 +29,7 @@ import {
   SalaryType,
   useGetCompaniesQuery,
 } from '@/graphql/client/gql/schema';
-import { type FormValuesType } from '@/scenes/Company/CreateJobPost';
+import { type EditJoPostValuesType } from '@/scenes/Company/CreateJobPost';
 import { capitalize } from '@/utils';
 
 import s from './jobdetails.module.scss';
@@ -80,7 +80,7 @@ export const schema = toFormikValidationSchema(
 );
 
 const JobDetails = () => {
-  const formik = useFormikContext<FormValuesType>();
+  const formik = useFormikContext<EditJoPostValuesType>();
   const { values, handleChange } = formik;
   const [isFixed, setIsFixed] = useState(true);
   const { data: session } = useSession();

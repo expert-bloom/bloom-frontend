@@ -23,7 +23,7 @@ import {
 import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { AnimatePresence, motion } from 'framer-motion';
-import { isEqual, pickBy, mapValues } from 'lodash';
+import { isEqual, mapValues, pickBy } from 'lodash';
 import { matchIsValidTel } from 'mui-tel-input';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
@@ -46,8 +46,6 @@ import {
   type SettingFormValuesType,
 } from './data';
 import s from './profile.module.scss';
-
-// s
 
 const formSteps = [
   {

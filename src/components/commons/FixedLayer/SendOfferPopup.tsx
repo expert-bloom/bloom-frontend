@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   BusinessCenter,
@@ -34,29 +34,24 @@ import { useGetApplication } from '@/components/commons/FixedLayer/ApplicantDeta
 import {
   GetCompanyJobApplicationsDocument,
   GetJobApplicationsDocument,
+  useSendAnOfferMutation,
   useSendInterviewRequestMutation,
 } from '@/graphql/client/gql/schema';
+import useMe from '@/hooks/useMe';
 import { useAppStore } from '@/lib/store';
 
 const message = 'a;ksldjf';
 
 const SendInterviewPopup = () => {
-  const [interviewMessage, setInterviewMessage] = React.useState('');
+  const { me } = useMe();
+  const [offerMessage, setOfferMessage] = useState('');
   const { selectedJobPostId, appPopupsState, setAppPopupsState } =
     useAppStore();
 
-  const handleClose = () => {
-    if (appPopupsState.isLoading) {
-      toast.error('Please wait until the request is sent');
-      return;
-    }
-    setAppPopupsState({
-      showSendInterviewPopup: false,
-    });
-  };
-
   const [sendInterviewRequest, sendInterviewRequestRespond] =
     useSendInterviewRequestMutation();
+
+  const [sendOffer, sendOfferResponse] = useSendAnOfferMutation();
 
   const { application, isLoading, error } = useGetApplication(
     selectedJobPostId as string,
@@ -66,21 +61,24 @@ const SendInterviewPopup = () => {
   const profile = application?.applicant;
 
   useEffect(() => {
-    if (!interviewMessage && !isLoading) {
-      setInterviewMessage(`Hello ${profile?.account.fullName ?? '-'},
-We would like to invite you to an interview to learn more about your background and discuss the position. Please replay with your video answering the interview questions.
-Thank you, 
-henok
-henzzo-org`);
+    if (!offerMessage && !isLoading) {
+      setOfferMessage(`Hello ${profile?.account.fullName ?? '-'},
+
+Congratulations on your offer from Jo Ads!
+We are delighted to offer you the position of Front-end Developer role with an anticipated start date of Aug 12, 2023. As discussed during your interview, please review your detailed offer letter. 
+
+Kind Regards,
+${me?.firstName ?? '-'}
+${me?.company?.companyName ?? '-'}`);
     }
   }, []);
 
-  const onSendInterview = () => {
+  const onSendOffer = () => {
     setAppPopupsState({
       isLoading: true,
     });
 
-    sendInterviewRequest({
+    sendOffer({
       refetchQueries: [
         GetCompanyJobApplicationsDocument,
         GetJobApplicationsDocument,
@@ -88,20 +86,18 @@ henzzo-org`);
       variables: {
         input: {
           date: new Date(),
-          applicationId: appPopupsState.selectedApplicationId as string,
-          description: interviewMessage,
+          applicationId: application?.id ?? '',
+          applicantId: profile?.id ?? '',
+          description: offerMessage,
         },
       },
     })
       .then((res) => {
         console.log('send interview res : ', res);
 
-        if (res.data?.sendInterviewRequest?.id) {
-          toast.success('Interview request sent successfully');
-          setAppPopupsState({
-            showSendInterviewPopup: false,
-            isLoading: false,
-          });
+        if (res.data?.offerApplicant?.id) {
+          toast.success('Offer request sent successfully');
+          handleClose();
         }
       })
       .catch((error) => {
@@ -112,10 +108,21 @@ henzzo-org`);
 
   if (!profile) return null;
 
+  const handleClose = () => {
+    if (appPopupsState.isLoading) {
+      toast.error('Please wait until the request is sent');
+      return;
+    }
+    setAppPopupsState({
+      showSendOfferPopup: false,
+      isLoading: false,
+    });
+  };
+
   return (
     <Dialog
       open={
-        appPopupsState.showSendInterviewPopup &&
+        appPopupsState.showSendOfferPopup &&
         !!appPopupsState.selectedApplicationId
       }
       onClose={handleClose}
@@ -123,7 +130,7 @@ henzzo-org`);
       className={s.interview_dialog}
       keepMounted={false}
     >
-      <DialogTitle sx={{ p: '1.5rem 1rem' }}>Request An Interview</DialogTitle>
+      <DialogTitle sx={{ p: '1.5rem 1rem' }}>Send An Offer</DialogTitle>
 
       <DialogContent dividers sx={{ p: '.5rem 3rem' }}>
         <ListItem alignItems="flex-start" className={s.list_item}>
@@ -183,7 +190,7 @@ henzzo-org`);
         <Stack sx={{ p: '3.5rem 0' }} gap="1rem">
           <Alert severity="info">
             <Typography variant="body2">
-              You are about to send an interview request to{' '}
+              You are about to send an offer request to{' '}
               <Typography variant="body2" fontWeight="600" component="span">
                 {profile?.account.fullName}
               </Typography>
@@ -213,9 +220,9 @@ henzzo-org`);
               variant="outlined"
               fullWidth
               multiline
-              value={interviewMessage}
+              value={offerMessage}
               onChange={(e) => {
-                setInterviewMessage(e.target.value);
+                setOfferMessage(e.target.value);
               }}
               required
             />
@@ -241,15 +248,15 @@ henzzo-org`);
           size="large"
           type="submit"
           onClick={() => {
-            if (!interviewMessage) {
+            if (!offerMessage) {
               toast.error('Please enter your message');
               return;
             }
 
-            onSendInterview();
+            onSendOffer();
           }}
         >
-          Send Interview Request
+          Send An Offer Request
         </LoadingButton>
       </DialogActions>
     </Dialog>

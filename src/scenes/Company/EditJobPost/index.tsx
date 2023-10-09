@@ -1,13 +1,12 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import React, { useEffect, useState, useTransition } from 'react';
 
 import {
   ArrowCircleLeftTwoTone,
   ArrowCircleRightTwoTone,
-  Save,
   Update,
 } from '@mui/icons-material';
 import {
-  Button,
   CircularProgress,
   LinearProgress,
   Step,
@@ -17,25 +16,24 @@ import {
 } from '@mui/material';
 import { useFormik } from 'formik';
 import { AnimatePresence, motion, transform } from 'framer-motion';
-import { isEqual } from 'lodash';
+import { isEqual, mapValues, pickBy } from 'lodash';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import { toast } from 'react-hot-toast';
 
 import { MoButton } from '@/components/MoButton';
 import {
-  type CreateJobPostInput,
-  type EnglishLevel,
-  type ExperienceLevel,
+  GetJobPostDocument,
+  GetJobPostsDocument,
   type JobPost,
-  type JobSite,
-  type JobType,
-  type SalaryType,
-  useCreateJobPostMutation,
+  useEditJobPostMutation,
   useGetJobPostsQuery,
 } from '@/graphql/client/gql/schema';
 import useMe from '@/hooks/useMe';
-import { SettingFormValuesType } from '@/scenes/Applicant/Profile/data';
+import {
+  type EditJoPostValuesType,
+  initialValuesShape,
+} from '@/scenes/Company/CreateJobPost';
 import InterviewQuestions, {
   schema as InterviewSchema,
 } from '@/scenes/Company/EditJobPost/InterviewQuestions';
@@ -45,7 +43,6 @@ import JobDetails, {
 import JobRequirement, {
   schema as JobReqSchema,
 } from '@/scenes/Company/EditJobPost/JobRequirement';
-import Review from '@/scenes/Company/EditJobPost/Review';
 import {
   transition,
   wrapperVariants,
@@ -85,49 +82,9 @@ const formSteps: FormStepType[] = [
     component: (props: any) => <InterviewQuestions {...props} />,
     schema: InterviewSchema,
   },
-  {
-    name: stepNames.Post,
-    component: (props: any) => <Review {...props} />,
-  } /* {
-    name: 'Done',
-    component: (props: any) => <h1>congradulation </h1>,
-  }, */,
 ];
 
-const initialValuesShape = {
-  title: '' as string,
-  description: '' as string,
-  jobType: '' as JobType,
-  category: [
-    {
-      label: '',
-    },
-  ] as Array<{ label: string }>,
-  vacancy: 88 as number,
-  deadline: new Date(),
-  salaryType: '' as SalaryType,
-  salary: [30] as unknown as [number, number] | number[],
-  jobSite: '' as JobSite,
-  email: '',
-  location: '' as string,
-
-  // requirements
-  experience: 3,
-  skillLevel: '' as ExperienceLevel,
-  skill: [
-    {
-      label: '',
-    },
-  ],
-  englishLevel: 'FLUENT' as EnglishLevel,
-  otherLanguages: [] as unknown as Array<{ language: string; level: string }>,
-  qualifications: ['ambitious and passionate'] as string[],
-  interviewQuestions: ['what is your name?', 'how old are you'] as string[],
-
-  companyId: '' as unknown as string,
-};
-
-export type EditJoPostValuesType = typeof initialValuesShape;
+// export type EditJoPostValuesType = typeof initialValuesShape;
 
 interface EditJobPostContextType {
   formik: ReturnType<typeof useFormik<EditJoPostValuesType>>;
@@ -160,7 +117,8 @@ const PostJob = () => {
     ...formSteps[activeStep],
   });
 
-  const [createPost, response] = useCreateJobPostMutation();
+  const [editJobPost, editJobPostResponse] = useEditJobPostMutation();
+
   const jobPostPayloads = useGetJobPostsQuery();
 
   const handleNext = () => {
@@ -200,6 +158,7 @@ const PostJob = () => {
       ...initialValues,
       ...findSelectedJobPost,
       category: findSelectedJobPost.category.map((c) => ({ label: c })),
+      skills: findSelectedJobPost.category.map((c) => ({ label: c })),
       otherLanguages: findSelectedJobPost.otherLanguages.map((lang) => ({
         language: lang.split('-')[0].trim(),
         level: lang.split('-')[1].trim(),
@@ -214,13 +173,83 @@ const PostJob = () => {
         ...initial,
       },
     });
+    setInitialValues(initial);
+  };
+
+  const nullify = <T extends Record<string, any>>(obj: T) => {
+    const value = mapValues(obj, (value) => {
+      if (value === '') return null;
+      return value;
+    });
+    return value;
+  };
+  const getChangedFields = (
+    from: Record<string, any>,
+    target: Record<string, any>,
+  ) => {
+    return pickBy(from, (value, key) => {
+      const equal = isEqual(target[key], value);
+      return !equal;
+    });
+  };
+
+  const onEditJobPost = () => {
+    if (!isChanged) {
+      return;
+    }
+    // filter out only the changed values
+    const changedValues: Partial<EditJoPostValuesType> = getChangedFields(
+      formik.values,
+      formik.initialValues,
+    ) as any;
+    const editInput: any =
+      nullify<Partial<EditJoPostValuesType>>(changedValues);
+
+    if (editInput?.category) {
+      editInput.category = editInput?.category?.map((c: any) => c.label);
+    }
+
+    if (editInput?.skills) {
+      editInput.skills = editInput?.skills.map((c: any) => c.label);
+    }
+
+    if (editInput?.otherLanguages) {
+      editInput.otherLanguages = editInput?.otherLanguages.map(
+        (lang: any) => `${lang.language} - ${lang.level}`,
+      );
+    }
+
+    console.log('edit job post input : ', editInput);
+
+    editJobPost({
+      refetchQueries: [GetJobPostsDocument, GetJobPostDocument],
+      variables: {
+        input: {
+          editedData: editInput,
+          filter: {
+            jobPostId: id as string,
+            companyId: me?.company?.id as string,
+          },
+        },
+      },
+    })
+      .then((res) => {
+        if (res.data?.editJobPost.jobPost?.id) {
+          toast.success('Job Post Updated Successfully');
+        }
+      })
+      .catch((err) => {
+        toast.error('Error Updating Job Post');
+        console.log('err : ', err);
+      });
   };
 
   useEffect(() => {
     if (
       jobPostPayloads.loading ||
       !jobPostPayloads.data ||
-      !jobPostPayloads.data.getJobPosts
+      !jobPostPayloads.data.getJobPosts ||
+      !id
     ) {
       return;
     }
@@ -249,71 +278,6 @@ const PostJob = () => {
           handleNext();
           break;
         case stepNames.Post: {
-          const job: CreateJobPostInput = {
-            title: values.title,
-            description: values.description,
-            jobType: values.jobType,
-            category: values.category.map((c: any) => c.label),
-            vacancy: values.vacancy,
-            applicationDeadline: values.deadline,
-            salaryType: values.salaryType,
-            salary: values.salary,
-            jobSite: values.jobSite,
-            email: values.email,
-            location: values.location,
-
-            jobExperience: values.experience,
-            skills: values.skill.map((c: any) => c.label),
-            englishLevel: values.englishLevel,
-            otherLanguages: values.otherLanguages.map(
-              (lang) => `${lang.language} - ${lang.level}`,
-            ),
-            qualifications: values.qualifications,
-            interviewQuestions: values.interviewQuestions,
-            experienceLevel: values.skillLevel,
-
-            isVisible: true,
-
-            postedBy: session?.user?.id ?? '',
-            affiliateId: me?.affiliate?.id ?? null,
-            companyId:
-              session?.user?.accountType === 'COMPANY'
-                ? (me?.company?.id as string)
-                : values.companyId,
-          };
-
-          const createPostPayload = await createPost({
-            variables: {
-              input: {
-                ...job,
-              },
-            },
-          });
-
-          if (
-            createPostPayload?.errors &&
-            createPostPayload.errors?.length > 0
-          ) {
-            toast.success(createPostPayload.errors?.join(', '));
-          }
-
-          if (
-            createPostPayload.data?.createJobPost &&
-            createPostPayload.data?.createJobPost.errors.length > 0
-          ) {
-            toast.success(
-              createPostPayload.data?.createJobPost.errors
-                ?.map((err) => err.message)
-                .join(', '),
-            );
-          }
-
-          if (createPostPayload.data?.createJobPost.jobPost?.id) {
-            toast.success('Successfully created your Job-post');
-            void router.push('/company/dashboard');
-          }
-
-          console.log('response : ', createPostPayload);
           break;
         }
         case 'Done':
@@ -334,8 +298,6 @@ const PostJob = () => {
       setIsChanged(checkForChange());
     });
   }, [formik.values]);
-
-  const postNow = currentStep.name === stepNames.Post;
 
   if (selectedJobPost === null) return <div className={s.container} />;
 
@@ -398,14 +360,13 @@ const PostJob = () => {
                   <CircularProgress sx={{ position: 'absolute' }} />
                 )}
 
-                <Button variant="text">Exit</Button>
-
                 <MoButton
                   // onClick={handleNext}
-                  loading={formik.isSubmitting}
+                  loading={editJobPostResponse.loading}
                   disabled={!isChanged}
-                  type="submit"
+                  // type="submit"
                   endIcon={<Update />}
+                  onClick={onEditJobPost}
                 >
                   Update Job Post
                 </MoButton>
@@ -424,8 +385,12 @@ const PostJob = () => {
                     loading={formik.isSubmitting}
                     type="submit"
                     endIcon={<ArrowCircleRightTwoTone />}
+                    disabled={
+                      activeStep === formSteps.length - 1 ||
+                      editJobPostResponse.loading
+                    }
                   >
-                    {postNow ? 'Post Job' : 'Next'}
+                    Next
                   </MoButton>
                 </div>
               </div>

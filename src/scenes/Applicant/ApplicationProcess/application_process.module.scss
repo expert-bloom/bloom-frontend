@@ -2,6 +2,8 @@
 
 .container {
   width: 100%;
+  min-height: 100vh;
+  margin-bottom: 10vmax;
 
   & :local {
 
@@ -85,7 +87,7 @@
 
       .action_center {
         width: 100%;
-        max-width: 43rem;
+        max-width: 37rem;
         //border: 1px solid #000;
         //padding: .5rem;
       }

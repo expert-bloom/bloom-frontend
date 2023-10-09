@@ -21,16 +21,15 @@ import { useRouter } from 'next/router';
 import { BiLinkExternal } from 'react-icons/bi';
 
 import {
-  type Application,
-  useGetJobApplicationsQuery,
+  ApplicationStatus,
+  InterviewStatus,
 } from '@/graphql/client/gql/schema';
 import useMe from '@/hooks/useMe';
-import { useResponseErrorHandler } from '@/hooks/useResponseErrorHandler';
-import ApplicationDetail from '@/scenes/Applicant/ApplicationProcess/components/ApplicationDetail';
-import {
-  getStatusTextAndColor,
-  stepsData,
-} from '@/scenes/Applicant/ApplicationProcess/helpers';
+import ApplicationDetail, {
+  useFindApplication,
+} from '@/scenes/Applicant/ApplicationProcess/components/ApplicationDetail';
+import InterviewDetail from '@/scenes/Applicant/ApplicationProcess/components/InterviewDetail';
+import { getStatusTextAndColor } from '@/scenes/Applicant/ApplicationProcess/helpers';
 
 import s from './application_process.module.scss';
 
@@ -81,6 +80,7 @@ interface StepType {
   completed: boolean;
   skipped: boolean;
   expanded: boolean;
+  isActive: boolean;
 }
 
 const ApplicationProcess = () => {
@@ -92,87 +92,85 @@ const ApplicationProcess = () => {
   const [activeStepIdx, setActiveStepIdx] = useState(0);
 
   const { me } = useMe();
-  const [selectedApplication, setSelectedApplication] =
-    useState<Application | null>();
-
-  const jobApplications = useGetJobApplicationsQuery({
-    skip: !me?.applicant?.id,
-    variables: {
-      input: {
-        applicantId: me?.applicant?.id ?? '',
-      },
-    },
-  });
-
-  useResponseErrorHandler(
-    jobApplications.error,
-    'Error getting job applications',
-  );
+  const {
+    data: selectedApplication,
+    error,
+    loading,
+  } = useFindApplication(id as string);
 
   useEffect(() => {
-    if (
-      !!selectedApplication ||
-      jobApplications.loading ||
-      !jobApplications.data?.getJobApplications
-    )
-      return;
-
-    const findSelected = jobApplications.data?.getJobApplications.edges.find(
-      (ap) => ap.node.id === id,
-    )?.node;
-
-    console.log('findSelected : ', findSelected);
-
-    setSelectedApplication(findSelected ?? null);
-  }, [jobApplications]);
-
-  useEffect(() => {
-    if (!selectedApplication) return;
+    if (!id || loading || !selectedApplication) return;
 
     const steps: StepType[] = [];
+
+    console.log('selected appliatins : ', selectedApplication);
 
     // application stage
     const applicationStep: StepType = {
       name: 'Your Application',
-      component: <ApplicationDetail />,
-      status: selectedApplication?.status,
+      component: (
+        <ApplicationDetail
+          application={selectedApplication}
+          applicationId={id as string}
+        />
+      ),
+      status: selectedApplication.status,
       expanded: false,
       description:
         'This is Your Application process where you can track you prgress on the applciation process',
       skipped: false,
-      completed: false,
+      completed: selectedApplication?.status === ApplicationStatus.Interview,
+      isActive: selectedApplication?.status === ApplicationStatus.Pending,
     };
     steps.push(applicationStep);
 
     // interview stage
     const interviewStep: StepType = {
       name: 'Interview',
-      component: <ApplicationDetail />,
-      status: selectedApplication?.status,
+      component: <InterviewDetail applicationId={id as string} />,
+      status: selectedApplication?.interview?.status ?? 'NO INTERVIEW',
       expanded: false,
       description:
         'This is Your Interview process where you can track you prgress on the applciation process',
       skipped: false,
-      completed: false,
+      completed:
+        selectedApplication?.interview?.status === InterviewStatus.Accepted,
+      isActive:
+        selectedApplication?.interview?.status === InterviewStatus.Pending,
     };
     steps.push(interviewStep);
 
     // offer stage
     const offerStep: StepType = {
       name: 'Offer',
-      component: <ApplicationDetail />,
+      component: <h1> OFFER </h1>,
       status: selectedApplication?.status,
       expanded: false,
       description:
         'This is Your Interview process where you can track you prgress on the applciation process',
       skipped: false,
       completed: false,
+      isActive: false,
     };
     steps.push(offerStep);
 
     setSteps(steps);
-    setActiveStep(applicationStep);
+
+    if (selectedApplication?.offer) {
+      setActiveStepIdx(2);
+    } else if (selectedApplication?.interview) {
+      setActiveStepIdx(1);
+    } else {
+      setActiveStepIdx(0);
+    }
   }, [selectedApplication]);
+
+  useEffect(() => {
+    if (!steps.length) return;
+
+    const selectedStep = steps[activeStepIdx];
+    setActiveStep(selectedStep);
+  }, [activeStepIdx, selectedApplication, steps]);
 
   return (
     <div className={s.container}>
@@ -204,16 +202,18 @@ const ApplicationProcess = () => {
                   expanded={steps[index].expanded}
                 >
                   <StepLabel
-                    optional={<StepperStatus label={label} color={color} />}
+                    optional={
+                      <StepperStatus label={step.status} color={color} />
+                    }
                     onClick={() => {
-                      if (activeStepIdx < index) return;
+                      const selectedStep = steps[index];
 
-                      setSteps((steps) =>
-                        steps.map((step, idx) => ({
-                          ...step,
-                          expand: idx === index,
-                        })),
-                      );
+                      if (selectedStep.isActive || selectedStep.completed) {
+                        // expand the selected step
+                        // selectedStep.expanded = !selectedStep.expanded;
+                        // setSteps([...steps]);
+                        setActiveStepIdx(index);
+                      }
 
                       // setActiveSForm(index);
                     }}

@@ -37,9 +37,9 @@ import { useResponseErrorHandler } from '@/hooks/useResponseErrorHandler';
 import { useAppStore } from '@/lib/store';
 import AppliedApplicants from '@/scenes/Company/MarketPlace/AppliedApplicants';
 import BestMatch from '@/scenes/Company/MarketPlace/BestMatch';
-import InterviewApplicants from '@/scenes/Company/MarketPlace/InterviewApplicants';
 import Offers from '@/scenes/Company/MarketPlace/Offers';
 import SavedApplicants from '@/scenes/Company/MarketPlace/SavedApplicants';
+import InterviewApplicants from 'src/scenes/Company/MarketPlace/Interview';
 
 import s from './marketplace.module.scss';
 

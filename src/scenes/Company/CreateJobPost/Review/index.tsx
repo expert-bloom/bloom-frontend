@@ -13,12 +13,12 @@ import {
 import clsx from 'clsx';
 import { useFormikContext } from 'formik';
 
-import { type FormValuesType } from '@/scenes/Company/CreateJobPost';
+import { type EditJoPostValuesType } from '@/scenes/Company/CreateJobPost';
 
 import s from './review.module.scss';
 
 const Review = () => {
-  const formik = useFormikContext<FormValuesType>();
+  const formik = useFormikContext<EditJoPostValuesType>();
   const { values, handleChange } = formik;
 
   return (

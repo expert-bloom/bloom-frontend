@@ -6,6 +6,8 @@ import ApplicantDetail from '@/components/commons/FixedLayer/ApplicantDetail';
 import JobDetail from '@/components/commons/FixedLayer/JobDetailSlider';
 import ProfileView from '@/components/commons/FixedLayer/ProfileView';
 import SendInterviewPopup from '@/components/commons/FixedLayer/SendInterviewPopup';
+import SendOfferPopup from '@/components/commons/FixedLayer/SendOfferPopup';
+import ViewInterviewResponse from '@/components/commons/FixedLayer/ViewInterviewResponse';
 import { useAppStore } from '@/lib/store';
 
 import s from './fixed.module.scss';
@@ -14,7 +16,7 @@ const FixedLayer: React.FC<any> = () => {
   const showDetail = useAppStore((state) => state.jobPostDetailState);
   const profileDetail = useAppStore((state) => state.profileDetail);
   const applicantDetail = useAppStore((state) => state.applicantDetail);
-  const interviewPopup = useAppStore((state) => state.interviewPopup);
+  const interviewPopup = useAppStore((state) => state.appPopupsState);
 
   return (
     <div className={s.container}>
@@ -25,6 +27,8 @@ const FixedLayer: React.FC<any> = () => {
         {/* {interviewPopup.open && <SendInterviewPopup />} */}
 
         <SendInterviewPopup />
+        <ViewInterviewResponse />
+        <SendOfferPopup />
       </AnimatePresence>
     </div>
   );

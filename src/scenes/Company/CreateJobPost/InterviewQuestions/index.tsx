@@ -18,14 +18,14 @@ import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 
 import FilePond from '@/lib/filePong';
-import { type FormValuesType } from '@/scenes/Company/CreateJobPost';
+import { type EditJoPostValuesType } from '@/scenes/Company/CreateJobPost';
 
 import s from './interview_q.module.scss';
 
 export const schema = toFormikValidationSchema(z.object({}));
 
 const InterviewQuestions = () => {
-  const formik = useFormikContext<FormValuesType>();
+  const formik = useFormikContext<EditJoPostValuesType>();
   const [disabled, setDisabled] = useState(false);
   const [interviewQuestion, setInterviewQuestion] = useState('');
   const filePond = useRef<FilePond>(null);

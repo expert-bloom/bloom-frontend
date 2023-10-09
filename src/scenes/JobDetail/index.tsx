@@ -23,7 +23,7 @@ import moment from 'moment/moment';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
-import { Loader } from '@/components/Loader';
+import Loader from '@/components/Loader';
 import { MoButton } from '@/components/MoButton';
 import { MotionChild } from '@/components/MotionItems';
 import { useGetJobPostsQuery } from '@/graphql/client/gql/schema';

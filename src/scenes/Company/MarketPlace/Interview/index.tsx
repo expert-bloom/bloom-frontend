@@ -1,20 +1,12 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-import {
-  BusinessCenter,
-  CalendarToday,
-  MonetizationOn,
-  Place,
-  StarOutlineTwoTone,
-  VisibilityOff,
-} from '@mui/icons-material';
-import { LoadingButton } from '@mui/lab';
+import { BusinessCenter, MonetizationOn, Place } from '@mui/icons-material';
 import {
   Alert,
+  type AlertColor,
   AlertTitle,
   Avatar,
-  Button,
   Chip,
   List,
   ListItem,
@@ -30,20 +22,61 @@ import {
 import moment from 'moment/moment';
 
 import Loader from '@/components/Loader';
-import { useGetCompanyJobApplicationsQuery } from '@/graphql/client/gql/schema';
+import {
+  type Application,
+  InterviewStatus,
+  useGetCompanyJobApplicationsQuery,
+} from '@/graphql/client/gql/schema';
 import { useResponseErrorHandler } from '@/hooks/useResponseErrorHandler';
 import { useAppStore } from '@/lib/store';
 
 import s from './saved.module.scss';
 
-const InterviewApplicants = () => {
-  const [value, setValue] = React.useState(0);
+const tabCategories = [
+  {
+    label: 'Invited ( Pending )',
+    value: InterviewStatus.Pending,
+  },
+  {
+    label: 'Responded',
+    value: InterviewStatus.ApplicantResponded,
+  },
+  {
+    label: 'Refused',
+    value: InterviewStatus.ApplicantRefused,
+  },
+];
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
+const getLabel = (status: InterviewStatus) => {
+  switch (status) {
+    case InterviewStatus.Pending:
+      return { label: 'Wait for the applicant to respond', color: 'info' };
+    case InterviewStatus.ApplicantResponded:
+      return {
+        label: 'Applicant Responded',
+      };
+    case InterviewStatus.ApplicantRefused:
+      return { label: 'Applicant Refused', color: 'error' };
+    default:
+      return { label: status, color: 'error' };
+  }
+};
+
+const InterviewApplicants = () => {
+  const [activeCategories, setActiveCategories] = useState(
+    tabCategories[0].value,
+  );
+  const [filteredCategories, setFilteredCategories] = useState<Application[]>(
+    [],
+  );
+
+  const handleChange = (event: React.SyntheticEvent, newValue: any) => {
+    console.log('new vaues : ', newValue);
+    setActiveCategories(newValue);
   };
 
-  const { setApplicantDetail } = useAppStore();
+  const { setApplicantDetail, appPopupsState, setAppPopupsState } =
+    useAppStore();
   const selectedJobPostId = useAppStore((state) => state.selectedJobPostId);
 
   const jobApplications = useGetCompanyJobApplicationsQuery({
@@ -63,6 +96,21 @@ const InterviewApplicants = () => {
     'An error occurred while getting job applications',
   );
 
+  useEffect(() => {
+    if (!applications?.getJobApplications || loading) {
+      return;
+    }
+
+    const applicationsWithApplicant = applications.getJobApplications.edges;
+
+    const filtered = applicationsWithApplicant
+      .map((ap) => ap.node)
+      .filter((app) => app.jobPostId === selectedJobPostId)
+      .filter((app) => app?.interview?.status === activeCategories);
+
+    setFilteredCategories(filtered);
+  }, [jobApplications, activeCategories, selectedJobPostId]);
+
   if (loading) {
     return (
       <div className={s.container}>
@@ -75,31 +123,30 @@ const InterviewApplicants = () => {
     return null;
   }
 
-  const applicationsWithApplicant = applications.getJobApplications.edges;
-
   return (
     <div className={s.container}>
       <Tabs
-        value={value}
+        value={activeCategories}
         onChange={handleChange}
         indicatorColor="secondary"
         textColor="inherit"
         // variant="fullWidth"
       >
-        <Tab label="Requested" />
-        <Tab label="Responded" />
-        <Tab label="Refused" />
+        {tabCategories.map((label) => (
+          <Tab key={label.label} label={label.label} value={label.value} />
+        ))}
       </Tabs>
 
       <List className={s.list}>
-        {applicationsWithApplicant.map(({ node: application }, idx) => (
+        {filteredCategories.map((application, idx) => (
           <ListItem
             key={idx}
             disablePadding
             className={s.list_item}
             onClick={() => {
-              setApplicantDetail({
+              setAppPopupsState({
                 selectedApplicationId: application.id,
+                showViewInterviewPopup: true,
               });
             }}
             secondaryAction={
@@ -108,8 +155,19 @@ const InterviewApplicants = () => {
                 alignItems="center"
                 justifyContent="flex-end"
               >
-                <Alert severity="info">
-                  <Typography>{application?.interview?.status}</Typography>
+                <Alert
+                  severity={
+                    getLabel(application?.interview?.status as InterviewStatus)
+                      .color as AlertColor
+                  }
+                >
+                  <Typography variant="subtitle2" textTransform={'capitalize'}>
+                    {
+                      getLabel(
+                        application?.interview?.status as InterviewStatus,
+                      ).label
+                    }
+                  </Typography>
                 </Alert>
               </Stack>
             }
@@ -195,7 +253,7 @@ const InterviewApplicants = () => {
         ))}
       </List>
 
-      {applicationsWithApplicant.length === 0 && (
+      {filteredCategories.length === 0 && (
         <div className={s.not_found}>
           <Alert severity="info">
             <AlertTitle>
@@ -208,10 +266,10 @@ const InterviewApplicants = () => {
         </div>
       )}
 
-      {applicationsWithApplicant.length > 0 && (
+      {filteredCategories.length > 0 && (
         <Pagination
           className={s.pagination}
-          count={applicationsWithApplicant.length}
+          count={filteredCategories.length}
           variant="outlined"
           shape="rounded"
         />

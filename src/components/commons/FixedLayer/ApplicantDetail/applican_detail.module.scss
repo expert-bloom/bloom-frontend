@@ -81,7 +81,7 @@
           gap: 1.5rem;
           flex-flow: column;
 
-            //border: 1px solid #000;
+          //border: 1px solid #000;
 
 
           .list_item {
@@ -92,7 +92,8 @@
             .list_item_btn {
               padding: 1rem;
             }
-            .name{
+
+            .name {
               text-transform: capitalize;
             }
 
@@ -104,13 +105,13 @@
               margin-right: 1.5rem;
             }
 
-            .primary{
-              p{
+            .primary {
+              p {
                 font-size: 1.1rem;
               }
             }
 
-            .secondary{
+            .secondary {
               margin-top: .5rem;
 
             }
@@ -152,11 +153,11 @@
               //border: 1px solid #000;
 
               // select material ui chip
-                & :global{
-                  .MuiChip-root {
-                    color: gray;
-                  }
+              & :global {
+                .MuiChip-root {
+                  color: gray;
                 }
+              }
             }
 
             .actions {
@@ -167,21 +168,22 @@
           }
 
 
-          .about{
-            .txt{
+          .about {
+            .txt {
               font-weight: 300;
               font-size: 1.1rem;
               color: gray;
             }
           }
 
-          .vid{
+
+          .vid {
             border: 1px solid transparent;
             border-radius: 1rem;
             overflow: hidden;
             margin-top: 2rem;
 
-            iframe{
+            iframe {
               width: 100%;
               border: 1px solid transparent;
               border-radius: 1rem;
@@ -198,11 +200,11 @@
   }
 }
 
-.interview_dialog{
+.interview_dialog {
   //border: 1px solid red;
 
-  & :global{
-    .MuiDialog-paper{
+  & :global {
+    .MuiDialog-paper {
       max-width: 43rem;
     }
 
@@ -210,6 +212,32 @@
   }
 
   & :local {
+
+    .vid_wrapper {
+      position: relative;
+
+      .loader {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
+
+    .vid {
+      border: 1px solid transparent;
+      border-radius: 1rem;
+      overflow: hidden;
+      margin-top: 2rem;
+
+      iframe {
+        width: 100%;
+        border: 1px solid transparent;
+        border-radius: 1rem;
+
+      }
+    }
+
     .list_item {
       border-radius: .5rem;
       padding: 0;
@@ -218,7 +246,8 @@
       .list_item_btn {
         padding: 1rem;
       }
-      .name{
+
+      .name {
         text-transform: capitalize;
       }
 
@@ -230,13 +259,13 @@
         margin-right: 1.5rem;
       }
 
-      .primary{
-        p{
+      .primary {
+        p {
           font-size: 1rem;
         }
       }
 
-      .secondary{
+      .secondary {
         margin-top: .5rem;
       }
 
@@ -269,7 +298,7 @@
         //border: 1px solid #000;
 
         // select material ui chip
-        & :global{
+        & :global {
           .MuiChip-root {
             color: gray;
           }

@@ -1,31 +1,6 @@
-mutation CreateJobPost($input: CreateJobPostInput!) {
-    createJobPost(input: $input) {
-        errors {
-            message
-        }
-        jobPost {
-            id
-        }
-    }
-}
 
-mutation CreateJobApplication($input: CreateApplicationInput!) {
-    createApplication(input: $input) {
-        errors {
-            message
-        }
 
-        application {
-            id
-            applicantId
-            jobPostId
-            createdAt
-        }
-    }
-}
 
-mutation SaveJobPost($input: SaveJobPostInput!) {
-    saveJobPost(input: $input) {
-        ...JopPostFragment
-    }
-}
+
+
+

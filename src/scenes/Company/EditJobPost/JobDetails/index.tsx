@@ -29,7 +29,7 @@ import {
   SalaryType,
   useGetCompaniesQuery,
 } from '@/graphql/client/gql/schema';
-import { type FormValuesType } from '@/scenes/Company/CreateJobPost';
+import { type EditJoPostValuesType } from '@/scenes/Company/CreateJobPost';
 import { useProfileSettingFormContext } from '@/scenes/Company/EditJobPost';
 import { capitalize } from '@/utils';
 

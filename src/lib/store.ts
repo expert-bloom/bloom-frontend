@@ -10,9 +10,12 @@ interface ProfileDetail {
   profileId: string | null;
 }
 
-interface InterviewPopup {
+interface AppPopupState {
   isLoading: boolean;
-  open: boolean;
+  selectedApplicationId: string | null;
+  showSendInterviewPopup: boolean;
+  showSendOfferPopup: boolean;
+  showViewInterviewPopup: boolean;
 }
 
 interface ApplicantDetail {
@@ -24,13 +27,13 @@ interface Store {
   jobPostDetailState: JobPostDetail;
   profileDetail: ProfileDetail;
   applicantDetail: ApplicantDetail;
-  interviewPopup: InterviewPopup;
+  appPopupsState: AppPopupState;
 
   selectedJobPostId: string | null;
 
   setJobPostDetailId: (postDetail: Partial<JobPostDetail>) => void;
   setProfileDetail: (profileDetail: Partial<ProfileDetail>) => void;
-  setInterviewPopup: (profileDetail: Partial<InterviewPopup>) => void;
+  setAppPopupsState: (profileDetail: Partial<AppPopupState>) => void;
 
   setApplicantDetail: (profileDetail: Partial<ApplicantDetail>) => void;
 
@@ -48,9 +51,12 @@ export const useAppStore = create<Store>((set) => ({
     profileId: null,
     isLoading: false,
   },
-  interviewPopup: {
+  appPopupsState: {
     isLoading: false,
-    open: false,
+    showSendInterviewPopup: false,
+    showViewInterviewPopup: false,
+    showSendOfferPopup: false,
+    selectedApplicationId: null,
   },
 
   applicantDetail: {
@@ -84,9 +90,9 @@ export const useAppStore = create<Store>((set) => ({
     }));
   },
 
-  setInterviewPopup: (interviewPopup: Partial<InterviewPopup>) => {
+  setAppPopupsState: (interviewPopup: Partial<AppPopupState>) => {
     set((state) => ({
-      interviewPopup: { ...state.interviewPopup, ...interviewPopup },
+      appPopupsState: { ...state.appPopupsState, ...interviewPopup },
     }));
   },
 

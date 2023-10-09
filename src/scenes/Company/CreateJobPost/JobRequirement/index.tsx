@@ -34,8 +34,8 @@ import { useFormikContext } from 'formik';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 
-import { EnglishLevel } from '@/graphql/client/gql/schema';
-import { type FormValuesType } from '@/scenes/Company/CreateJobPost';
+import { EnglishLevel, ExperienceLevel } from '@/graphql/client/gql/schema';
+import { type EditJoPostValuesType } from '@/scenes/Company/CreateJobPost';
 import { capitalize } from '@/utils';
 
 import s from './jobrequirment.module.scss';
@@ -73,7 +73,7 @@ const JobRequirement = () => {
   const [open, setOpen] = React.useState(false);
   const [age, setAge] = React.useState<number | string>('');
 
-  const formik = useFormikContext<FormValuesType>();
+  const formik = useFormikContext<EditJoPostValuesType>();
   const { values, handleChange } = formik;
   const [selectedLanguage, setSelectedLanguage] = useState({
     language: '',
@@ -116,9 +116,9 @@ const JobRequirement = () => {
             isOptionEqualToValue={(option, value) =>
               option.label === value.label
             }
-            value={values.skill}
+            value={values.skills}
             onChange={(event, newValue) => {
-              void formik.setFieldValue('skill', newValue);
+              void formik.setFieldValue('skills', newValue);
             }}
             renderOption={(props, option, { selected }) => (
               <li {...props}>
@@ -129,7 +129,7 @@ const JobRequirement = () => {
             renderInput={(params) => (
               <TextField
                 {...params}
-                name="skill"
+                name="skills"
                 label="job skills"
                 placeholder="Skills"
               />
@@ -176,18 +176,11 @@ const JobRequirement = () => {
           <FormLabel>Skill Level</FormLabel>
 
           <Select
-            value={formik.values.skillLevel}
+            value={formik.values.experienceLevel}
             onChange={formik.handleChange}
-            name="skillLevel"
+            name="experienceLevel"
           >
-            {[
-              'Beginner',
-              'Intermediate',
-              'Advanced',
-              'Expert',
-              'Junior',
-              'Senior',
-            ].map((value, idx) => (
+            {Object.values(ExperienceLevel).map((value, idx) => (
               <MenuItem value={value} key={idx}>
                 {value}
               </MenuItem>

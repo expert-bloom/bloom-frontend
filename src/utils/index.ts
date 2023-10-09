@@ -57,3 +57,20 @@ export const useTransitionFix = (): Cleanup => {
     cleanupRef.current();
   }, []);
 };
+
+export function getYoutubeIdFromURL(url: string) {
+  // noinspection RegExpRedundantEscape
+  const regExp =
+    // eslint-disable-next-line
+    /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+
+  const match = url.match(regExp);
+
+  if (match && match[2].length === 11) {
+    return match[2];
+  }
+
+  console.log('The supplied URL is not a valid youtube URL');
+
+  return '';
+}

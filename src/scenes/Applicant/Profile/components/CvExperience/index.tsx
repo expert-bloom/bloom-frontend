@@ -37,6 +37,7 @@ import {
   type WorkExperienceFormValuesType,
 } from '@/scenes/Applicant/Profile/data';
 import { skillOption } from '@/scenes/Company/CreateJobPost/JobRequirement';
+import { getYoutubeIdFromURL } from '@/utils';
 
 import s from './cv.module.scss';
 
@@ -336,7 +337,9 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
 
             {showPreview && formik.values.applicant.introVideo && (
               <YouTube
-                videoId={formik.values.applicant.introVideo}
+                videoId={getYoutubeIdFromURL(
+                  formik.values.applicant.introVideo,
+                )}
                 style={{ width: '100%' }}
                 className={s.vid}
                 iframeClassName="intro_vid_iframe"

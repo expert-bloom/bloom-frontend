@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   Bookmark,
@@ -45,6 +45,10 @@ interface Props {
 }
 
 const DetailContent = ({ jobPost, isLoading, onCloseJobDetail }: Props) => {
+  const [isNavigating, setIsNavigating] = useState(false);
+
+  // check if the router is navigating
+
   return (
     <SimpleBar style={{ maxHeight: '100vh' }}>
       <MotionChild className={s.content} transition={transition}>

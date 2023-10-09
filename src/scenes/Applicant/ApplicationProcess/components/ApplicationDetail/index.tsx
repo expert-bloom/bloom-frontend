@@ -18,13 +18,79 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
+import { capitalize } from 'lodash';
 import moment from 'moment/moment';
 import Link from 'next/link';
 import { BiLinkExternal } from 'react-icons/bi';
 
+import Loader from '@/components/Loader';
+import {
+  type Application,
+  useGetJobApplicationsQuery,
+} from '@/graphql/client/gql/schema';
+import useMe from '@/hooks/useMe';
+import { useResponseErrorHandler } from '@/hooks/useResponseErrorHandler';
+
 import s from './applicationdetail.module.scss';
 
-const ApplicationDetail = () => {
+interface Props {
+  applicationId: string;
+  application: Application;
+}
+
+export const useFindApplication = (applicationId: string) => {
+  const { me } = useMe();
+  const jobApplicationsResponse = useGetJobApplicationsQuery({
+    skip: !me?.applicant?.id,
+    fetchPolicy: 'network-only',
+    variables: {
+      input: {
+        filter: {
+          applicantId: me?.applicant?.id ?? '',
+        },
+      },
+    },
+  });
+
+  const { data, error, loading } = jobApplicationsResponse;
+
+  useResponseErrorHandler(
+    jobApplicationsResponse.error,
+    'Error getting job applications',
+  );
+
+  return {
+    data: data?.getJobApplications.edges.find(
+      (ja) => ja.node.id === applicationId,
+    )?.node,
+    error,
+    loading,
+  };
+};
+
+const ApplicationDetail = ({ applicationId, application }: Props) => {
+  console.log('application : ', application);
+
+  /* const {
+    data: application,
+    error,
+    loading,
+  } = useFindApplication(applicationId);
+
+  if (loading) {
+    return (
+      <div className={s.container}>
+        <Loader />
+      </div>
+    );
+  }
+
+  console.log('application: ', application);
+
+  if (!application) {
+    return null;
+  } */
+
   return (
     <div className={s.container}>
       <ListItem
@@ -52,11 +118,13 @@ const ApplicationDetail = () => {
                   // fontWeight="400"
                   className={s.title}
                 >
-                  {'post.title'}
+                  {application?.jobPost?.title}
                 </Typography>
 
                 <Chip
-                  label={moment().format('DD MMM YYYY, hh:mm A')}
+                  label={moment(application?.jobPost?.createdAt).format(
+                    'DD MMM YYYY, hh:mm A',
+                  )}
                   variant="outlined"
                   size="small"
                   sx={{ px: '.2rem', color: 'gray' }}
@@ -69,23 +137,28 @@ const ApplicationDetail = () => {
                 <div className={s.detail}>
                   <div className={s.detail_item}>
                     <BusinessCenter fontSize="small" />
-                    <Typography variant="body2">Unknown</Typography>
+                    <Typography variant="body2">
+                      {capitalize(application?.jobPost?.jobSite)}
+                    </Typography>
                   </div>
                   -
                   <div className={s.detail_item}>
                     <MonetizationOn fontSize="small" />
-                    <Typography variant="body2">12k /mo</Typography>
+                    <Typography variant="body2">
+                      {application?.jobPost?.salary} /mo
+                    </Typography>
                   </div>
                   -
                   <div className={s.detail_item}>
                     <Place fontSize="small" />
-                    <Typography variant="body2">USA</Typography>
+                    <Typography variant="body2">
+                      {application?.jobPost?.location}
+                    </Typography>
                   </div>
                 </div>
 
                 <Typography className={s.desc} fontWeight={300} variant="body2">
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                  pariatur quam totam ullam ut.
+                  {application?.jobPost?.description}
                 </Typography>
               </Stack>
             }
@@ -97,7 +170,7 @@ const ApplicationDetail = () => {
         <Stack>
           <Typography variant="h6">You</Typography>
           <Typography variant="body2" color="gray">
-            {moment().format('DD MMM YYYY, hh:mm A')}
+            {moment(application.createdAt).format('DD MMM YYYY, hh:mm A')}
           </Typography>
         </Stack>
 
@@ -110,32 +183,43 @@ const ApplicationDetail = () => {
         <Stack gap=".3rem">
           <Typography variant="h6">Cover Letter</Typography>
           <Typography variant="body1" fontWeight="300">
-            I am writing to express my strong interest in the front-end
-            developer position at your company. With 6 years of experience (with
-            project-based evidence) in the field and a passion for delivering
-            solutions, I am confident in my ability to make a valuable
-            contribution to your team. My qualifications include expertise in
-            React.js, Next.js, and the ecosystem of those. I have honed these
-            skills through various projects, ranging from small website designs
-            to large-scale applications. I am also well-versed in the latest web
-            development practices and technologies, ensuring that the solutions
-            I deliver are both effective and up-to-date. In addition to my
-            technical skills, I am a team player..
+            {application?.coverLetter}
           </Typography>
         </Stack>
 
-        <Stack direction="row" alignItems="center">
-          <Typography variant="h6">Resume:</Typography>
-          <Link href="/">
-            <Button startIcon={<BiLinkExternal />}>resume.pdf</Button>
-          </Link>
+        <Stack direction="row" alignItems="center" flexWrap="wrap" gap=".5rem">
+          <Stack direction="row" alignItems="center">
+            <Typography variant="h6">Resume:</Typography>
+            <Link href="/">
+              <Button startIcon={<BiLinkExternal />}>resume.pdf</Button>
+            </Link>
+          </Stack>
+          <Stack direction="row" alignItems="center">
+            <Typography variant="h6">Email :</Typography>
+            <Typography variant="subtitle2">{application?.email}</Typography>
+          </Stack>
+          <Stack direction="row" alignItems="center">
+            <Typography variant="h6">Phone :</Typography>
+            <Typography variant="subtitle2">{application?.phone}</Typography>
+          </Stack>
         </Stack>
 
-        <Alert severity="warning" className={s.alert}>
-          <Typography variant="body1">
-            Please wait for the recruiter to respond.
-          </Typography>
-        </Alert>
+        {application.status === 'PENDING' && (
+          <Alert severity="warning" className={s.alert}>
+            <Typography variant="body1">
+              Please wait for the recruiter to respond.
+            </Typography>
+          </Alert>
+        )}
+
+        {application.status === 'INTERVIEW' && (
+          <Alert severity="success" className={s.alert}>
+            <Typography variant="body1">
+              Great You have an interview scheduled. Please check your email for
+              more.
+            </Typography>
+          </Alert>
+        )}
       </div>
     </div>
   );

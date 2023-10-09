@@ -1,0 +1,26 @@
+mutation SaveJobPost($input: SaveJobPostInput!) {
+    saveJobPost(input: $input) {
+        ...JopPostFragment
+    }
+}
+
+mutation RespondToInterview($input: RespondInterviewInput!) {
+    respondInterview(input: $input) {
+        ...InterviewFragment
+    }
+}
+
+mutation CreateJobApplication($input: CreateApplicationInput!) {
+    createApplication(input: $input) {
+        errors {
+            message
+        }
+
+        application {
+            id
+            applicantId
+            jobPostId
+            createdAt
+        }
+    }
+}
