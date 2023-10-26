@@ -1,40 +1,11 @@
 import type React from 'react';
 
-import {
-  AccountCircle,
-  Contacts,
-  PendingActions,
-  Settings,
-} from '@mui/icons-material';
 import { type FormikHelpers } from 'formik/dist/types';
 
 import {
   type EnglishLevel,
   type ExperienceLevel,
 } from '@/graphql/client/gql/schema';
-
-export const settingCategories = [
-  {
-    label: 'Profile',
-    Icon: AccountCircle,
-    value: '1',
-  },
-  {
-    label: 'Contact Info',
-    Icon: Contacts,
-    value: '2',
-  },
-  {
-    label: 'CV & Experience',
-    Icon: PendingActions,
-    value: '3',
-  },
-  {
-    label: 'Account Setting',
-    Icon: Settings,
-    value: '4',
-  },
-];
 
 export const initialValues = {
   // profile

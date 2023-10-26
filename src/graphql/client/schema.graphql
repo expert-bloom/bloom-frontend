@@ -279,6 +279,7 @@ type Mutation {
     offerApplicant(input: OfferApplicantInput!): Offer
     profileUpdate(input: UpdateProfileInput!): AccountUpdate!
     respondInterview(input: RespondInterviewInput!): Interview
+    respondToOffer(input: RespondOfferInput!): Offer
     saveApplicant(input: SaveApplicantInput!): Boolean
     saveJobPost(input: SaveJobPostInput!): JobPost
     sayHi: String!
@@ -320,7 +321,7 @@ type PageInfo {
 }
 
 type Query {
-    findAccount(input: AccountInput!): FindOnePayload
+    findAccount(input: FindAccountFilterInput!): FindOnePayload
     getApplicant(input: GetApplicantInput!): Applicant
     getApplicants(input: GetApplicantsInput!): ApplicantConnection
     getCompanies: [Company!]!
@@ -367,6 +368,7 @@ enum AccountType {
 enum ApplicationStatus {
     ACCEPTED
     INTERVIEW
+    OFFER
     PENDING
     REJECTED
 }
@@ -437,12 +439,6 @@ enum SalaryType {
 scalar DateTime
 
 input AccountFilterInput {
-    email: String
-    id: ID
-    phone: String
-}
-
-input AccountInput {
     email: String
     id: ID
     phone: String
@@ -564,6 +560,11 @@ input EditJobPostInputData {
     vacancy: Int
 }
 
+input FindAccountFilterInput {
+    accountFilter: AccountFilterInput
+    oAuthFilter: OAuthAccountFilterInput
+}
+
 input GetApplicantInput {
     id: String!
 }
@@ -611,7 +612,7 @@ input MeInput {
     accountId: String!
 }
 
-input OAuthAccount {
+input OAuthAccountFilterInput {
     provider: String
 }
 
@@ -657,6 +658,13 @@ input RespondInterviewInput {
     refuse: Boolean = false
 }
 
+input RespondOfferInput {
+    applicantId: String!
+    applicationId: String!
+    offerId: String!
+    refuse: Boolean = false
+}
+
 input SaveApplicantInput {
     applicantId: String!
     companyId: String!
@@ -681,6 +689,7 @@ input SendInterviewRequestInput {
 
 input SignUpInput {
     accountType: AccountType!
+    companyName: String
     country: String!
     email: String!
     firstName: String!

@@ -1,11 +1,15 @@
-/* eslint-disable no-extra-boolean-cast */
+/* eslint-disable no-extra-boolean-cast,@typescript-eslint/restrict-template-expressions */
 import { type NextApiRequest, type NextApiResponse } from 'next';
-import NextAuth, { type NextAuthOptions } from 'next-auth';
+import NextAuth, { type Account, type NextAuthOptions } from 'next-auth';
+import { type AdapterUser } from 'next-auth/adapters';
+import EmailProvider from 'next-auth/providers/email';
 import GithubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google';
 import { type Awaitable, type User } from 'next-auth/src';
+import nodemailer, { createTransport } from 'nodemailer';
 
 import {
+  type AccountType,
   FindAccountDocument,
   type FindAccountQuery,
   type FindAccountQueryVariables,
@@ -14,9 +18,70 @@ import {
   type SignUpOAuthMutationVariables,
 } from '@/graphql/client/gql/schema';
 import apollo from '@/lib/apollo';
+import { type AuthType } from '@/scenes/Auth/useSocialAuth';
+import { html, text } from '@/utils/email';
 
 import LoginProvider from './loginProvider';
 import SignupProvider from './signupProvider';
+
+const redirectUrl = '/auth/social-sign-in';
+
+const signUpWithSocial = async (
+  user: User | AdapterUser,
+  clientType: AccountType,
+  account: Account,
+) => {
+  const signUpPayload = await apollo.mutate<
+    SignUpOAuthMutation,
+    SignUpOAuthMutationVariables
+  >({
+    mutation: SignUpOAuthDocument,
+    variables: {
+      input: {
+        OAuth: {
+          provider: account.provider,
+          providerAccountId: account.providerAccountId,
+          accessToken: account.access_token ?? '-',
+          expires: new Date(account.expires_at ?? new Date()),
+          tokenType: account.token_type ?? '-',
+        },
+        account: {
+          email: user.email ?? '-',
+          image: user.image,
+          accountType: clientType,
+          userName: user.name,
+          firstName: (user as any).firstName,
+          lastName: (user as any).lastName,
+        },
+      },
+    },
+  });
+
+  const { data, errors } = signUpPayload;
+
+  if (errors !== undefined && errors.length > 0) {
+    return `${redirectUrl}/?error=${errors
+      .map((e: any) => e.message)
+      .join(', ')}`;
+  }
+
+  if (!data?.signUpOAuth) {
+    return `${redirectUrl}/?error=Something goes wrong signing-up!`;
+  }
+
+  // check for user errors
+  if (data.signUpOAuth.errors.length > 0) {
+    return `${redirectUrl}/?error=${data.signUpOAuth.errors
+      .map((e: any) => e.message)
+      .join(', ')}`;
+  }
+
+  if (data.signUpOAuth.account?.id) {
+    return true;
+  }
+
+  return `${redirectUrl}/?error=Something goes wrong signing-up!`;
+};
 
 const getOptions: (req: NextApiRequest) => NextAuthOptions = (req) => ({
   // Configure one or more authentication providers
@@ -36,7 +101,7 @@ const getOptions: (req: NextApiRequest) => NextAuthOptions = (req) => ({
   },
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
-      console.log(
+      /* console.log(
         'signIn callback ---> ',
         'request cookies ::   ',
         req.cookies,
@@ -50,35 +115,15 @@ const getOptions: (req: NextApiRequest) => NextAuthOptions = (req) => ({
         email,
         'credentials : ',
         JSON.stringify(credentials, null, 2),
-      );
-
-      /*
-      *
-          provider: 'github',
-          type: 'oauth',
-          providerAccountId: '54037700',
-          access_token: 'ghu_h6QQzmqKh7MJjHxjYPotiX0S60g4Cb15eDdu',
-          expires_at: 1691559679,
-          refresh_token: 'ghr_V2MUizsOPUZEgNr1wAtermaqNb6MitXFbjp4m9cVTHGDdOvBxR8XxKFZcbwWGhgkeS7Ygs4YheN5',
-          refresh_token_expires_in: 15897599,
-          token_type: 'bearer',
-          scope: ''
-
-      *
-      *
-      * */
-
-      // return '/auth/sign-in/?error=foolish';
+      ); */
 
       if (account?.type === 'credentials' && Boolean(user)) {
         return true;
-      } else if (
-        account?.provider === 'google' ||
-        account?.provider === 'github'
-      ) {
-        const redirectUrl = '/auth/social-sign-in';
-        const clientType: any = req.cookies.clientType;
-        const authType: any = req.cookies.authType;
+      }
+
+      if (account?.provider === 'google' || account?.provider === 'github') {
+        const clientType = req.cookies.clientType as AccountType;
+        const authType = req.cookies.authType as AuthType;
 
         try {
           // check if account exist
@@ -90,21 +135,18 @@ const getOptions: (req: NextApiRequest) => NextAuthOptions = (req) => ({
             fetchPolicy: 'network-only',
             variables: {
               input: {
-                email: user.email,
+                accountFilter: {
+                  email: user.email,
+                },
+                oAuthFilter: {
+                  provider: 'google',
+                },
               },
             },
           });
 
           // console.log('find accoutn payload :  ', findAccountPayload);
 
-          if (
-            !Boolean(findAccountPayload.data.findAccount?.account?.id) &&
-            authType === 'login'
-          ) {
-            return `${redirectUrl}/?error=Account Not Found!`;
-          }
-
-          // todo : check if account created with social link
           /* if (
             findAccountPayload.data?.findAccount?.account?.oAuthClient
               ?.length &&
@@ -113,83 +155,34 @@ const getOptions: (req: NextApiRequest) => NextAuthOptions = (req) => ({
           ) {
 
           } */
-
-          // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-          if (findAccountPayload.data.findAccount?.account?.id) {
-            if (authType === 'signup') {
-              return `${redirectUrl}/?error=Account Already Exist, Please login!`;
-            } else if (authType === 'login') {
+          if (authType === 'login') {
+            if (findAccountPayload.data.findAccount?.account?.id) {
               return true;
             }
-          } else if (authType === 'signup') {
-            const signUpPayload = await apollo.mutate<
-              SignUpOAuthMutation,
-              SignUpOAuthMutationVariables
-            >({
-              mutation: SignUpOAuthDocument,
-              variables: {
-                input: {
-                  OAuth: {
-                    provider: account.provider,
-                    providerAccountId: account.providerAccountId,
-                    accessToken: account.access_token ?? '-',
-                    expires: new Date(account.expires_at ?? new Date()),
-                    tokenType: account.token_type ?? '-',
-                  },
-                  account: {
-                    email: user.email ?? '-',
-                    image: user.image,
-                    accountType: clientType,
-                    userName: user.name,
-                    firstName: (user as any).firstName,
-                    lastName: (user as any).lastName,
-                  },
-                },
-              },
-            });
 
-            const { data, errors } = signUpPayload;
-
-            console.log('login query Res  : ', data);
-
-            if (errors !== undefined && errors.length > 0) {
-              return `${redirectUrl}/?error=${errors
-                .map((e: any) => e.message)
-                .join(', ')}`;
-            }
-
-            if (data === undefined || data === null) {
-              return `${redirectUrl}/?error=Something goes wrong signing-up!`;
-            }
-
-            // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-            if (data.signUpOAuth && data.signUpOAuth.errors.length > 0) {
-              return `${redirectUrl}/?error=${data.signUpOAuth.errors
-                .map((e: any) => e.message)
-                .join(', ')}`;
-            }
-
-            if (
-              data.signUpOAuth.account !== undefined &&
-              data.signUpOAuth.account !== null
-            ) {
-              const { account } = data.signUpOAuth;
-
-              console.log('SIGN-Up success ----->   ', account);
-
-              return true;
+            if (!findAccountPayload.data.findAccount?.account?.id) {
+              return `${redirectUrl}/?error=Account Not Found!`;
             }
           }
+
+          if (authType === 'signup') {
+            if (findAccountPayload.data.findAccount?.account?.id) {
+              return `${redirectUrl}/?error=Account Already Exist, Please login!`;
+            }
+
+            // signup with social
+            return await signUpWithSocial(user, clientType, account);
+          }
+
           return false;
         } catch (err: any) {
           console.log('err : ', err);
           return `${redirectUrl}/?error=${
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             err.message ?? 'Something went wrong'
           }`;
         }
       } else {
-        return '/404';
+        return `${redirectUrl}/?error=Invalid Provider`;
       }
 
       // return account?.type === 'credentials' && Boolean(user) ? true : '/404';
@@ -232,7 +225,9 @@ const getOptions: (req: NextApiRequest) => NextAuthOptions = (req) => ({
           fetchPolicy: 'network-only',
           variables: {
             input: {
-              email: user.email,
+              accountFilter: {
+                email: user.email,
+              },
             },
           },
         });
@@ -319,6 +314,43 @@ const getOptions: (req: NextApiRequest) => NextAuthOptions = (req) => ({
           email: profile.email,
           image: profile.avatar_url, // firstName: profile.name ?? profile.login,
         };
+      },
+    }),
+
+    EmailProvider({
+      server: process.env.EMAIL_SERVER,
+      from: process.env.EMAIL_FROM,
+      async sendVerificationRequest(params) {
+        const { identifier, url, provider, theme } = params;
+        const { host } = new URL(url);
+
+        const transport = createTransport(provider.server);
+
+        const acc = await nodemailer.createTestAccount();
+
+        console.log('sendVerificationRequest : ', params);
+
+        const t2 = createTransport({
+          service: 'gmail',
+          auth: {
+            type: 'OAuth2',
+            user: 'henokgetachew500@gmail.com',
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+          },
+        });
+
+        const result = await t2.sendMail({
+          to: identifier,
+          from: provider.from,
+          subject: `Sign in to ${host}`,
+          text: text({ url, host }),
+          html: html({ url, host, theme }),
+        });
+        const failed = result.rejected.concat(result.pending).filter(Boolean);
+        if (failed.length) {
+          throw new Error(`Email(s) (${failed.join(', ')}) could not be sent`);
+        }
       },
     }),
   ],

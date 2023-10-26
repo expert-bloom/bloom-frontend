@@ -6,6 +6,8 @@ fragment AuthAccountFragment on AuthAccountPayload{
     firstName
     lastName
     createdAt
+    phone
+    emailVerified
 
     oAuthClient {
         id
@@ -14,6 +16,7 @@ fragment AuthAccountFragment on AuthAccountPayload{
         expires
         providerAccountId
         tokenType
+        refreshToken
     }
 }
 

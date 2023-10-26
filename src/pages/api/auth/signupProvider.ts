@@ -1,4 +1,5 @@
 import CredentialsProvider from 'next-auth/providers/credentials';
+
 import { AuthTypeKeys } from '@/constants';
 import {
   type AuthAccountPayload,
@@ -37,6 +38,7 @@ export default CredentialsProvider<Record<string, any>>({
             lastName,
             firstName,
             accountType,
+            companyName: credential?.companyName,
           },
         },
       });
@@ -59,7 +61,6 @@ export default CredentialsProvider<Record<string, any>>({
         );
       }
 
-      // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       if (data?.signUp?.account) {
         const { account } = data.signUp;
         return account satisfies AuthAccountPayload;

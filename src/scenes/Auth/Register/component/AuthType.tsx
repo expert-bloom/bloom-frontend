@@ -1,9 +1,10 @@
 import React from 'react';
 
 import {
-  AccountCircleTwoTone,
   Badge,
   ContentPasteSearchTwoTone,
+  CorporateFare,
+  Handshake,
   RadioButtonChecked,
   RadioButtonUnchecked,
 } from '@mui/icons-material';
@@ -18,10 +19,10 @@ import s from '../signup.module.scss';
 
 const aType = [
   {
-    label: "I'm a client, hiring for a project",
+    label: "I'm a Company, hiring for work",
     value: AccountType.Company,
     checked: false,
-    Icon: AccountCircleTwoTone,
+    Icon: CorporateFare,
   },
   {
     label: "I'm an applicant, looking for work",
@@ -33,7 +34,7 @@ const aType = [
     label: "I'm a recruiter, looking for applicants",
     value: AccountType.Affiliate,
     checked: false,
-    Icon: Badge,
+    Icon: Handshake,
   },
 ];
 

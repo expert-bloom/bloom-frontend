@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import {
   ArrowCircleLeft,
   CheckCircleTwoTone,
+  CorporateFare,
   GitHub,
   Person,
   Visibility,
@@ -39,10 +40,6 @@ const AuthDetails = ({ onReturn }: any) => {
   const { values, handleChange } = formik;
   const router = useRouter();
   const { withSocial } = useSocialAuth();
-
-  useEffect(() => {
-    // console.log('formik : ', formik);
-  }, [formik]);
 
   useEffect(() => {
     window.onmessage = (event: Record<string, any>) => {
@@ -259,32 +256,57 @@ const AuthDetails = ({ onReturn }: any) => {
         name="email"
         value={values.email}
         onChange={handleChange}
+        error={!!formik.errors.email}
+        helperText={formik.errors.email}
         label="Email"
         variant="outlined"
+        required
         fullWidth
       />
 
-      <Autocomplete
-        disablePortal
-        fullWidth
-        // sx={{ width: 300 }}
-        // multiple
-        options={Object.values(countries)}
-        getOptionLabel={(option) => option.name ?? ''}
-        value={values.country as any}
-        onChange={(event, newValue) => {
-          void formik.setFieldValue('country', newValue);
-        }}
-        renderInput={(params) => (
+      <Stack direction="row" spacing={2}>
+        {values.type === 'COMPANY' && (
           <TextField
-            {...params}
-            name="country"
-            label="Your Location"
+            required
+            name="companyName"
+            label="Company Name"
+            type="text"
             fullWidth
-            // required
+            variant="outlined"
+            value={formik.values.companyName}
+            onChange={formik.handleChange}
+            error={!!formik.errors.companyName}
+            helperText={formik.errors.companyName}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <CorporateFare />
+                </InputAdornment>
+              ),
+            }}
           />
         )}
-      />
+
+        <Autocomplete
+          disablePortal
+          fullWidth
+          options={Object.values(countries)}
+          getOptionLabel={(option) => option.name ?? ''}
+          value={values.country as any}
+          onChange={(event, newValue) => {
+            void formik.setFieldValue('country', newValue);
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              name="country"
+              label="Your Location"
+              fullWidth
+              required
+            />
+          )}
+        />
+      </Stack>
 
       <FormControlLabel
         className={s.confirm}

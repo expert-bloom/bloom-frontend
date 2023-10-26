@@ -89,8 +89,8 @@ const SignUp = () => {
         };
       } else if (props.values.type === AccountType.Affiliate) {
         return {
-          disabled: false,
-          label: 'Join as a Affiliate',
+          disabled: true,
+          label: '( Coming Soon )',
         };
       } else {
         return {
@@ -133,7 +133,7 @@ const SignUp = () => {
               case 'Auth Type':
                 console.log('onSubmit values :', values);
 
-                if (!values.type) return null;
+                if (!values.type || values.type === 'AFFILIATE') return null;
 
                 handleNext();
                 break;
@@ -155,6 +155,7 @@ const SignUp = () => {
                   firstName: values.firstName,
                   lastName: values.lastName,
                   accountType: values.type,
+                  companyName: values.companyName,
                   country: values.country.name,
                   redirect: false,
                 } satisfies SignUpInput & SignInOptions)

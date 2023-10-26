@@ -23,12 +23,14 @@ import { BiLinkExternal } from 'react-icons/bi';
 import {
   ApplicationStatus,
   InterviewStatus,
+  OfferStatus,
 } from '@/graphql/client/gql/schema';
 import useMe from '@/hooks/useMe';
 import ApplicationDetail, {
   useFindApplication,
 } from '@/scenes/Applicant/ApplicationProcess/components/ApplicationDetail';
 import InterviewDetail from '@/scenes/Applicant/ApplicationProcess/components/InterviewDetail';
+import OfferDetail from '@/scenes/Applicant/ApplicationProcess/components/OfferDetail';
 import { getStatusTextAndColor } from '@/scenes/Applicant/ApplicationProcess/helpers';
 
 import s from './application_process.module.scss';
@@ -103,23 +105,21 @@ const ApplicationProcess = () => {
 
     const steps: StepType[] = [];
 
-    console.log('selected appliatins : ', selectedApplication);
+    console.log('selected application ---- : ', selectedApplication);
 
     // application stage
     const applicationStep: StepType = {
       name: 'Your Application',
-      component: (
-        <ApplicationDetail
-          application={selectedApplication}
-          applicationId={id as string}
-        />
-      ),
+      component: <ApplicationDetail application={selectedApplication} />,
       status: selectedApplication.status,
       expanded: false,
       description:
         'This is Your Application process where you can track you prgress on the applciation process',
       skipped: false,
-      completed: selectedApplication?.status === ApplicationStatus.Interview,
+      completed:
+        selectedApplication?.status === ApplicationStatus.Interview ||
+        selectedApplication?.status === ApplicationStatus.Offer ||
+        selectedApplication?.status === ApplicationStatus.Accepted,
       isActive: selectedApplication?.status === ApplicationStatus.Pending,
     };
     steps.push(applicationStep);
@@ -143,14 +143,15 @@ const ApplicationProcess = () => {
     // offer stage
     const offerStep: StepType = {
       name: 'Offer',
-      component: <h1> OFFER </h1>,
-      status: selectedApplication?.status,
+      component: <OfferDetail applicationId={id as string} />,
+      status: selectedApplication?.offer?.status ?? 'NO OFFER YET',
       expanded: false,
       description:
         'This is Your Interview process where you can track you prgress on the applciation process',
       skipped: false,
-      completed: false,
-      isActive: false,
+
+      completed: selectedApplication?.offer?.status === OfferStatus.Accepted,
+      isActive: selectedApplication?.offer?.status === OfferStatus.Pending,
     };
     steps.push(offerStep);
 
@@ -203,17 +204,14 @@ const ApplicationProcess = () => {
                 >
                   <StepLabel
                     optional={
-                      <StepperStatus label={step.status} color={color} />
+                      <StepperStatus label={step.status} color="info" />
                     }
                     onClick={() => {
                       const selectedStep = steps[index];
 
-                      if (selectedStep.isActive || selectedStep.completed) {
-                        // expand the selected step
-                        // selectedStep.expanded = !selectedStep.expanded;
-                        // setSteps([...steps]);
-                        setActiveStepIdx(index);
-                      }
+                      console.log('selected step : ', selectedStep);
+
+                      setActiveStepIdx(index);
 
                       // setActiveSForm(index);
                     }}

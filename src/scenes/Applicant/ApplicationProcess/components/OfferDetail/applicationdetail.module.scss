@@ -71,9 +71,8 @@
     .question_list {
       padding: 2rem;
       display: flex;
-      //flex-flow: column;
-      flex-flow: wrap;
-      gap: 1rem;
+      flex-flow: column;
+      gap: .5rem;
 
       p {
         font-weight: 300;

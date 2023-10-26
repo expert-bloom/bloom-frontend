@@ -1,6 +1,5 @@
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
-
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -52,12 +51,6 @@ export type AccountFilterInput = {
   phone?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type AccountInput = {
-  email?: InputMaybe<Scalars['String']['input']>;
-  id?: InputMaybe<Scalars['ID']['input']>;
-  phone?: InputMaybe<Scalars['String']['input']>;
-};
-
 export type AccountPayload = {
   accountType: AccountType;
   affiliate: Maybe<AffiliateLight>;
@@ -76,10 +69,14 @@ export type AccountPayload = {
 
 export enum AccountSortField {
   /** Sort users by created at. */
-  CreatedAt = 'CREATED_AT' /** Sort users by email. */,
-  Email = 'EMAIL' /** Sort users by first name. */,
-  FirstName = 'FIRST_NAME' /** Sort users by last modified at. */,
-  LastModifiedAt = 'LAST_MODIFIED_AT' /** Sort users by last name. */,
+  CreatedAt = 'CREATED_AT',
+  /** Sort users by email. */
+  Email = 'EMAIL',
+  /** Sort users by first name. */
+  FirstName = 'FIRST_NAME',
+  /** Sort users by last modified at. */
+  LastModifiedAt = 'LAST_MODIFIED_AT',
+  /** Sort users by last name. */
   LastName = 'LAST_NAME',
 }
 
@@ -167,14 +164,17 @@ export type ApplicantAppliedJobPostEdge = {
 };
 
 export type ApplicantConnection = {
-  edges: Array<ApplicantEdge> /** Pagination data for this connection. */;
-  pageInfo: PageInfo /** A total count of items in the collection. */;
+  edges: Array<ApplicantEdge>;
+  /** Pagination data for this connection. */
+  pageInfo: PageInfo;
+  /** A total count of items in the collection. */
   totalCount: Maybe<Scalars['Int']['output']>;
 };
 
 export type ApplicantEdge = {
   /** A cursor for use in pagination. */
-  cursor: Scalars['String']['output'] /** The item at the end of the edge. */;
+  cursor: Scalars['String']['output'];
+  /** The item at the end of the edge. */
   node: Applicant;
 };
 
@@ -259,6 +259,7 @@ export type ApplicationFilter = {
 export enum ApplicationStatus {
   Accepted = 'ACCEPTED',
   Interview = 'INTERVIEW',
+  Offer = 'OFFER',
   Pending = 'PENDING',
   Rejected = 'REJECTED',
 }
@@ -392,6 +393,11 @@ export enum ExperienceLevel {
   Junior = 'Junior',
   Senior = 'Senior',
 }
+
+export type FindAccountFilterInput = {
+  accountFilter?: InputMaybe<AccountFilterInput>;
+  oAuthFilter?: InputMaybe<OAuthAccountFilterInput>;
+};
 
 export type FindOnePayload = PayloadError & {
   account: Maybe<AccountPayload>;
@@ -540,6 +546,7 @@ export type Mutation = {
   offerApplicant: Maybe<Offer>;
   profileUpdate: AccountUpdate;
   respondInterview: Maybe<Interview>;
+  respondToOffer: Maybe<Offer>;
   saveApplicant: Maybe<Scalars['Boolean']['output']>;
   saveJobPost: Maybe<JobPost>;
   sayHi: Scalars['String']['output'];
@@ -580,6 +587,10 @@ export type MutationRespondInterviewArgs = {
   input: RespondInterviewInput;
 };
 
+export type MutationRespondToOfferArgs = {
+  input: RespondOfferInput;
+};
+
 export type MutationSaveApplicantArgs = {
   input: SaveApplicantInput;
 };
@@ -616,7 +627,7 @@ export type OAuth = {
   tokenType: Scalars['String']['output'];
 };
 
-export type OAuthAccount = {
+export type OAuthAccountFilterInput = {
   provider?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -678,7 +689,8 @@ export enum OfferStatus {
 
 export enum OrderDirection {
   /** Specifies an ascending sort order. */
-  Asc = 'ASC' /** Specifies a descending sort order. */,
+  Asc = 'ASC',
+  /** Specifies a descending sort order. */
   Desc = 'DESC',
 }
 
@@ -709,7 +721,7 @@ export type Query = {
 };
 
 export type QueryFindAccountArgs = {
-  input: AccountInput;
+  input: FindAccountFilterInput;
 };
 
 export type QueryGetApplicantArgs = {
@@ -755,6 +767,13 @@ export type RespondInterviewInput = {
   refuse?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
+export type RespondOfferInput = {
+  applicantId: Scalars['String']['input'];
+  applicationId: Scalars['String']['input'];
+  offerId: Scalars['String']['input'];
+  refuse?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
 export enum SalaryType {
   Hourly = 'HOURLY',
   Monthly = 'MONTHLY',
@@ -786,6 +805,7 @@ export type SendInterviewRequestInput = {
 
 export type SignUpInput = {
   accountType: AccountType;
+  companyName?: InputMaybe<Scalars['String']['input']>;
   country: Scalars['String']['input'];
   email: Scalars['String']['input'];
   firstName: Scalars['String']['input'];
@@ -1046,7 +1066,7 @@ export type AccountPayloadFragmentFragment = {
 };
 
 export type FindAccountQueryVariables = Exact<{
-  input: AccountInput;
+  input: FindAccountFilterInput;
 }>;
 
 export type FindAccountQuery = {
@@ -1307,6 +1327,27 @@ export type RespondToInterviewMutation = {
     answerVideo: string | null;
     answerText: string | null;
     status: InterviewStatus | null;
+    description: string;
+    deadline: any | null;
+    createdAt: any;
+    updatedAt: any;
+  } | null;
+};
+
+export type RespondToOfferMutationVariables = Exact<{
+  input: RespondOfferInput;
+}>;
+
+export type RespondToOfferMutation = {
+  respondToOffer: {
+    id: string;
+    companyId: string;
+    jobPostId: string;
+    applicantId: string;
+    jobApplicationId: string | null;
+    answerVideo: string | null;
+    answerText: string | null;
+    status: OfferStatus | null;
     description: string;
     deadline: any | null;
     createdAt: any;
@@ -1733,6 +1774,8 @@ export type AuthAccountFragmentFragment = {
   firstName: string;
   lastName: string;
   createdAt: any;
+  phone: string | null;
+  emailVerified: any | null;
   oAuthClient: Array<{
     id: string;
     provider: string;
@@ -1740,6 +1783,7 @@ export type AuthAccountFragmentFragment = {
     expires: any;
     providerAccountId: string;
     tokenType: string;
+    refreshToken: string | null;
   }>;
 };
 
@@ -1758,6 +1802,8 @@ export type LoginMutation = {
       firstName: string;
       lastName: string;
       createdAt: any;
+      phone: string | null;
+      emailVerified: any | null;
       oAuthClient: Array<{
         id: string;
         provider: string;
@@ -1765,6 +1811,7 @@ export type LoginMutation = {
         expires: any;
         providerAccountId: string;
         tokenType: string;
+        refreshToken: string | null;
       }>;
     } | null;
   };
@@ -1785,6 +1832,8 @@ export type SignUpMutation = {
       firstName: string;
       lastName: string;
       createdAt: any;
+      phone: string | null;
+      emailVerified: any | null;
       oAuthClient: Array<{
         id: string;
         provider: string;
@@ -1792,6 +1841,7 @@ export type SignUpMutation = {
         expires: any;
         providerAccountId: string;
         tokenType: string;
+        refreshToken: string | null;
       }>;
     } | null;
   };
@@ -1812,6 +1862,8 @@ export type SignUpOAuthMutation = {
       firstName: string;
       lastName: string;
       createdAt: any;
+      phone: string | null;
+      emailVerified: any | null;
       oAuthClient: Array<{
         id: string;
         provider: string;
@@ -1819,6 +1871,7 @@ export type SignUpOAuthMutation = {
         expires: any;
         providerAccountId: string;
         tokenType: string;
+        refreshToken: string | null;
       }>;
     } | null;
   };
@@ -2492,6 +2545,8 @@ export const AuthAccountFragmentFragmentDoc = gql`
     firstName
     lastName
     createdAt
+    phone
+    emailVerified
     oAuthClient {
       id
       provider
@@ -2499,6 +2554,7 @@ export const AuthAccountFragmentFragmentDoc = gql`
       expires
       providerAccountId
       tokenType
+      refreshToken
     }
   }
 `;
@@ -2549,7 +2605,6 @@ export function useUpdateProfileMutation(
     UpdateProfileMutationVariables
   >(UpdateProfileDocument, options);
 }
-
 export type UpdateProfileMutationHookResult = ReturnType<
   typeof useUpdateProfileMutation
 >;
@@ -2560,7 +2615,7 @@ export type UpdateProfileMutationOptions = Apollo.BaseMutationOptions<
   UpdateProfileMutationVariables
 >;
 export const FindAccountDocument = gql`
-  query FindAccount($input: AccountInput!) {
+  query FindAccount($input: FindAccountFilterInput!) {
     findAccount(input: $input) {
       errors {
         message
@@ -2601,7 +2656,6 @@ export function useFindAccountQuery(
     options,
   );
 }
-
 export function useFindAccountLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     FindAccountQuery,
@@ -2614,7 +2668,6 @@ export function useFindAccountLazyQuery(
     options,
   );
 }
-
 export type FindAccountQueryHookResult = ReturnType<typeof useFindAccountQuery>;
 export type FindAccountLazyQueryHookResult = ReturnType<
   typeof useFindAccountLazyQuery
@@ -2654,14 +2707,12 @@ export function useMeQuery(
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, options);
 }
-
 export function useMeLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, options);
 }
-
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
@@ -2707,7 +2758,6 @@ export function useSaveJobPostMutation(
     options,
   );
 }
-
 export type SaveJobPostMutationHookResult = ReturnType<
   typeof useSaveJobPostMutation
 >;
@@ -2759,7 +2809,6 @@ export function useRespondToInterviewMutation(
     RespondToInterviewMutationVariables
   >(RespondToInterviewDocument, options);
 }
-
 export type RespondToInterviewMutationHookResult = ReturnType<
   typeof useRespondToInterviewMutation
 >;
@@ -2768,6 +2817,57 @@ export type RespondToInterviewMutationResult =
 export type RespondToInterviewMutationOptions = Apollo.BaseMutationOptions<
   RespondToInterviewMutation,
   RespondToInterviewMutationVariables
+>;
+export const RespondToOfferDocument = gql`
+  mutation RespondToOffer($input: RespondOfferInput!) {
+    respondToOffer(input: $input) {
+      ...OfferFragment
+    }
+  }
+  ${OfferFragmentFragmentDoc}
+`;
+export type RespondToOfferMutationFn = Apollo.MutationFunction<
+  RespondToOfferMutation,
+  RespondToOfferMutationVariables
+>;
+
+/**
+ * __useRespondToOfferMutation__
+ *
+ * To run a mutation, you first call `useRespondToOfferMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRespondToOfferMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [respondToOfferMutation, { data, loading, error }] = useRespondToOfferMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRespondToOfferMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    RespondToOfferMutation,
+    RespondToOfferMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    RespondToOfferMutation,
+    RespondToOfferMutationVariables
+  >(RespondToOfferDocument, options);
+}
+export type RespondToOfferMutationHookResult = ReturnType<
+  typeof useRespondToOfferMutation
+>;
+export type RespondToOfferMutationResult =
+  Apollo.MutationResult<RespondToOfferMutation>;
+export type RespondToOfferMutationOptions = Apollo.BaseMutationOptions<
+  RespondToOfferMutation,
+  RespondToOfferMutationVariables
 >;
 export const CreateJobApplicationDocument = gql`
   mutation CreateJobApplication($input: CreateApplicationInput!) {
@@ -2818,7 +2918,6 @@ export function useCreateJobApplicationMutation(
     CreateJobApplicationMutationVariables
   >(CreateJobApplicationDocument, options);
 }
-
 export type CreateJobApplicationMutationHookResult = ReturnType<
   typeof useCreateJobApplicationMutation
 >;
@@ -2887,7 +2986,6 @@ export function useGetApplicantsQuery(
     options,
   );
 }
-
 export function useGetApplicantsLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     GetApplicantsQuery,
@@ -2900,7 +2998,6 @@ export function useGetApplicantsLazyQuery(
     options,
   );
 }
-
 export type GetApplicantsQueryHookResult = ReturnType<
   typeof useGetApplicantsQuery
 >;
@@ -2985,7 +3082,6 @@ export function useGetApplicantQuery(
     options,
   );
 }
-
 export function useGetApplicantLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     GetApplicantQuery,
@@ -2998,7 +3094,6 @@ export function useGetApplicantLazyQuery(
     options,
   );
 }
-
 export type GetApplicantQueryHookResult = ReturnType<
   typeof useGetApplicantQuery
 >;
@@ -3050,7 +3145,6 @@ export function useGetJobApplicationsQuery(
     GetJobApplicationsQueryVariables
   >(GetJobApplicationsDocument, options);
 }
-
 export function useGetJobApplicationsLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     GetJobApplicationsQuery,
@@ -3063,7 +3157,6 @@ export function useGetJobApplicationsLazyQuery(
     GetJobApplicationsQueryVariables
   >(GetJobApplicationsDocument, options);
 }
-
 export type GetJobApplicationsQueryHookResult = ReturnType<
   typeof useGetJobApplicationsQuery
 >;
@@ -3121,7 +3214,6 @@ export function useLoginMutation(
     options,
   );
 }
-
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<
@@ -3175,7 +3267,6 @@ export function useSignUpMutation(
     options,
   );
 }
-
 export type SignUpMutationHookResult = ReturnType<typeof useSignUpMutation>;
 export type SignUpMutationResult = Apollo.MutationResult<SignUpMutation>;
 export type SignUpMutationOptions = Apollo.BaseMutationOptions<
@@ -3229,7 +3320,6 @@ export function useSignUpOAuthMutation(
     options,
   );
 }
-
 export type SignUpOAuthMutationHookResult = ReturnType<
   typeof useSignUpOAuthMutation
 >;
@@ -3278,7 +3368,6 @@ export function useSaveApplicantMutation(
     SaveApplicantMutationVariables
   >(SaveApplicantDocument, options);
 }
-
 export type SaveApplicantMutationHookResult = ReturnType<
   typeof useSaveApplicantMutation
 >;
@@ -3330,7 +3419,6 @@ export function useSendInterviewRequestMutation(
     SendInterviewRequestMutationVariables
   >(SendInterviewRequestDocument, options);
 }
-
 export type SendInterviewRequestMutationHookResult = ReturnType<
   typeof useSendInterviewRequestMutation
 >;
@@ -3382,7 +3470,6 @@ export function useSendAnOfferMutation(
     options,
   );
 }
-
 export type SendAnOfferMutationHookResult = ReturnType<
   typeof useSendAnOfferMutation
 >;
@@ -3438,7 +3525,6 @@ export function useCreateJobPostMutation(
     CreateJobPostMutationVariables
   >(CreateJobPostDocument, options);
 }
-
 export type CreateJobPostMutationHookResult = ReturnType<
   typeof useCreateJobPostMutation
 >;
@@ -3494,7 +3580,6 @@ export function useEditJobPostMutation(
     options,
   );
 }
-
 export type EditJobPostMutationHookResult = ReturnType<
   typeof useEditJobPostMutation
 >;
@@ -3541,7 +3626,6 @@ export function useGetCompaniesQuery(
     options,
   );
 }
-
 export function useGetCompaniesLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     GetCompaniesQuery,
@@ -3554,7 +3638,6 @@ export function useGetCompaniesLazyQuery(
     options,
   );
 }
-
 export type GetCompaniesQueryHookResult = ReturnType<
   typeof useGetCompaniesQuery
 >;
@@ -3618,7 +3701,6 @@ export function useGetSavedApplicantsQuery(
     GetSavedApplicantsQueryVariables
   >(GetSavedApplicantsDocument, options);
 }
-
 export function useGetSavedApplicantsLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     GetSavedApplicantsQuery,
@@ -3631,7 +3713,6 @@ export function useGetSavedApplicantsLazyQuery(
     GetSavedApplicantsQueryVariables
   >(GetSavedApplicantsDocument, options);
 }
-
 export type GetSavedApplicantsQueryHookResult = ReturnType<
   typeof useGetSavedApplicantsQuery
 >;
@@ -3684,7 +3765,6 @@ export function useGetCompanyJobPostsQuery(
     GetCompanyJobPostsQueryVariables
   >(GetCompanyJobPostsDocument, options);
 }
-
 export function useGetCompanyJobPostsLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     GetCompanyJobPostsQuery,
@@ -3697,7 +3777,6 @@ export function useGetCompanyJobPostsLazyQuery(
     GetCompanyJobPostsQueryVariables
   >(GetCompanyJobPostsDocument, options);
 }
-
 export type GetCompanyJobPostsQueryHookResult = ReturnType<
   typeof useGetCompanyJobPostsQuery
 >;
@@ -3753,7 +3832,6 @@ export function useGetCompanyJobApplicationsQuery(
     GetCompanyJobApplicationsQueryVariables
   >(GetCompanyJobApplicationsDocument, options);
 }
-
 export function useGetCompanyJobApplicationsLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     GetCompanyJobApplicationsQuery,
@@ -3766,7 +3844,6 @@ export function useGetCompanyJobApplicationsLazyQuery(
     GetCompanyJobApplicationsQueryVariables
   >(GetCompanyJobApplicationsDocument, options);
 }
-
 export type GetCompanyJobApplicationsQueryHookResult = ReturnType<
   typeof useGetCompanyJobApplicationsQuery
 >;
@@ -3814,7 +3891,6 @@ export function useGetJobPostsQuery(
     options,
   );
 }
-
 export function useGetJobPostsLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     GetJobPostsQuery,
@@ -3827,7 +3903,6 @@ export function useGetJobPostsLazyQuery(
     options,
   );
 }
-
 export type GetJobPostsQueryHookResult = ReturnType<typeof useGetJobPostsQuery>;
 export type GetJobPostsLazyQueryHookResult = ReturnType<
   typeof useGetJobPostsLazyQuery
@@ -3873,7 +3948,6 @@ export function useGetJobPostQuery(
     options,
   );
 }
-
 export function useGetJobPostLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
     GetJobPostQuery,
@@ -3886,7 +3960,6 @@ export function useGetJobPostLazyQuery(
     options,
   );
 }
-
 export type GetJobPostQueryHookResult = ReturnType<typeof useGetJobPostQuery>;
 export type GetJobPostLazyQueryHookResult = ReturnType<
   typeof useGetJobPostLazyQuery

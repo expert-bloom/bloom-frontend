@@ -46,7 +46,7 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
 
     return () => {
       stepUtil.current = {
-        onSubmit: () => false,
+        onSubmit: () => formik.values,
       } as any;
     };
   }, []);

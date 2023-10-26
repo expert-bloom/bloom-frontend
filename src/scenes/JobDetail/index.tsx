@@ -22,6 +22,7 @@ import {
 import moment from 'moment/moment';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { useRouter } from 'next/router';
 
 import Loader from '@/components/Loader';
 import { MoButton } from '@/components/MoButton';
@@ -33,7 +34,8 @@ import s from './jobdetail.module.scss';
 
 const JobDetail = () => {
   // get the id from the url
-  const { id } = useParams<{ id: string }>();
+  const router = useRouter();
+  const { id } = router.query;
 
   const { data: jobPost, loading } = useGetJobPostsQuery();
 

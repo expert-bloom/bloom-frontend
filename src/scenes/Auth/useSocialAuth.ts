@@ -5,6 +5,9 @@ import Cookies from 'js-cookie';
 import { type AccountType } from '@/graphql/client/gql/schema';
 import { capitalize } from '@/utils';
 
+export type AuthType = 'login' | 'signup';
+export type SocialAuthType = 'google' | 'github';
+
 export default function useSocialAuth() {
   const windowRef = useRef<Window | null>(null);
 
@@ -37,8 +40,8 @@ export default function useSocialAuth() {
   };
 
   const withSocial = (
-    authType: 'login' | 'signup',
-    social: 'google' | 'github',
+    authType: AuthType,
+    social: SocialAuthType,
     clientType: AccountType | null,
   ) => {
     // document.cookie = `authType=${authType}`;

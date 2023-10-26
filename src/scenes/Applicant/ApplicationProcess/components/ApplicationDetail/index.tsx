@@ -26,6 +26,8 @@ import { BiLinkExternal } from 'react-icons/bi';
 import Loader from '@/components/Loader';
 import {
   type Application,
+  ApplicationStatus,
+  InterviewStatus,
   useGetJobApplicationsQuery,
 } from '@/graphql/client/gql/schema';
 import useMe from '@/hooks/useMe';
@@ -34,8 +36,8 @@ import { useResponseErrorHandler } from '@/hooks/useResponseErrorHandler';
 import s from './applicationdetail.module.scss';
 
 interface Props {
-  applicationId: string;
-  application: Application;
+  // applicationId: string;
+  application: Omit<Application, 'applicant'>;
 }
 
 export const useFindApplication = (applicationId: string) => {
@@ -68,7 +70,7 @@ export const useFindApplication = (applicationId: string) => {
   };
 };
 
-const ApplicationDetail = ({ applicationId, application }: Props) => {
+const ApplicationDetail = ({ application }: Props) => {
   console.log('application : ', application);
 
   /* const {
@@ -217,6 +219,22 @@ const ApplicationDetail = ({ applicationId, application }: Props) => {
             <Typography variant="body1">
               Great You have an interview scheduled. Please check your email for
               more.
+            </Typography>
+          </Alert>
+        )}
+
+        {application?.status === ApplicationStatus.Offer && (
+          <Alert severity="success" className={s.alert}>
+            <Typography variant="body1">
+              You have an offer from the employer. Please check your email for
+            </Typography>
+          </Alert>
+        )}
+
+        {application?.status === ApplicationStatus.Accepted && (
+          <Alert severity="success" className={s.alert}>
+            <Typography variant="body1">
+              You have accepted the offer from the employer
             </Typography>
           </Alert>
         )}

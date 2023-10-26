@@ -10,6 +10,12 @@ mutation RespondToInterview($input: RespondInterviewInput!) {
     }
 }
 
+mutation RespondToOffer($input: RespondOfferInput!) {
+    respondToOffer(input: $input) {
+        ...OfferFragment
+    }
+}
+
 mutation CreateJobApplication($input: CreateApplicationInput!) {
     createApplication(input: $input) {
         errors {

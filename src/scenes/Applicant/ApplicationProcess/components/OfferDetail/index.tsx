@@ -6,8 +6,6 @@ import {
   Cancel,
   MonetizationOn,
   Place,
-  RadioButtonChecked,
-  RadioButtonUnchecked,
   Send,
 } from '@mui/icons-material';
 import {
@@ -39,7 +37,9 @@ import {
   GetCompanyJobApplicationsDocument,
   GetJobApplicationsDocument,
   InterviewStatus,
+  OfferStatus,
   useRespondToInterviewMutation,
+  useRespondToOfferMutation,
 } from '@/graphql/client/gql/schema';
 import useMe from '@/hooks/useMe';
 import { useFindApplication } from '@/scenes/Applicant/ApplicationProcess/components/ApplicationDetail';
@@ -59,8 +59,7 @@ const ApplicationDetail = ({ applicationId }: Props) => {
     error: false,
     errorMsg: '',
   });
-  const [respondToInterview, respondToInterviewResponse] =
-    useRespondToInterviewMutation();
+  const [respondToOffer, respondToOfferResponse] = useRespondToOfferMutation();
 
   const {
     data: application,
@@ -86,16 +85,14 @@ const ApplicationDetail = ({ applicationId }: Props) => {
     );
   }
 
-  if (!application?.interview) {
+  if (!application?.offer) {
     return (
       <div className={s.container}>
         <Alert severity="warning">
           <AlertTitle>
-            <Typography variant="h6">No Interview</Typography>
+            <Typography variant="h6">No Offer Yet</Typography>
           </AlertTitle>
-          <Typography variant="body1">
-            You have not been invited to an interview yet
-          </Typography>
+          <Typography variant="body1">You do not have an offer yet.</Typography>
         </Alert>
       </div>
     );
@@ -176,115 +173,51 @@ const ApplicationDetail = ({ applicationId }: Props) => {
         </ListItemButton>
       </ListItem>
 
-      {application?.interview?.status ===
-        InterviewStatus.ApplicantResponded && (
-        <Alert severity="info">
+      {application?.offer?.status === OfferStatus.Pending && (
+        <Alert severity="success">
           <AlertTitle>
-            <Typography variant="h6">Interview Video Submitted</Typography>
+            <Typography variant="h6">New Offer</Typography>
           </AlertTitle>
           <Typography variant="body1">
-            Your interview video has been submitted, you will be notified when
-            the employer responds
+            You have an offer from the employer
           </Typography>
         </Alert>
       )}
 
-      {application?.interview?.status === InterviewStatus.Pending && (
-        <Alert severity="info" variant="filled">
-          Upload your interview video answering the following job-post interview
-          questions to youtube and paste the link here
+      {application?.offer?.status === OfferStatus.Accepted && (
+        <Alert severity="success">
+          <AlertTitle>
+            <Typography variant="h6">Offer Accepted</Typography>
+          </AlertTitle>
+          <Typography variant="body1">You have joined the company.</Typography>
         </Alert>
       )}
 
       <Stack gap=".7rem" flex="1" style={{ width: '100%' }}>
-        <FormLabel>Jop Post Interview questions</FormLabel>
-        <Paper elevation={2}>
-          <SimpleBar
-            style={{ maxHeight: '10rem' }}
-            forceVisible
-            autoHide={false}
-          >
-            <div className={s.question_list}>
-              {application?.jobPost?.interviewQuestions?.map((q, i) => (
-                <Stack direction="row" key={q} alignItems="center" gap=".5rem">
-                  <Alert severity="info" icon={<RadioButtonChecked />}>
-                    <Typography>{q}</Typography>
-                  </Alert>
-                </Stack>
-              ))}
-            </div>
-          </SimpleBar>
-        </Paper>
+        <FormLabel>Offer Detail</FormLabel>
+        <TextField
+          fullWidth
+          required
+          multiline
+          rows={5}
+          disabled={true}
+          InputProps={{
+            readOnly: true,
+          }}
+          value={application?.offer?.description ?? '-'}
+        />
       </Stack>
 
-      <div className={s.intro_vid}>
-        <Stack spacing={0.5} flex="1" style={{ width: '100%' }}>
-          <FormLabel>Link to your YouTube video</FormLabel>
-          <TextField
-            fullWidth
-            required
-            disabled={
-              application?.interview?.status ===
-              InterviewStatus.ApplicantResponded
-            }
-            InputProps={{
-              readOnly:
-                application?.interview?.status ===
-                InterviewStatus.ApplicantResponded,
-            }}
-            // make this read only
-
-            // placeholder="Ex. https://www.youtube.com/watch?v=1234567890"
-            onChange={(e) => {
-              setInterviewVideoLink((prev) => ({
-                error: false,
-                errorMsg: '',
-                url: e.target.value,
-              }));
-            }}
-            value={interviewVideoLink.url}
-            error={interviewVideoLink.error}
-            helperText={interviewVideoLink.errorMsg}
-          />
-          <FormControlLabel
-            control={<Checkbox />}
-            label="Preivew"
-            disabled={Boolean(
-              !interviewVideoLink && !application?.interview?.answerVideo,
-            )}
-            onChange={(e, checked) => {
-              setShowPreview(checked);
-            }}
-          />
-        </Stack>
-
-        {showPreview && interviewVideoLink?.url?.length > 0 && (
-          <YouTube
-            videoId={getYoutubeIdFromURL(interviewVideoLink.url)}
-            style={{ width: '100%' }}
-            className={s.vid}
-            iframeClassName="interview_vid_iframe"
-            // onReady={onReady}
-            // onError={onError}
-          />
-        )}
-      </div>
-
-      {application?.interview?.status === 'PENDING' && (
+      {application?.offer?.status === 'PENDING' && (
         <div className={s.action}>
           <MoButton
             variant="outlined"
             color="error"
             size="large"
             startIcon={<Cancel />}
-            loading={respondToInterviewResponse.loading}
+            loading={respondToOfferResponse.loading}
             onClick={() => {
-              if (!interviewVideoLink) {
-                toast.error('Please paste your interview video link');
-                return;
-              }
-
-              respondToInterview({
+              respondToOffer({
                 refetchQueries: [
                   GetJobApplicationsDocument,
                   GetCompanyJobApplicationsDocument,
@@ -292,14 +225,15 @@ const ApplicationDetail = ({ applicationId }: Props) => {
                 awaitRefetchQueries: true,
                 variables: {
                   input: {
-                    interviewId: application?.interview?.id ?? '',
+                    applicationId: application?.id ?? '',
+                    offerId: application?.offer?.id ?? '',
                     applicantId: me?.applicant?.id ?? '',
                     refuse: true,
                   },
                 },
               })
                 .then((res) => {
-                  if (res.data?.respondInterview?.id) {
+                  if (res.data?.respondToOffer?.id) {
                     toast.success('Interview video submitted successfully');
                   }
                 })
@@ -316,19 +250,9 @@ const ApplicationDetail = ({ applicationId }: Props) => {
             size="large"
             startIcon={<Send />}
             disabled={!interviewVideoLink}
-            loading={respondToInterviewResponse.loading}
+            loading={respondToOfferResponse.loading}
             onClick={() => {
-              if (!interviewVideoLink.url) {
-                toast.error('Please paste your interview video link');
-                return;
-              }
-
-              if (!getYoutubeIdFromURL(interviewVideoLink.url)) {
-                toast.error('The supplied URL is not a valid youtube URL');
-                return;
-              }
-
-              respondToInterview({
+              respondToOffer({
                 refetchQueries: [
                   GetJobApplicationsDocument,
                   GetCompanyJobApplicationsDocument,
@@ -336,15 +260,15 @@ const ApplicationDetail = ({ applicationId }: Props) => {
                 awaitRefetchQueries: true,
                 variables: {
                   input: {
-                    interviewId: application?.interview?.id ?? '',
-                    interviewVideoUrl: interviewVideoLink?.url,
+                    applicationId: application?.id ?? '',
+                    offerId: application?.offer?.id ?? '',
                     applicantId: me?.applicant?.id ?? '',
                   },
                 },
               })
                 .then((res) => {
-                  if (res.data?.respondInterview?.id) {
-                    toast.success('Interview video submitted successfully');
+                  if (res.data?.respondToOffer?.id) {
+                    toast.success('Offer accepted successfully');
                   }
                 })
                 .catch((error) => {
@@ -352,28 +276,9 @@ const ApplicationDetail = ({ applicationId }: Props) => {
                 });
             }}
           >
-            Submit Interview Video
+            Accept The Offer
           </MoButton>
         </div>
-      )}
-
-      {application?.interview?.status ===
-        InterviewStatus.ApplicantResponded && (
-        <Alert severity="warning" className={s.alert}>
-          <Typography variant="body1">
-            Please wait for the recruiter to respond for your interview
-            response.
-          </Typography>
-        </Alert>
-      )}
-
-      {application?.interview?.status === InterviewStatus.Accepted && (
-        <Alert severity="success" className={s.alert}>
-          <Typography variant="body1">
-            Congratulations! Your interview has been accepted. Please proceed to
-            the next step.
-          </Typography>
-        </Alert>
       )}
     </div>
   );

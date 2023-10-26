@@ -7,7 +7,6 @@ import {
   LocalOffer,
   PendingActions,
   Settings,
-  WorkOutlineTwoTone,
   WorkTwoTone,
 } from '@mui/icons-material';
 import { LoadingButton } from '@mui/lab';
@@ -22,16 +21,10 @@ import {
 } from '@mui/material';
 import clsx from 'clsx';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useErrorHandler } from 'next/dist/client/components/react-dev-overlay/internal/helpers/use-error-handler';
 import Link from 'next/link';
-import { BsFillJournalBookmarkFill } from 'react-icons/bs';
 
 import { MotionParent } from '@/components/MotionItems';
-import {
-  useGetCompaniesQuery,
-  useGetCompanyJobPostsQuery,
-  useGetJobPostsQuery,
-} from '@/graphql/client/gql/schema';
+import { useGetCompanyJobPostsQuery } from '@/graphql/client/gql/schema';
 import useMe from '@/hooks/useMe';
 import { useResponseErrorHandler } from '@/hooks/useResponseErrorHandler';
 import { useAppStore } from '@/lib/store';

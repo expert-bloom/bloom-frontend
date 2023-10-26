@@ -62,7 +62,7 @@ const SendInterviewPopup = () => {
 
   useEffect(() => {
     if (!offerMessage && !isLoading) {
-      setOfferMessage(`Hello ${profile?.account.fullName ?? '-'},
+      setOfferMessage(`Hello ${profile?.account.firstName ?? '-'},
 
 Congratulations on your offer from Jo Ads!
 We are delighted to offer you the position of Front-end Developer role with an anticipated start date of Aug 12, 2023. As discussed during your interview, please review your detailed offer letter. 

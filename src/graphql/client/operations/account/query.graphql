@@ -48,7 +48,7 @@ fragment AccountPayloadFragment on AccountPayload{
 }
 
 
-query FindAccount($input: AccountInput!) {
+query FindAccount($input: FindAccountFilterInput!) {
     findAccount(input: $input){
         errors {
             message
