@@ -45,9 +45,9 @@ const LoginScene = () => {
   const { withSocial } = useSocialAuth();
 
   const [btnAttribute, setBtnAttribute] = useState({
-    disabled: true,
+    disabled: false,
     loading: false,
-    text: 'Create Account',
+    label: 'Login',
   });
 
   const [activeStep, setActiveStep] = useState(0);
@@ -123,12 +123,19 @@ const LoginScene = () => {
             setErrorMsg(undefined);
             switch (currentStep.name) {
               case 'Sign In':
-                console.log('onSubmit values :', values);
+                if (btnAttribute.loading) {
+                  return;
+                }
+
+                setBtnAttribute((prev) => ({
+                  ...prev,
+                  loading: true,
+                  label: 'Signing In...',
+                }));
+                setErrorMsg(undefined);
                 lToast = toast.loading('Signing in...');
 
-                // return;
-
-                signIn(AuthTypeKeys.LOGIN, {
+                await signIn(AuthTypeKeys.LOGIN, {
                   email: values.email,
                   password: values.password,
                   redirect: false,
@@ -144,6 +151,11 @@ const LoginScene = () => {
                       toast.dismiss(lToast);
                       toast.error(res.error ?? 'something went wrong');
                       setErrorMsg(res.error ?? 'something went wrong');
+                      setBtnAttribute((prev) => ({
+                        ...prev,
+                        loading: false,
+                        label: 'Login',
+                      }));
                       return;
                     }
 
@@ -156,6 +168,11 @@ const LoginScene = () => {
                   .catch((err) => {
                     console.log('error : ', err);
 
+                    setBtnAttribute((prev) => ({
+                      ...prev,
+                      loading: false,
+                      label: 'Login',
+                    }));
                     setErrorMsg(err.message ?? 'something went wrong');
                     toast.error(err.message ?? 'something went wrong');
                   });
@@ -167,7 +184,7 @@ const LoginScene = () => {
           }}
         >
           {(props) => {
-            const btnTxt = getBtnTxt(props);
+            // const btnTxt = getBtnTxt(props);
 
             return (
               <Form>
@@ -194,13 +211,14 @@ const LoginScene = () => {
                       },
                       whileTap: {},
                     }}
-                    disabled={btnTxt.disabled}
-                    loading={btnAttribute.loading}
+                    disabled={btnAttribute.disabled || props.isSubmitting}
+                    loading={btnAttribute.loading || props.isSubmitting}
                     type="submit"
-                    endIcon={<Login />}
+                    endIcon={!props.isSubmitting && <Login />}
+                    loadingPosition="start"
                     fullWidth
                   >
-                    {btnTxt.label}
+                    {btnAttribute.label}
                   </MoButton>
 
                   <div className={s.or}>

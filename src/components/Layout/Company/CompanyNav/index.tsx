@@ -4,16 +4,11 @@ import {
   CreateNewFolderRounded,
   Dashboard,
   Handshake,
-  Logout,
   WorkHistory,
 } from '@mui/icons-material';
 import {
   Avatar,
   Button,
-  Divider,
-  ListItemIcon,
-  Menu,
-  MenuItem,
   Slide,
   Stack,
   Tooltip,
@@ -25,9 +20,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { signOut, useSession } from 'next-auth/react';
 
-import AccountAlert from '@/components/AccountAlert';
 import { usePopover } from '@/hooks/use-popover';
 import Logo from '@/public/logo.png';
 
@@ -68,8 +61,7 @@ const navVariants = {
 
 const navTransition = {
   duration: 1,
-  ease: [0.6, 0.01, 0, 0.9],
-  // delay: 1,
+  ease: [0.6, 0.01, 0, 0.9], // delay: 1,
 };
 
 const links = [
@@ -95,21 +87,9 @@ const links = [
   },
 ];
 
-export default function CompanyNav({ pageProps }: any) {
-  // console.log('data: ', session, isTalent);
+export default function CompanyNav() {
   const router = useRouter();
   const accountPopover = usePopover();
-
-  const { data } = useSession();
-
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   return (
     <HideOnScroll>

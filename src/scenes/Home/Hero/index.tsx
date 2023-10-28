@@ -1,13 +1,14 @@
 import React from 'react';
-import s from './hero.module.scss';
+
+import { ManageSearch } from '@mui/icons-material';
 import { Button, Stack, TextField, Typography } from '@mui/material';
 import { motion, MotionConfig, type Variants } from 'framer-motion';
+import Image from 'next/image';
 
+import s from './hero.module.scss';
 import Img1 from './img.png';
 import Img2 from './img_1.png';
 import Img3 from './img_2.png';
-import Image from 'next/image';
-import { ManageSearch } from '@mui/icons-material';
 
 const imgs = [Img1, Img2, Img3];
 

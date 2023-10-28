@@ -1,8 +1,10 @@
 import React from 'react';
-import s from './postit.module.scss';
+
 import { Button, Typography } from '@mui/material';
-import Posts from './img.png';
 import Image from 'next/image';
+
+import Posts from './img.png';
+import s from './postit.module.scss';
 
 const PostIt = () => {
   return (

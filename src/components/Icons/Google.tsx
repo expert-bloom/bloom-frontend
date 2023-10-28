@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 const GoogleIcon = ({ width, height }: { width?: string; height?: string }) => (
   <svg
     data-v-48748210=""

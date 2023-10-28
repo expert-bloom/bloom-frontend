@@ -26,7 +26,6 @@ import { toast } from 'react-hot-toast';
 import {
   GetSavedApplicantsDocument,
   MeDocument,
-  SaveApplicantDocument,
   useGetApplicantsQuery,
   useSaveApplicantMutation,
 } from '@/graphql/client/gql/schema';
@@ -40,9 +39,9 @@ const MarketPlace = () => {
   const [selectedJobPost, setSelectedJobPost] = useState<string>('');
   const { setProfileDetail } = useAppStore();
 
+  // todo : convert this to getBestMatchApplicantsQuery
   const applicantsPayload = useGetApplicantsQuery({
-    // fetchPolicy: 'network-only',
-    // skip: !selectedJobPost || !me?.company?.id,
+    skip: !selectedJobPost || !me?.company?.id,
     variables: {
       input: {
         filter: {
@@ -82,11 +81,8 @@ const MarketPlace = () => {
   return (
     <div className={s.container}>
       <List className={s.list}>
-        {applicantsPayload.data?.getApplicants?.edges
-          // .concat(applicantsPayload.data?.getApplicants?.edges)
-          // .concat(applicantsPayload.data?.getApplicants?.edges)
-          // .concat(applicantsPayload.data?.getApplicants?.edges)
-          .map(({ node: applicant }, idx) => {
+        {applicantsPayload.data?.getApplicants?.edges.map(
+          ({ node: applicant }, idx) => {
             const saved = me?.company?.savedApplicants.find(
               (savedApplicant) => savedApplicant.id === applicant.id,
             );
@@ -182,15 +178,19 @@ const MarketPlace = () => {
                 </ListItemButton>
               </ListItem>
             );
-          })}
+          },
+        )}
       </List>
 
-      <Pagination
-        className={s.pagination}
-        count={10}
-        variant="outlined"
-        shape="rounded"
-      />
+      {!applicantsPayload.loading &&
+        applicantsPayload.data?.getApplicants?.edges.length && (
+          <Pagination
+            className={s.pagination}
+            count={applicantsPayload.data?.getApplicants?.edges.length}
+            variant="outlined"
+            shape="rounded"
+          />
+        )}
     </div>
   );
 };

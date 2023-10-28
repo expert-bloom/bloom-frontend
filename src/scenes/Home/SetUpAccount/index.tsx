@@ -1,7 +1,10 @@
 import React from 'react';
-import s from './setupaccount.module.scss';
+
 import { Button, TextField, Typography } from '@mui/material';
+
 import { MoButton } from '@/components/MoButton';
+
+import s from './setupaccount.module.scss';
 
 const SetUpAccount = () => {
   return (

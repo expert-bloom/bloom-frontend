@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import React, { useEffect, useState } from 'react';
 
 import { ArrowCircleRightTwoTone } from '@mui/icons-material';
@@ -7,8 +6,7 @@ import { type Country } from 'countries-list';
 import { Form, Formik, type FormikProps } from 'formik';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { signIn, useSession } from 'next-auth/react';
-import { type SignInOptions } from 'next-auth/src/react/types';
+import { signIn, type SignInOptions, useSession } from 'next-auth/react';
 import { toast } from 'react-hot-toast';
 
 import { MoButton } from '@/components/MoButton';

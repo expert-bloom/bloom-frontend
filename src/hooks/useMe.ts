@@ -10,7 +10,7 @@ function useMe() {
 
   const mePayload = useMeQuery({
     skip: !session?.user?.id,
-    nextFetchPolicy: 'cache-and-network',
+    // nextFetchPolicy: 'cache-and-network',
     variables: {
       input: {
         accountId: session?.user?.id as string,

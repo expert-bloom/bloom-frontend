@@ -1,12 +1,9 @@
-/* eslint-disable no-extra-boolean-cast,@typescript-eslint/restrict-template-expressions */
 import { type NextApiRequest, type NextApiResponse } from 'next';
-import NextAuth, { type Account, type NextAuthOptions } from 'next-auth';
+import type { Account, Awaitable, NextAuthOptions, User } from 'next-auth';
+import NextAuth from 'next-auth';
 import { type AdapterUser } from 'next-auth/adapters';
-import EmailProvider from 'next-auth/providers/email';
 import GithubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google';
-import { type Awaitable, type User } from 'next-auth/src';
-import nodemailer, { createTransport } from 'nodemailer';
 
 import {
   type AccountType,
@@ -19,7 +16,6 @@ import {
 } from '@/graphql/client/gql/schema';
 import apollo from '@/lib/apollo';
 import { type AuthType } from '@/scenes/Auth/useSocialAuth';
-import { html, text } from '@/utils/email';
 
 import LoginProvider from './loginProvider';
 import SignupProvider from './signupProvider';
@@ -317,7 +313,7 @@ const getOptions: (req: NextApiRequest) => NextAuthOptions = (req) => ({
       },
     }),
 
-    EmailProvider({
+    /* EmailProvider({
       server: process.env.EMAIL_SERVER,
       from: process.env.EMAIL_FROM,
       async sendVerificationRequest(params) {
@@ -352,7 +348,7 @@ const getOptions: (req: NextApiRequest) => NextAuthOptions = (req) => ({
           throw new Error(`Email(s) (${failed.join(', ')}) could not be sent`);
         }
       },
-    }),
+    }), */
   ],
 });
 

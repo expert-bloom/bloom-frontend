@@ -1,8 +1,9 @@
 import React from 'react';
-import s from './trustedby.module.scss';
-import { Typography } from '@mui/material';
-import HorizontalMarquee from '@/components/HorizontalMarquee';
 
+import { Typography } from '@mui/material';
+import Image from 'next/image';
+
+import HorizontalMarquee from '@/components/HorizontalMarquee';
 import Logo1 from '@/public/assets/logo-ipsum/Vector-1.png';
 import Logo2 from '@/public/assets/logo-ipsum/Vector-2.png';
 import Logo3 from '@/public/assets/logo-ipsum/Vector-3.png';
@@ -10,7 +11,8 @@ import Logo4 from '@/public/assets/logo-ipsum/Vector-4.png';
 import Logo5 from '@/public/assets/logo-ipsum/Vector-5.png';
 import Logo6 from '@/public/assets/logo-ipsum/Vector-6.png';
 import Logo7 from '@/public/assets/logo-ipsum/Vector-7.png';
-import Image from 'next/image';
+
+import s from './trustedby.module.scss';
 
 const logos = [Logo1, Logo2, Logo3, Logo4, Logo5, Logo6, Logo7];
 

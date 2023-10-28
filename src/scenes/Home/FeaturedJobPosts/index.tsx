@@ -1,11 +1,11 @@
 import React from 'react';
-import s from './featuredjobposts.module.scss';
 
+import { Scrollbar } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-// Import Swiper styles
+import s from './featuredjobposts.module.scss';
+
 import 'swiper/css';
-import { Scrollbar } from 'swiper';
 
 const FeaturedJobPosts = () => {
   const data = [1, 2, 3, 4, 5, 6, 7, 8];

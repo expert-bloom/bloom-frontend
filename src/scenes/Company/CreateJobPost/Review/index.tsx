@@ -97,8 +97,8 @@ const Review = () => {
               </IconButton>
             </header>
             <Typography variant="body1" className={s.value}>
-              {values.skill.length > 0 ? (
-                values.skill.map((s) => s.label).join(', ')
+              {values.skills.length > 0 ? (
+                values.skills.map((s) => s.label).join(', ')
               ) : (
                 <Typography variant="body1" className={s.value}>
                   Not selected (required)

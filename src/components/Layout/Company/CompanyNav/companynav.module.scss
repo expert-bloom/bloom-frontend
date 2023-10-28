@@ -44,7 +44,6 @@
         }
       }
 
-
       p {
         font-weight: 900;
         line-height: 100%;
@@ -63,7 +62,7 @@
         &.active {
 
           button {
-            border-bottom: thin solid rebeccapurple;
+            border-bottom: 5px solid s.$clrs-accent;
           }
 
           color: s.$clrs-accent;

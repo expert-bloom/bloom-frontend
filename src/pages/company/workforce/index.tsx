@@ -1,13 +1,9 @@
 import React from 'react';
 
+import WorkforceScene from '@/scenes/Company/Workforce';
+
 const WorkForce = () => {
-  return (
-    <div
-      style={{
-        minHeight: '100vh',
-      }}
-    ></div>
-  );
+  return <WorkforceScene />;
 };
 
 export default WorkForce;

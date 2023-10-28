@@ -1,3 +1,6 @@
+import React, { useRef } from 'react';
+
+import { wrap } from '@motionone/utils';
 import {
   motion,
   useAnimationFrame,
@@ -7,8 +10,7 @@ import {
   useTransform,
   useVelocity,
 } from 'framer-motion';
-import { wrap } from '@motionone/utils';
-import React, { useRef } from 'react';
+
 import s from './marquee.module.scss';
 
 interface PropsType {

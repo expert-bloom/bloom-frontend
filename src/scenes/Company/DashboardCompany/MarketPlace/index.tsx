@@ -52,7 +52,7 @@ const MarketPlace = () => {
         </div>
       )}
 
-      {!(posts?.getJobPosts && posts?.getJobPosts?.length > 0) && (
+      {!(!loading && posts?.getJobPosts && posts?.getJobPosts?.length > 0) && (
         <CardContent>
           <Alert severity="info" className={s.alert}>
             <AlertTitle>

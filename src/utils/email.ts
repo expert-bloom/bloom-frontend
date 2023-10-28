@@ -1,6 +1,4 @@
-import { type Theme } from 'next-auth/src/core/types';
-
-export function html(params: { url: string; host: string; theme: Theme }) {
+export function html(params: { url: string; host: string; theme: any }) {
   const { url, host, theme } = params;
 
   const escapedHost = host.replace(/\./g, '&#8203;.');

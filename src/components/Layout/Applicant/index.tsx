@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import { AnimatePresence, motion } from 'framer-motion';
+import { useMeasure } from 'react-use';
 
 import AccountAlert from '@/components/AccountAlert';
 import Footer from '@/components/commons/Footer';
@@ -12,26 +13,17 @@ interface Props {
   children: React.ReactNode;
 }
 
-export const useTopPadding = () => {
-  const [height, setHeight] = React.useState(0);
-
-  useEffect(() => {
-    setHeight(document.getElementById('top-nav')?.offsetHeight ?? 0);
-  }, []);
-
-  return { top: height };
-};
-
 const Applicant: React.FC<Props> = ({ children }) => {
-  // define a ref for the top nav bar (mutable)
-
-  const { top } = useTopPadding();
-
-  console.log('top : ', top);
+  const [ref, { height }] = useMeasure<any>();
 
   return (
     <>
-      <motion.div className={s.nav_bar} initial="initial" animate="animate">
+      <motion.div
+        className={s.nav_bar}
+        initial="initial"
+        animate="animate"
+        ref={ref}
+      >
         <AnimatePresence>
           <ApplicantNav key="top-nav-bar" />
         </AnimatePresence>
@@ -41,7 +33,7 @@ const Applicant: React.FC<Props> = ({ children }) => {
         <div
           className={s.wrapper}
           style={{
-            paddingTop: top,
+            paddingTop: height,
           }}
         >
           <AccountAlert />

@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import s from './frequentaskedquestions.module.scss';
-import { IconButton, Typography } from '@mui/material';
-import { data } from './data';
+
 import { ArrowCircleDown } from '@mui/icons-material';
+import { IconButton, Typography } from '@mui/material';
 import clsx from 'clsx';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 
+import { data } from './data';
+import s from './frequentaskedquestions.module.scss';
+
 const FrequentAskedQuestions = () => {
   const [selectedQuestion, setSelectedQuestion] = useState<number>();
-
-  useEffect(() => {}, []);
 
   return (
     <div className={s.container}>

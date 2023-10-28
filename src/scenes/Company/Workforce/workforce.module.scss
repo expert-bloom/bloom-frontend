@@ -1,0 +1,58 @@
+@use '@/styles/index.scss' as s;
+
+.container {
+  width: 100%;
+  min-height: 100vh;
+  margin-bottom: 5vmax;
+
+  & :local {
+
+    .wrapper {
+
+      display: flex;
+      flex-flow: column;
+      gap: 3rem;
+
+      & > hr {
+        //margin-top: 3rem;
+      }
+
+      .applicants {
+        padding: 4rem;
+        //margin-top: 3rem;
+
+        .no_talent {
+          align-items: center;
+          gap: .7rem;
+        }
+      }
+
+      .managers {
+        display: flex;
+        gap: 1.5rem;
+      }
+
+      .owner, .invite {
+        padding: 4rem;
+        max-width: 25rem;
+
+        & > div {
+          align-items: center;
+          gap: 1rem;
+          text-align: center;
+        }
+
+        // select mui avatar
+
+        & :global {
+          .MuiAvatar-root {
+            width: 5rem;
+            height: 5rem;
+          }
+        }
+
+        //margin-top: 3rem;
+      }
+    }
+  }
+}

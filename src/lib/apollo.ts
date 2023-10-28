@@ -32,9 +32,8 @@ import {
   type Operation,
   split,
 } from '@apollo/client';
-import { getOperationAST, print } from 'graphql';
-
 import { YogaLink } from '@graphql-yoga/apollo-link';
+import { getOperationAST, print } from 'graphql';
 
 type SSELinkOptions = EventSourceInit & { uri: string };
 

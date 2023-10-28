@@ -240,8 +240,8 @@ const CompanyProfile = () => {
         // filter out the __typename from the workExperience
         workExperience: applicant.workExperience.map((item) => {
           // eslint-disable-next-line @typescript-eslint/naming-convention
-          const { __typename, ...rest } = item;
-          return rest;
+          delete (item as any)?.__typename;
+          return item;
         }),
       },
     };
