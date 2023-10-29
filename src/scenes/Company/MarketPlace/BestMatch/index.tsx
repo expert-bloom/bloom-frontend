@@ -9,6 +9,8 @@ import {
 } from '@mui/icons-material';
 import { LoadingButton } from '@mui/lab';
 import {
+  Alert,
+  AlertTitle,
   Avatar,
   Button,
   Chip,
@@ -40,7 +42,7 @@ const MarketPlace = () => {
   const { setProfileDetail } = useAppStore();
 
   // todo : convert this to getBestMatchApplicantsQuery
-  const applicantsPayload = useGetApplicantsQuery({
+  const bestMatchQuery = useGetApplicantsQuery({
     skip: !selectedJobPost || !me?.company?.id,
     variables: {
       input: {
@@ -69,19 +71,19 @@ const MarketPlace = () => {
   // console.log('applicantsPayload : ', applicantsPayload);
 
   useEffect(() => {
-    if (applicantsPayload.data?.getApplicants?.edges && !selectedJobPost) {
-      setSelectedJobPost(applicantsPayload.data.getApplicants.edges[0].node.id);
+    if (bestMatchQuery.data?.getApplicants?.edges && !selectedJobPost) {
+      setSelectedJobPost(bestMatchQuery.data.getApplicants.edges[0].node.id);
     }
 
-    if (applicantsPayload.error) {
-      toast.error(applicantsPayload.error.message);
+    if (bestMatchQuery.error) {
+      toast.error(bestMatchQuery.error.message);
     }
-  }, [applicantsPayload]);
+  }, [bestMatchQuery]);
 
   return (
     <div className={s.container}>
       <List className={s.list}>
-        {applicantsPayload.data?.getApplicants?.edges.map(
+        {bestMatchQuery.data?.getApplicants?.edges.map(
           ({ node: applicant }, idx) => {
             const saved = me?.company?.savedApplicants.find(
               (savedApplicant) => savedApplicant.id === applicant.id,
@@ -182,11 +184,26 @@ const MarketPlace = () => {
         )}
       </List>
 
-      {!applicantsPayload.loading &&
-        applicantsPayload.data?.getApplicants?.edges.length && (
+      <p>{bestMatchQuery.data?.getApplicants?.edges.length}</p>
+
+      {!bestMatchQuery.data?.getApplicants?.edges && (
+        <div className={s.not_found}>
+          <Alert severity="info">
+            <AlertTitle>
+              <Typography variant="h6">No Best-Matches</Typography>
+            </AlertTitle>
+            <Typography>
+              No best match applicant found for this job post.
+            </Typography>
+          </Alert>
+        </div>
+      )}
+
+      {!bestMatchQuery.loading &&
+        bestMatchQuery.data?.getApplicants?.edges.length && (
           <Pagination
             className={s.pagination}
-            count={applicantsPayload.data?.getApplicants?.edges.length}
+            count={bestMatchQuery.data?.getApplicants?.edges.length}
             variant="outlined"
             shape="rounded"
           />

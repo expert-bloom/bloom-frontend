@@ -5,11 +5,14 @@ import { LoadingButton } from '@mui/lab';
 import {
   Alert,
   AlertTitle,
+  Autocomplete,
+  Box,
   Chip,
   ListItemText,
   MenuItem,
   Select,
   Stack,
+  TextField,
   Typography,
 } from '@mui/material';
 import moment from 'moment';
@@ -38,6 +41,7 @@ const MarketPlaceToolBar = () => {
   // const [selectedJobPostId, setSelectedJobPostId] = React.useState<string>('');
 
   const { selectedJobPostId, setSelectedJobPostId } = useAppStore();
+  const [selectedJobPost, setSelectedJobPost] = React.useState<any>();
 
   const jobPostPayload = useGetCompanyJobPostsQuery({
     skip: !me?.company?.id,
@@ -107,6 +111,41 @@ const MarketPlaceToolBar = () => {
       <header className={s.mp_header}>
         <Stack gap="1rem" flex="1" justifyContent="space-between">
           <Typography variant="h5">Select Job Post</Typography>
+
+          <Autocomplete
+            fullWidth
+            disablePortal
+            className={s.post_list_autocomplete}
+            options={
+              jobPostPayload.data?.getCompanyJobPosts?.jobPosts?.map((jp) => ({
+                label: jp.title,
+                value: jp.id,
+              })) ?? []
+            }
+            value={selectedJobPost}
+            onChange={(e, value) => {
+              setSelectedJobPostId(value?.value ?? '');
+              setSelectedJobPost(value);
+            }}
+            renderInput={(params) => (
+              <Stack direction="row" alignItems="center" gap="1rem">
+                <WorkTwoTone color="primary" />
+
+                <TextField {...params} label="Movie" />
+              </Stack>
+            )}
+            renderOption={(props, option) => (
+              <Box component="li" {...(props as any)}>
+                <WorkTwoTone color="disabled" />
+                <ListItemText className={s.selected} primary={option.label} />
+                <Chip
+                  variant="filled"
+                  size="small"
+                  label={moment().toDate().toDateString()}
+                />
+              </Box>
+            )}
+          />
 
           <Stack className={s.mp_header_flex}>
             <Select

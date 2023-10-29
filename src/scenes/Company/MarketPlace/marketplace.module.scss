@@ -34,6 +34,22 @@
           gap: 1.5rem;
         }
 
+        .post_list_autocomplete{
+          display: none;
+        }
+
+        & :global {
+          .MuiAutocomplete-option{
+            padding: .7rem;
+            flex-flow: row;
+            gap: .5rem;
+
+            .selected{
+              display: none;
+            }
+          }
+        }
+
         .select {
           max-width: 45rem;
           width: 100%;
