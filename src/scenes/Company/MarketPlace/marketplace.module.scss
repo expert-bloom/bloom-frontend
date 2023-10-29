@@ -32,6 +32,12 @@
           flex-flow: row;
           flex-wrap: wrap;
           gap: 1.5rem;
+
+          .toolbar_loading{
+            max-width: 3rem;
+            display: grid;
+            place-items: center;
+          }
         }
 
         .post_list_autocomplete{

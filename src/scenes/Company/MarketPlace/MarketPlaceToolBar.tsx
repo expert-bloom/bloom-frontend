@@ -3,16 +3,11 @@ import React, { useEffect } from 'react';
 import { EditRounded, WorkTwoTone } from '@mui/icons-material';
 import { LoadingButton } from '@mui/lab';
 import {
-  Alert,
-  AlertTitle,
-  Autocomplete,
-  Box,
   Chip,
   ListItemText,
   MenuItem,
   Select,
   Stack,
-  TextField,
   Typography,
 } from '@mui/material';
 import moment from 'moment';
@@ -59,6 +54,18 @@ const MarketPlaceToolBar = () => {
 
   useEffect(() => {
     if (
+      !jobPostPayload.loading &&
+      jobPostPayload.data?.getCompanyJobPosts?.jobPosts &&
+      !selectedJobPost
+    ) {
+      setSelectedJobPost(
+        jobPostPayload.data.getCompanyJobPosts?.jobPosts[0].id,
+      );
+    }
+  }, [jobPostPayload]);
+
+  useEffect(() => {
+    if (
       jobPostPayload.loading ||
       meLoading ||
       !jobPostPayload.data?.getCompanyJobPosts
@@ -75,79 +82,19 @@ const MarketPlaceToolBar = () => {
     }
   }, [jobPostPayload]);
 
-  if (jobPostPayload.loading || meLoading) {
-    return (
-      <div className={s.container}>
-        <div className={s.wrapper}>
-          <div className={s.loading}>
-            <Loader />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (
-    !jobPostPayload.loading &&
-    !jobPostPayload.data?.getCompanyJobPosts.jobPosts
-  ) {
-    return (
-      <div className={s.container}>
-        <div className={s.wrapper}>
-          <div className={s.loading}>
-            <Alert severity="error" className={s.alert}>
-              <AlertTitle>
-                <Typography variant="h5">Unexpected error.</Typography>
-              </AlertTitle>
-            </Alert>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div>
       <header className={s.mp_header}>
         <Stack gap="1rem" flex="1" justifyContent="space-between">
           <Typography variant="h5">Select Job Post</Typography>
 
-          <Autocomplete
-            fullWidth
-            disablePortal
-            className={s.post_list_autocomplete}
-            options={
-              jobPostPayload.data?.getCompanyJobPosts?.jobPosts?.map((jp) => ({
-                label: jp.title,
-                value: jp.id,
-              })) ?? []
-            }
-            value={selectedJobPost}
-            onChange={(e, value) => {
-              setSelectedJobPostId(value?.value ?? '');
-              setSelectedJobPost(value);
-            }}
-            renderInput={(params) => (
-              <Stack direction="row" alignItems="center" gap="1rem">
-                <WorkTwoTone color="primary" />
-
-                <TextField {...params} label="Movie" />
-              </Stack>
-            )}
-            renderOption={(props, option) => (
-              <Box component="li" {...(props as any)}>
-                <WorkTwoTone color="disabled" />
-                <ListItemText className={s.selected} primary={option.label} />
-                <Chip
-                  variant="filled"
-                  size="small"
-                  label={moment().toDate().toDateString()}
-                />
-              </Box>
-            )}
-          />
-
           <Stack className={s.mp_header_flex}>
+            {(jobPostPayload.loading || meLoading) && (
+              <div className={s.toolbar_loading}>
+                <Loader style={{}} />
+              </div>
+            )}
+
             <Select
               className={s.select}
               value={selectedJobPostId}
