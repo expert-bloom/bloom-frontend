@@ -12,6 +12,7 @@ interface Props<
   TData = any,
   QVariables extends OperationVariables = OperationVariables,
 > {
+  // data: ReturnType<typeof useQuery<TData, QVariables>>;
   data: ReturnType<typeof useQuery<TData, QVariables>>;
   children: (data: Props['data']) => React.ReactNode;
   errorMessage?: string;
@@ -27,7 +28,7 @@ const QueryComponent = ({
   error,
   loading,
   loadingComponent,
-}: Props) => {
+}: Props<any>) => {
   if (data.loading || loading) {
     return (
       <div className={s.container}>
