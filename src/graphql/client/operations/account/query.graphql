@@ -60,8 +60,8 @@ query FindAccount($input: FindAccountFilterInput!) {
     }
 }
 
-query Me($input: MeInput!) {
-    me(input: $input){
+query Me {
+    me  {
         ...AccountPayloadFragment
     }
 }

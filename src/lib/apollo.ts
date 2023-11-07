@@ -23,74 +23,38 @@ const apolloClient = new ApolloClient({
 export default apolloClient;
 */
 
-import {
-  ApolloClient,
-  ApolloLink,
-  type FetchResult,
-  InMemoryCache,
-  Observable,
-  type Operation,
-  split,
-} from '@apollo/client';
+import { ApolloClient, InMemoryCache, split } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 import { YogaLink } from '@graphql-yoga/apollo-link';
-import { getOperationAST, print } from 'graphql';
+import { getOperationAST } from 'graphql';
 
-type SSELinkOptions = EventSourceInit & { uri: string };
+import { SSELink } from '@/lib/SSELink';
 
-class SSELink extends ApolloLink {
-  constructor(private readonly options: SSELinkOptions) {
-    super();
-  }
-
-  request(operation: Operation): Observable<FetchResult> {
-    const url = new URL(this.options.uri);
-    url.searchParams.append('query', print(operation.query));
-
-    if (operation.operationName) {
-      url.searchParams.append('operationName', operation.operationName);
-    }
-    if (operation.variables) {
-      url.searchParams.append('variables', JSON.stringify(operation.variables));
-    }
-    if (operation.extensions) {
-      url.searchParams.append(
-        'extensions',
-        JSON.stringify(operation.extensions),
-      );
-    }
-
-    return new Observable((sink) => {
-      const eventsource = new EventSource(url.toString(), this.options);
-      eventsource.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        sink.next(data);
-        if (eventsource.readyState === 2) {
-          sink.complete();
-        }
-      };
-      eventsource.onerror = function (error) {
-        sink.error(error);
-      };
-      return () => {
-        eventsource.close();
-      };
-    });
-  }
-}
-
-const uri = `${
-  process.env.NEXT_PUBLIC_API_BASE_URL ??
-  (function () {
-    throw new Error('API URL is EMPTY !!!');
-  })()
-}/graphql`;
+const uri = `${process.env.NEXT_PUBLIC_API_BASE_URL}/graphql`;
 
 const sseLink = new SSELink({
   uri,
+  withCredentials: true,
+});
+
+const httpLink = new YogaLink({
+  endpoint: uri,
+  credentials: 'include',
+});
+
+const authLink = setContext((_, { headers }) => {
+  // console.log(' headers ------------------------ --- : ', headers);
+
+  return {
+    headers: {
+      ...headers, // authorization: 'Bearer dummy-data',
+      'x-graphql-yoga-csrf': 'test',
+    },
+  };
 });
 
 const link = split(
-  ({ query, operationName }) => {
+  ({ query, operationName, setContext }) => {
     const definition = getOperationAST(query, operationName);
     return (
       definition?.kind === 'OperationDefinition' &&
@@ -98,13 +62,12 @@ const link = split(
     );
   },
   sseLink,
-  new YogaLink({
-    endpoint: uri,
-  }),
+  httpLink,
 );
 
 const client = new ApolloClient({
-  link,
+  link: authLink.concat(link),
+  credentials: 'include',
   cache: new InMemoryCache(),
 });
 

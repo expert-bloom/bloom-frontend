@@ -33,6 +33,10 @@ mutation Login($input: LoginInput!) {
     }
 }
 
+mutation LogOut {
+    logOut
+}
+
 
 mutation SignUp($input: SignUpInput!) {
     signUp(input: $input) {

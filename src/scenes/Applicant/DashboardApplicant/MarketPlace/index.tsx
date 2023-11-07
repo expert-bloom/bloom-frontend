@@ -12,14 +12,9 @@ import {
   CardHeader,
   Chip,
   CircularProgress,
-  Divider,
-  List,
-  ListItemButton,
-  ListItemText,
   Typography,
 } from '@mui/material';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
 
 import { useGetJobPostsQuery } from '@/graphql/client/gql/schema';
 import useMe from '@/hooks/useMe';

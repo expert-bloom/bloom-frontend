@@ -21,10 +21,9 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 
-import AccountAlert from '@/components/AccountAlert';
 import { usePopover } from '@/hooks/use-popover';
+import useMe from '@/hooks/useMe';
 import Logo from '@/public/logo.png';
 
 import { AccountPopover } from './AccountPopover';
@@ -101,9 +100,7 @@ export default function Applicant({ pageProps }: any) {
   const router = useRouter();
   const accountPopover = usePopover();
 
-  const { data: session } = useSession();
-
-  console.log('session', session);
+  const { me: session } = useMe();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -161,7 +158,7 @@ export default function Applicant({ pageProps }: any) {
                 height: 40,
                 width: 40,
               }}
-              src={session?.user?.image}
+              src={session?.image ?? ''}
             />
           </Tooltip>
 

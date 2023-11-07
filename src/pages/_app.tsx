@@ -6,14 +6,13 @@ import '@/lib/filePong/doka/doka.min.css';
 
 import { ApolloProvider } from '@apollo/client';
 import { CacheProvider, type EmotionCache } from '@emotion/react';
-import { Alert, CssBaseline } from '@mui/material';
+import { CssBaseline } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { type NextPage } from 'next';
 import { type AppProps } from 'next/app';
 import { type Session } from 'next-auth';
-import { SessionProvider } from 'next-auth/react';
 import { Provider } from 'react-redux';
 
 import { useNProgress } from '@/hooks/use-nprogress';
@@ -53,25 +52,23 @@ export default function App({
   useNProgress();
 
   return (
-    <SessionProvider session={pageProps.session}>
-      <ApolloProvider client={apollo}>
-        <CacheProvider value={emotionCache}>
-          <Provider store={store}>
-            <ThemeProvider theme={createTheme()}>
-              <CssBaseline />
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                {Component.signIn ? (
+    <ApolloProvider client={apollo}>
+      <CacheProvider value={emotionCache}>
+        <Provider store={store}>
+          <ThemeProvider theme={createTheme()}>
+            <CssBaseline />
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              {Component.signIn ? (
+                <Component {...pageProps} />
+              ) : (
+                <Layout pageProps={pageProps}>
                   <Component {...pageProps} />
-                ) : (
-                  <Layout pageProps={pageProps}>
-                    <Component {...pageProps} />
-                  </Layout>
-                )}
-              </LocalizationProvider>
-            </ThemeProvider>
-          </Provider>
-        </CacheProvider>
-      </ApolloProvider>
-    </SessionProvider>
+                </Layout>
+              )}
+            </LocalizationProvider>
+          </ThemeProvider>
+        </Provider>
+      </CacheProvider>
+    </ApolloProvider>
   );
 }

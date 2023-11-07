@@ -16,7 +16,6 @@ import {
 import { Form, Formik } from 'formik';
 import { AnimatePresence, motion, transform } from 'framer-motion';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { toast } from 'react-hot-toast';
 
 import { MoButton } from '@/components/MoButton';
@@ -159,7 +158,6 @@ export type EditJoPostValuesType = typeof initialValuesShape;
 const PostJob = () => {
   const [dir, setDir] = useState<'RIGHT' | 'LEFT'>();
   const [activeStep, setActiveStep] = React.useState(0);
-  const { data: session } = useSession();
   const { me } = useMe();
 
   const [currentStep, setCurrentStep] = useState<typeof formSteps[number]>({
@@ -264,10 +262,10 @@ const PostJob = () => {
 
                     isVisible: true,
 
-                    postedBy: session?.user?.id ?? '',
+                    postedBy: me?.id ?? '',
                     affiliateId: me?.affiliate?.id ?? null,
                     companyId:
-                      session?.user?.accountType === 'COMPANY'
+                      me?.accountType === 'COMPANY'
                         ? (me?.company?.id as string)
                         : values.companyId,
                   };

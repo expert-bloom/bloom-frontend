@@ -18,7 +18,6 @@ import { useFormik } from 'formik';
 import { AnimatePresence, motion, transform } from 'framer-motion';
 import { isEqual, mapValues, pickBy } from 'lodash';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { toast } from 'react-hot-toast';
 
 import { MoButton } from '@/components/MoButton';
@@ -102,7 +101,6 @@ const PostJob = () => {
   const [isChanged, setIsChanged] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [activeStep, setActiveStep] = React.useState(0);
-  const { data: session } = useSession();
   const router = useRouter();
   const { id } = router.query;
   const { me } = useMe();

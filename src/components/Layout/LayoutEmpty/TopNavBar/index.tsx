@@ -24,10 +24,10 @@ import { AnimatePresence, motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { signOut, useSession } from 'next-auth/react';
 
 import { AccountPopover } from '@/components/Layout/Company/CompanyNav/AccountPopover';
 import { usePopover } from '@/hooks/use-popover';
+import useMe from '@/hooks/useMe';
 import Logo from '@/public/logo.png';
 
 import s from './topnav.module.scss';
@@ -73,7 +73,7 @@ export default function TopNavBar({ pageProps }: any) {
   // console.log('data: ', session, isTalent);
   const router = useRouter();
 
-  const { data } = useSession();
+  const { me: data } = useMe();
   const accountPopover = usePopover();
 
   // console.log('session: ', data);
@@ -165,14 +165,14 @@ export default function TopNavBar({ pageProps }: any) {
 
                 <MenuItem
                   onClick={() => {
-                    signOut()
+                    /* signOut()
                       .then(() => {
                         void router.push('/auth/login');
                         handleClose();
                       })
                       .catch(() => {
                         handleClose();
-                      });
+                      }); */
                   }}
                 >
                   <ListItemIcon>

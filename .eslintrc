@@ -32,6 +32,7 @@
     "@typescript-eslint/strict-boolean-expressions": "off",
     "@typescript-eslint/indent": "off",
     "@typescript-eslint/restrict-template-expressions": "off",
+    "@typescript-eslint/prefer-nullish-coalescing": "off",
     "no-warning-comments": [
       "error",
       {

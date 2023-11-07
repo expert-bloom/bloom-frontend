@@ -13,7 +13,7 @@ export function useResponseErrorHandler(
   const { isShowToast = true } = options ?? {};
 
   useEffect(() => {
-    if (error) {
+    if (error?.message || error?.graphQLErrors?.length) {
       console.error(error);
       if (isShowToast) {
         toast.error(

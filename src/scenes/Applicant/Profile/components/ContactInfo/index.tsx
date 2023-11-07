@@ -15,7 +15,7 @@ import {
   type NestedOnSubmit,
   type StepProps,
 } from '@/scenes/Applicant/Profile/data';
-import { useCountries } from '@/scenes/JobList/SearchFilter/country-list';
+import { useCountries } from '@/scenes/JobList/SearchFilter/usecountries';
 
 import s from './contact_info.module.scss';
 

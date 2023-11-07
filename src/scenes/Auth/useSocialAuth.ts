@@ -52,7 +52,7 @@ export default function useSocialAuth() {
     Cookies.set('clientType', clientType ?? '-');
 
     popupCenter(
-      `/auth/social-sign-in/?social=${social}`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/signup/${social}/?authType=${authType}&clientType=${clientType}`,
       `${capitalize(social)} Sign In`,
     );
   };

@@ -11,18 +11,24 @@ import {
   Typography,
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
-import { signOut, useSession } from 'next-auth/react';
 import { toast } from 'react-hot-toast';
+
+import { MeDocument, useLogOutMutation } from '@/graphql/client/gql/schema';
+import useMe from '@/hooks/useMe';
 
 import s from './applicant_nav.module.scss';
 
 export const AccountPopover = (props: any) => {
   const { anchorEl, onClose, open } = props;
   const router = useRouter();
-  const { data: session }: any = useSession();
+  const { me: session } = useMe();
+  const [logout] = useLogOutMutation();
 
   const handleSignOut = useCallback(() => {
-    void signOut({ redirect: false })
+    void logout({
+      refetchQueries: [MeDocument],
+      awaitRefetchQueries: true,
+    })
       .then(() => {
         onClose?.();
         router.push('/auth/login');
@@ -56,7 +62,7 @@ export const AccountPopover = (props: any) => {
       >
         <Typography variant="overline">Account</Typography>
         <Typography color="text.secondary" variant="body2">
-          {session?.user?.email}
+          {session?.email}
         </Typography>
       </Box>
       <Divider />

@@ -18,8 +18,6 @@ import {
 import { DatePicker } from '@mui/x-date-pickers';
 import { useFormikContext } from 'formik';
 import moment from 'moment/moment';
-import { useSession } from 'next-auth/react';
-import invariant from 'ts-invariant';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 
@@ -29,14 +27,11 @@ import {
   SalaryType,
   useGetCompaniesQuery,
 } from '@/graphql/client/gql/schema';
+import useMe from '@/hooks/useMe';
 import { type EditJoPostValuesType } from '@/scenes/Company/CreateJobPost';
 import { capitalize } from '@/utils';
 
 import s from './jobdetails.module.scss';
-
-const jobTypeOptions = Object.keys(JobType).map((key) => ({
-  label: key,
-}));
 
 const jobCategoryOptions = [
   { label: 'Sales' },
@@ -45,24 +40,6 @@ const jobCategoryOptions = [
   },
   { label: 'IT' },
 ];
-
-const jobSalaryType = [
-  {
-    label: 'Monthly',
-  },
-  { label: 'Hourly' },
-  { label: 'Contractual' },
-];
-
-const workLocation = [
-  {
-    label: 'Remote',
-  },
-  { label: 'Onsite' },
-  { label: 'Hybrid' },
-];
-
-const minDistance = 10;
 
 export const schema = toFormikValidationSchema(
   z.object({
@@ -83,7 +60,7 @@ const JobDetails = () => {
   const formik = useFormikContext<EditJoPostValuesType>();
   const { values, handleChange } = formik;
   const [isFixed, setIsFixed] = useState(true);
-  const { data: session } = useSession();
+  const { me: session } = useMe();
   const { data: companies } = useGetCompaniesQuery();
 
   useEffect(() => {
@@ -132,7 +109,7 @@ const JobDetails = () => {
         />
       </Stack>
 
-      {session?.user?.accountType === 'AFFILIATE' && (
+      {session?.accountType === 'AFFILIATE' && (
         <Stack spacing={0.5} flex="1">
           <FormControl fullWidth>
             <InputLabel id="company">Affiliate Company</InputLabel>

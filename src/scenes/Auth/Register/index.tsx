@@ -6,14 +6,13 @@ import { type Country } from 'countries-list';
 import { Form, Formik, type FormikProps } from 'formik';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { signIn, type SignInOptions, useSession } from 'next-auth/react';
 import { toast } from 'react-hot-toast';
 
 import { MoButton } from '@/components/MoButton';
-import { AuthTypeKeys } from '@/constants';
-import { AccountType, type SignUpInput } from '@/graphql/client/gql/schema';
-import AuthDetails from '@/scenes/Auth/Register/component/AuthDetails';
+import { AccountType, useSignUpMutation } from '@/graphql/client/gql/schema';
+import useMe from '@/hooks/useMe';
 import AuthType from '@/scenes/Auth/Register/component/AuthType';
+import RegisterDetails from '@/scenes/Auth/Register/component/RegisterDetails';
 
 import s from './signup.module.scss';
 
@@ -46,14 +45,13 @@ const formSteps: FormStepType[] = [
   },
   {
     name: 'Auth Details',
-    Step: (props: any) => <AuthDetails {...props} />, // schema: JobDetailsSchema,
+    Step: (props: any) => <RegisterDetails {...props} />, // schema: JobDetailsSchema,
   },
 ];
 
 const SignUp = () => {
   const [activeStep, setActiveStep] = useState(0);
-  const [errorMsg, setErrorMsg] = useState<string>();
-  const { data: session } = useSession();
+  const { me, mePayload } = useMe();
   const [currentStep, setCurrentStep] = useState<typeof formSteps[number]>({
     ...formSteps[activeStep],
   });
@@ -64,6 +62,8 @@ const SignUp = () => {
   });
 
   const router = useRouter();
+
+  const [signIn, signInPayload] = useSignUpMutation();
 
   const handleNext = () => {
     setActiveStep((activeStep) => Math.min(formSteps.length, activeStep + 1));
@@ -108,7 +108,7 @@ const SignUp = () => {
     setCurrentStep({ ...formSteps[activeStep] });
   }, [activeStep]);
 
-  if (session) {
+  if (me?.id) {
     void router.replace('/');
     return null;
   }
@@ -147,32 +147,58 @@ const SignUp = () => {
                 setBtnAttribute((attr) => ({ ...attr, loading: true }));
 
                 // return ;
-                signIn(AuthTypeKeys.SIGNUP, {
-                  email: values.email,
-                  password: values.password,
-                  firstName: values.firstName,
-                  lastName: values.lastName,
-                  accountType: values.type,
-                  companyName: values.companyName,
-                  country: values.country.name,
-                  redirect: false,
-                } satisfies SignUpInput & SignInOptions)
-                  .then((res) => {
-                    if (
-                      res !== undefined &&
-                      !res.ok &&
-                      res.error !== undefined
-                    ) {
-                      setBtnAttribute((attr) => ({ ...attr, loading: false }));
-                      toast.error(res.error ?? 'something went wrong');
+                await signIn({
+                  variables: {
+                    input: {
+                      email: values.email,
+                      password: values.password,
+                      firstName: values.firstName,
+                      lastName: values.lastName,
+                      accountType: values.type,
+                      companyName: values.companyName,
+                      country: values.country.name,
+                    },
+                  },
+                })
+                  .then(async (res) => {
+                    const { data, errors } = res;
+
+                    setBtnAttribute((attr) => ({ ...attr, loading: false }));
+
+                    if (errors !== undefined) {
+                      toast.error(errors.map((e: any) => e.message).join(', '));
                       return;
                     }
 
-                    // redirect the user to the dashboard
-                    toast.success('Account created successfully, welcome!');
-                    void router.replace('/').then(() => {
-                      location.reload();
-                    });
+                    if (!data?.signUp) {
+                      toast.error('Something Wrong!');
+                      return;
+                    }
+
+                    if (data.signUp.errors.length > 0) {
+                      toast.error(
+                        data.signUp.errors
+                          .map((e: any) => e.message)
+                          .join(', '),
+                      );
+                      return;
+                    }
+
+                    if (data?.signUp?.account?.id) {
+                      await mePayload
+                        .refetch()
+                        .then((res) => {
+                          if (res.data.me?.id) {
+                            toast.success('Successfully logged in');
+                          }
+                        })
+                        .catch((err) => {
+                          console.log('err : ', err);
+                          toast.error('Something went wrong');
+                        });
+                    }
+
+                    return null;
                   })
                   .catch((err) => {
                     setBtnAttribute((attr) => ({ ...attr, loading: false }));

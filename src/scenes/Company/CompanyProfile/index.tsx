@@ -25,7 +25,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { isEqual, mapValues, pickBy } from 'lodash';
 import { matchIsValidTel } from 'mui-tel-input';
 import Image from 'next/image';
-import { useSession } from 'next-auth/react';
 import { toast } from 'react-hot-toast';
 
 import { MoButton } from '@/components/MoButton';
@@ -44,8 +43,6 @@ import {
   type NestedOnSubmit,
   type SettingFormValuesType,
 } from './data';
-
-// s
 
 const formSteps = [
   {
@@ -79,7 +76,6 @@ const CompanyProfile = () => {
   const [isPending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
   const [settingTogo, setSettingTogo] = useState<number | null>(null);
-  const { data: session } = useSession();
   const me = useMe();
   const [currentStep, setCurrentStep] = useState<typeof formSteps[number]>({
     ...formSteps[activeStep],
@@ -96,11 +92,10 @@ const CompanyProfile = () => {
   });
 
   const nullify = <T extends Record<string, any>>(obj: T) => {
-    const value = mapValues(obj, (value) => {
+    return mapValues(obj, (value) => {
       if (value === '') return null;
       return value;
     });
-    return value;
   };
   const getChangedFields = (
     from: Record<string, any>,
@@ -157,7 +152,7 @@ const CompanyProfile = () => {
         const profilePayload = await updateProfile({
           variables: {
             input: {
-              accountId: session?.user?.id ?? '',
+              accountId: me?.me?.id ?? '',
             } as any,
           },
           refetchQueries: [MeDocument],

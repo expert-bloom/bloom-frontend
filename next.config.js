@@ -24,7 +24,16 @@ const nextConfig = {
     '@mui/lab': {
       transform: '@mui/lab/{{member}}',
     },
+
   },
+
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+
+  // disable console log in production
+
+
   /*plugins: [
         new CopyWebpackPlugin({
           patterns: [

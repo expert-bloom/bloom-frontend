@@ -17,8 +17,8 @@ import {
 import { darken, lighten, styled } from '@mui/material/styles';
 
 import { ExperienceLevel, JobType } from '@/graphql/client/gql/schema';
-import { useCountriesWithRegion } from '@/scenes/JobList/SearchFilter/country-list';
 import { useIndustry } from '@/scenes/JobList/SearchFilter/industry-list';
+import { useCountriesWithRegion } from '@/scenes/JobList/SearchFilter/usecountries';
 import { capitalize } from '@/utils';
 import { useFilterContext } from 'src/scenes/JobList';
 

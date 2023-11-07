@@ -276,6 +276,7 @@ type Mutation {
     createJobPost(input: CreateJobPostInput!): JobPostResponse!
     editJobPost(input: EditJobPostInput!): JobPostResponse!
     logIn(input: LoginInput!): AuthPayload!
+    logOut: Boolean!
     offerApplicant(input: OfferApplicantInput!): Offer
     profileUpdate(input: UpdateProfileInput!): AccountUpdate!
     respondInterview(input: RespondInterviewInput!): Interview
@@ -326,12 +327,13 @@ type Query {
     getApplicants(input: GetApplicantsInput!): ApplicantConnection
     getCompanies: [Company!]!
     getCompanyJobPosts(input: GetCompanyJobPostsInput!): CompanyJobPostsResponse!
+    getCurrentUser: AccountPayload
     getJobApplications(input: GetJobApplicationsInput!): ApplicationConnections!
     getJobPost(input: GetJobPostInput!): JobPost
     getJobPosts(input: JopPostFilterInput): [JobPost!]!
     getSavedApplicant(input: GetSavedApplicantInput!): [Applicant!]!
     getSavedJobPosts(input: SavedJobPostsInput!): [JobPost!]!
-    me(input: MeInput!): AccountPayload
+    me: AccountPayload
     sayHi: String
 }
 

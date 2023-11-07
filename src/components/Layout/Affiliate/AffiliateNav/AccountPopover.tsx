@@ -11,25 +11,25 @@ import {
   Typography,
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
-import { signOut, useSession } from 'next-auth/react';
-import { toast } from 'react-hot-toast';
+
+import useMe from '@/hooks/useMe';
 
 import s from './affiliate_nav.module.scss';
 
 export const AccountPopover = (props: any) => {
   const { anchorEl, onClose, open } = props;
   const router = useRouter();
-  const { data: session }: any = useSession();
+  const { me: session }: any = useMe();
 
   const handleSignOut = useCallback(() => {
-    void signOut({ redirect: false })
+    /* void signOut({ redirect: false })
       .then(() => {
         onClose?.();
         router.push('/auth/login');
       })
       .catch(() => {
         toast.error('Error signing out');
-      });
+      }); */
   }, [onClose, session, router]);
 
   return (

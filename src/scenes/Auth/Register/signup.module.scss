@@ -20,6 +20,14 @@
       padding: 4rem;
       overflow: hidden;
 
+      .alert {
+        margin-top: 1.5rem;
+        border-color: red;
+        color: red;
+        background-color: rgba(red, .02);
+        text-transform: capitalize;
+      }
+
       .controll {
         display: flex;
         flex-flow: column;

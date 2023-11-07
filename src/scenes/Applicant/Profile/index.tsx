@@ -26,7 +26,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { isEqual, mapValues, pickBy } from 'lodash';
 import { matchIsValidTel } from 'mui-tel-input';
 import Image from 'next/image';
-import { useSession } from 'next-auth/react';
 import { toast } from 'react-hot-toast';
 
 import { MoButton } from '@/components/MoButton';
@@ -94,8 +93,7 @@ const Profile = () => {
   const [isPending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
   const [settingTogo, setSettingTogo] = useState<number | null>(null);
-  const { data: session } = useSession();
-  const me = useMe();
+  const { me, loading: meLoading } = useMe();
   const [currentStep, setCurrentStep] = useState<typeof formSteps[number]>({
     ...formSteps[activeStep],
   });
@@ -183,7 +181,7 @@ const Profile = () => {
         const profilePayload = await updateProfile({
           variables: {
             input: {
-              accountId: session?.user?.id ?? '',
+              accountId: me?.id ?? '',
               account: {
                 ...accountInput,
               },
@@ -241,18 +239,18 @@ const Profile = () => {
     setOpen(false);
   };
   const reset = () => {
-    if (me.me?.applicant === null || me.me?.applicant === undefined) return;
-    const applicant = me.me.applicant;
+    if (me?.applicant === null || me?.applicant === undefined) return;
+    const applicant = me.applicant;
 
     console.log('me : ', me);
 
     const initial: SettingFormValuesType = {
       account: {
-        image: me.me.image ?? '',
-        phone: me.me.phone ?? '',
-        firstName: me.me.firstName ?? '',
-        lastName: me.me.lastName ?? '',
-        email: me.me.email ?? '',
+        image: me.image ?? '',
+        phone: me.phone ?? '',
+        firstName: me.firstName ?? '',
+        lastName: me.lastName ?? '',
+        email: me.email ?? '',
       },
       applicant: {
         about: applicant.about ?? '',
@@ -294,15 +292,11 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    if (
-      me.me?.applicant === null ||
-      me.me?.applicant === undefined ||
-      me.loading
-    ) {
+    if (me?.applicant === null || me?.applicant === undefined || meLoading) {
       return;
     }
     reset();
-  }, [me.me?.applicant]);
+  }, [me?.applicant]);
 
   useEffect(() => {
     setCurrentStep({ ...formSteps[activeStep] });
@@ -325,17 +319,17 @@ const Profile = () => {
           <div className={s.nav}>
             <Stack gap="2rem">
               <div className={s.pp}>
-                <Image src={me.me?.image ?? ''} alt="profile pic" fill />
+                <Image src={me?.image ?? ''} alt="profile pic" fill />
               </div>
               <div>
                 {isPending && (
                   <CircularProgress sx={{ position: 'absolute' }} />
                 )}
                 <Typography variant="h6">
-                  {`${me.me?.firstName ?? '-'}  ${me.me?.lastName ?? '-'}`}
+                  {`${me?.firstName ?? '-'}  ${me?.lastName ?? '-'}`}
                 </Typography>
                 <Typography variant="body2" textAlign="center" color="gray">
-                  {me.me?.applicant?.jobPosition ?? '-'}
+                  {me?.applicant?.jobPosition ?? '-'}
                 </Typography>
               </div>
             </Stack>

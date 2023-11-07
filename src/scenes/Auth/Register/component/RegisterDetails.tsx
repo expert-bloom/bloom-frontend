@@ -10,6 +10,7 @@ import {
   VisibilityOff,
 } from '@mui/icons-material';
 import {
+  Alert,
   Autocomplete,
   Checkbox,
   FormControlLabel,
@@ -22,40 +23,47 @@ import {
 import { countries } from 'countries-list';
 import { useFormikContext } from 'formik';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 import { toast } from 'react-hot-toast';
 
 import GoogleIcon from '@/components/Icons/Google';
 import { MoButton } from '@/components/MoButton';
 import { AccountType } from '@/graphql/client/gql/schema';
+import useMe from '@/hooks/useMe';
 import useSocialAuth from '@/scenes/Auth/useSocialAuth';
 import { type RegisterFormValuesType } from 'src/scenes/Auth/Register';
 
 import s from '../signup.module.scss';
 
-const AuthDetails = ({ onReturn }: any) => {
-  const { data: session } = useSession();
+const RegisterDetails = ({ onReturn }: any) => {
+  const { me, mePayload } = useMe();
   const [showPassword, setShowPassword] = useState(false);
   const formik = useFormikContext<RegisterFormValuesType>();
   const { values, handleChange } = formik;
   const router = useRouter();
   const { withSocial } = useSocialAuth();
 
+  const [errorMsg, setErrorMsg] = useState<string>();
+
   useEffect(() => {
+    if (me?.id) return;
+
     window.onmessage = (event: Record<string, any>) => {
-      console.log('onmessage event : --- ', event.data);
+      // console.log('onmessage event : --- ', event.data);
       if (event.data.type === 'auth') {
         if (event.data.status === 'success') {
-          // window.close();
-          toast.success('Login success');
+          void mePayload
+            .refetch()
+            .then((res) => {
+              if (res.data.me?.id) {
+                toast.success('Login success');
+              }
+            })
+            .catch((err) => {
+              console.log('err : ', err);
+            });
         } else if (event.data.status === 'error') {
-          toast.error(
-            `Error : ${
-              (event.data.message as string) ?? 'something went wrong'
-            }`,
-          );
           formik.setSubmitting(false);
-          // setErrorMsg(event.data.message);
+          setErrorMsg(event.data.message);
         }
       }
     };
@@ -65,11 +73,10 @@ const AuthDetails = ({ onReturn }: any) => {
     };
   }, []);
 
-  useEffect(() => {
-    if (session) {
-      void router.push('/');
-    }
-  }, [session]);
+  if (me?.id) {
+    void router.push('/');
+    return null;
+  }
 
   const PasswordAdornment = () => (
     <InputAdornment position="end">
@@ -153,6 +160,12 @@ const AuthDetails = ({ onReturn }: any) => {
       >
         Continue with Github
       </MoButton>
+
+      {Boolean(errorMsg) && (
+        <Alert severity="error" variant="outlined" className={s.alert}>
+          <Typography variant="body1">{errorMsg}</Typography>
+        </Alert>
+      )}
 
       <div className={s.or}>
         <Typography variant="body1">or</Typography>
@@ -324,4 +337,4 @@ const AuthDetails = ({ onReturn }: any) => {
   );
 };
 
-export default AuthDetails;
+export default RegisterDetails;

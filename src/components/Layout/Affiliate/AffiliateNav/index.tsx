@@ -15,7 +15,6 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
 
 import { usePopover } from '@/hooks/use-popover';
 import Logo from '@/public/logo.png';
@@ -82,8 +81,6 @@ export default function CompanyNav({ pageProps }: any) {
   // console.log('data: ', session, isTalent);
   const router = useRouter();
   const accountPopover = usePopover();
-
-  const { data } = useSession();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);

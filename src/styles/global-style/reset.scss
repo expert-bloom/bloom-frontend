@@ -35,37 +35,40 @@
     --coef-title: 0.6;
     --coef-size: 0.7;
   }
-
-
-  /* @media screen and (min-width: 1920px) {
-     font-size: .84vw
-   }
-
-   @media screen and (min-width: 1440px) {
-     font-size: .926vw
-   }
-
-   @media screen and (min-width: 1280px) {
-     font-size: 1vw
-   }
-
-   @media screen and (max-width: 991px) {
-     font-size: 1.44vw
-   }
-
-   @media screen and (max-width: 767px) {
-     font-size: 1.9vw
-   }
-
-   @media screen and (max-width: 479px) {
-     font-size: 3.1vw
-   }*/
-
-
 }
 
 html {
   box-sizing: border-box;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  font-size: 18px;
+
+  font-family: f.$sofia-pro;
+  //font-weight: 900;
+
+
+  @include fluid-type(1920px, 5120px, 18px, 20px);
+
+  @media screen and (max-width: 1920px) {
+    font-size: 16px;
+
+  }
+
+  @media screen and (max-width: 1400px) {
+    //font-size: 14px;
+    font-size: 11.25px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    //font-size: 9px;
+  }
+
+  @media screen and (max-width: 768px) {
+    //font-size: 12px;
+  }
 }
 
 *, *::after, *::before {
@@ -76,7 +79,7 @@ html,
 body {
   //height: 100%;
 
-   // filepond global style
+  // filepond global style
   .filepond--root {
     font-family: 'SofiaProSoft', sans-serif;
   }

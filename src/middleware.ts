@@ -1,42 +1,21 @@
+import * as jose from 'jose';
 import { type NextRequest, NextResponse } from 'next/server';
-import { getToken } from 'next-auth/jwt';
 
-import { AccountType } from '@/graphql/client/gql/schema';
-
-/* const secret = process.env.NEXTAUTH_SECRET;
+const secret: any = process.env.JWT_SECRET;
 
 export async function middleware(request: NextRequest) {
-  const token = await getToken({ req: request, secret });
+  let token: any = {};
 
-  console.log(
-    'token ------------------------------- : ',
-    JSON.stringify(token, null, 2),
-  );
-
-  if (token == null) {
-    return NextResponse.redirect(new URL('/auth/login', request.url));
+  const rawJwt = request.cookies.get('authorization')?.value;
+  const s2 = new TextEncoder().encode(secret);
+  if (rawJwt && s2) {
+    token = await jose
+      .jwtVerify(rawJwt, s2, {
+        issuer: 'localhost',
+        algorithms: ['HS256'],
+      })
+      .then((res) => res.payload);
   }
-
-  if (request.nextUrl.pathname === '/company') {
-    // todo : check if user is client or freelancer
-    if (token.accountType === 'COMPANY')
-      return NextResponse.redirect(new URL('/company/dashboard', request.url));
-  }
-
-  return NextResponse.next();
-} */
-
-const secret = process.env.NEXTAUTH_SECRET;
-
-export async function middleware(request: NextRequest) {
-  const token: any = await getToken({ req: request, secret });
-
-  console.log(
-    'middleware token ------------------------------- : ',
-    JSON.stringify(token, null, 2),
-    'pathname',
-    request.nextUrl.pathname,
-  );
 
   if (request.nextUrl.pathname.startsWith('/auth') && token?.accountType) {
     if (token?.accountType === 'APPLICANT') {

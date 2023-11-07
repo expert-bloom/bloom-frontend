@@ -1,26 +1,29 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
-import React, { useEffect } from 'react';
+import React, { useLayoutEffect } from 'react';
 
 import { useRouter } from 'next/router';
-import { signIn, useSession } from 'next-auth/react';
+import { toast } from 'react-hot-toast';
 
+import { MeDocument } from '@/graphql/client/gql/schema';
+import useMe from '@/hooks/useMe';
 import s from '@/pages/auth/social-sign-in/signin.module.scss';
 
 const SocialSignIn = () => {
-  const { data: session, status } = useSession();
-  const { error, social } = useRouter().query;
+  const { me, mePayload } = useMe();
+  const { error, social, success = false } = useRouter().query;
 
   if (!social) {
     console.log('social : ', social);
     // throw new Error('Social login is not provided !!!!');
   }
 
-  if (session) {
+  if (me?.id) {
     console.log('closing window ----> ');
-    window.close();
+    toast.loading('Closing widnow ----> ');
+    // window.close();
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (error) {
       let message = error;
       if (['OAuthCallback', 'OAuthSignin'].includes(error as string))
@@ -35,20 +38,65 @@ const SocialSignIn = () => {
         message,
         data: null,
       });
+
       window.close();
+      return;
     }
-  }, [error]);
 
-  useEffect(() => {
-    if (!(status === 'loading') && !session && social)
-      void signIn(social as string, {
-        redirect: false,
+    void mePayload.client.refetchQueries({
+      include: [MeDocument],
+    });
+
+    void mePayload
+      .refetch()
+      .then((res) => {
+        console.log('me refetch : ', res);
+
+        if (res.errors?.length) {
+          window.opener?.postMessage({
+            type: 'auth',
+            social: (function () {
+              return social;
+            })(),
+            status: 'error',
+            message: res.errors.map((er) => er.message).join(', '),
+            data: null,
+          });
+          window.close();
+          return;
+        }
+
+        if (res.data.me?.id) {
+          window.opener?.postMessage({
+            type: 'auth',
+            social: (function () {
+              return social;
+            })(),
+            status: 'success',
+            message: 'Successfully logged in',
+            data: null,
+          });
+
+          window.close();
+        } else {
+          window.opener?.postMessage({
+            type: 'auth',
+            social: (function () {
+              return social;
+            })(),
+            status: 'error',
+            message: 'Faild to Fetch Me query',
+            data: null,
+          });
+
+          // window.close();
+        }
+      })
+      .catch((err) => {
+        console.log('err : ', err);
+        toast.error('error fetching me ----');
       });
-
-    return () => {
-      // window.close()
-    };
-  }, [session, status, social]);
+  }, [error, mePayload]);
 
   return (
     <div

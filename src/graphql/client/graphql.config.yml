@@ -2,5 +2,5 @@ schema: schema.graphql
 documents: '**/*.graphql'
 extensions:
   endpoints:
-#    default: http://localhost:4000/graphql
-    production: https://expert-bloom-obinasbaba.koyeb.app/graphql
+    default: http://localhost:4000/graphql
+#    production: https://expert-bloom-obinasbaba.koyeb.app/graphql

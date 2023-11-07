@@ -11,9 +11,9 @@ import { useFormikContext } from 'formik';
 
 import { type RegisterFormValuesType } from 'src/scenes/Auth/Register';
 
-import s from '../signin.module.scss';
+import s from '../login.module.scss';
 
-const SignInDetails = ({ onReturn }: any) => {
+const LogInDetails = ({ onReturn }: any) => {
   // console.log('countries : ', Object.values(countries));
   const [showPassword, setShowPassword] = useState(false);
   const formik = useFormikContext<RegisterFormValuesType>();
@@ -77,4 +77,4 @@ const SignInDetails = ({ onReturn }: any) => {
   );
 };
 
-export default SignInDetails;
+export default LogInDetails;

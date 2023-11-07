@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import React, { useEffect, useState } from 'react';
 
 import { GitHub, Login } from '@mui/icons-material';
@@ -6,16 +5,19 @@ import { Alert, Button, Stack, Typography } from '@mui/material';
 import { Form, Formik, type FormikProps } from 'formik';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { signIn, useSession } from 'next-auth/react';
 import { toast } from 'react-hot-toast';
 
 import GoogleIcon from '@/components/Icons/Google';
 import { MoButton } from '@/components/MoButton';
-import { AuthTypeKeys } from '@/constants';
-import SignInDetails from '@/scenes/Auth/Login/component/SignInDetails';
+import {
+  useLoginMutation,
+  useLogOutMutation,
+} from '@/graphql/client/gql/schema';
+import useMe from '@/hooks/useMe';
+import LogInDetails from '@/scenes/Auth/Login/component/LogInDetails';
 import useSocialAuth from '@/scenes/Auth/useSocialAuth';
 
-import s from './signin.module.scss';
+import s from './login.module.scss';
 
 const initialValues = {
   email: '',
@@ -35,14 +37,17 @@ export type AuthSignInFormValuesType = typeof initialValues;
 const formSteps: FormStepType[] = [
   {
     name: 'Sign In',
-    Step: (props: any) => <SignInDetails {...props} />,
+    Step: (props: any) => <LogInDetails {...props} />,
   },
 ];
 
 const LoginScene = () => {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { me, mePayload } = useMe();
   const { withSocial } = useSocialAuth();
+
+  const [login, loginPayload] = useLoginMutation();
+  const [logout] = useLogOutMutation();
 
   const [btnAttribute, setBtnAttribute] = useState({
     disabled: false,
@@ -59,12 +64,20 @@ const LoginScene = () => {
   useEffect(() => {
     window.onmessage = (event) => {
       if (event.data.type === 'auth') {
-        console.log('onmessage event : --- ', event.data);
+        // console.log('onmessage event : --- ', event.data);
         if (event.data.status === 'success') {
           // close the small window
           // window.close();
-
-          toast.success('Login success');
+          void mePayload
+            .refetch()
+            .then((res) => {
+              if (res.data.me?.id) {
+                toast.success('Login success');
+              }
+            })
+            .catch((err) => {
+              console.log('err : ', err);
+            });
         } else if (event.data.status === 'error') {
           setErrorMsg(event.data.message);
         }
@@ -75,10 +88,6 @@ const LoginScene = () => {
       window.onmessage = null;
     };
   }, []);
-
-  useEffect(() => {
-    console.log('rendered --- >');
-  });
 
   const handleNext = () => {
     setActiveStep((activeStep) => Math.min(formSteps.length, activeStep + 1));
@@ -101,7 +110,7 @@ const LoginScene = () => {
 
   let lToast = '';
 
-  if (session) {
+  if (me?.id) {
     void router.replace('/');
     return null;
   }
@@ -135,22 +144,26 @@ const LoginScene = () => {
                 setErrorMsg(undefined);
                 lToast = toast.loading('Signing in...');
 
-                await signIn(AuthTypeKeys.LOGIN, {
-                  email: values.email,
-                  password: values.password,
-                  redirect: false,
+                await login({
+                  variables: {
+                    input: {
+                      email: values.email,
+                      password: values.password,
+                    },
+                  },
                 })
-                  .then((res) => {
+                  .then(async (res) => {
+                    const { data, errors } = res;
                     console.log('res : ', res);
 
-                    if (
-                      res !== undefined &&
-                      !res?.ok &&
-                      res?.error !== undefined
-                    ) {
-                      toast.dismiss(lToast);
-                      toast.error(res.error ?? 'something went wrong');
-                      setErrorMsg(res.error ?? 'something went wrong');
+                    toast.dismiss(lToast);
+
+                    // apollo error
+                    if (errors !== undefined && errors.length > 0) {
+                      toast.error(
+                        errors.map((e: any) => e.message).join(', ') ??
+                          'something went wrong',
+                      );
                       setBtnAttribute((prev) => ({
                         ...prev,
                         loading: false,
@@ -159,11 +172,41 @@ const LoginScene = () => {
                       return;
                     }
 
-                    toast.dismiss(lToast);
-                    toast.success('successfully logged in');
-                    void router.replace('/').then(() => {
-                      location.reload();
-                    });
+                    // user error
+                    if (data?.logIn && data.logIn.errors.length > 0) {
+                      toast.error(
+                        data.logIn.errors
+                          .map((e: any) => e.message)
+                          .join(', ') ?? 'something went wrong',
+                      );
+                      setErrorMsg(
+                        data.logIn.errors
+                          .map((e: any) => e.message)
+                          .join(', ') ?? 'something went wrong',
+                      );
+                      setBtnAttribute((prev) => ({
+                        ...prev,
+                        loading: false,
+                        label: 'Login',
+                      }));
+                      return;
+                    }
+
+                    if (data?.logIn.account?.id) {
+                      await mePayload
+                        .refetch()
+                        .then((res) => {
+                          if (res.data.me?.id) {
+                            toast.dismiss(lToast);
+                            toast.success('Successfully logged in');
+                          }
+                        })
+                        .catch((err) => {
+                          console.log('err : ', err);
+                          toast.dismiss(lToast);
+                          toast.error('Something went wrong');
+                        });
+                    }
                   })
                   .catch((err) => {
                     console.log('error : ', err);

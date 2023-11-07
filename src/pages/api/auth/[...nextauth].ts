@@ -1,3 +1,4 @@
+import cookie from 'cookie';
 import { type NextApiRequest, type NextApiResponse } from 'next';
 import type { Account, Awaitable, NextAuthOptions, User } from 'next-auth';
 import NextAuth from 'next-auth';
@@ -79,7 +80,10 @@ const signUpWithSocial = async (
   return `${redirectUrl}/?error=Something goes wrong signing-up!`;
 };
 
-const getOptions: (req: NextApiRequest) => NextAuthOptions = (req) => ({
+const getOptions: (
+  req: NextApiRequest,
+  res: NextApiResponse,
+) => NextAuthOptions = (req, res) => ({
   // Configure one or more authentication providers
   events: {
     signIn: async (message) => {
@@ -188,7 +192,7 @@ const getOptions: (req: NextApiRequest) => NextAuthOptions = (req) => ({
       return url ?? baseUrl;
     }, */,
     async jwt({ token, user, account, profile, trigger, session }) {
-      /* console.log(
+      console.log(
         'jwt callback ---------> ',
         'token:',
         token,
@@ -202,7 +206,8 @@ const getOptions: (req: NextApiRequest) => NextAuthOptions = (req) => ({
         trigger,
         ', Session: ',
         session,
-      ); */
+      );
+
       if (trigger === 'signIn' && account?.type === 'credentials') {
         return {
           ...token,
@@ -247,6 +252,7 @@ const getOptions: (req: NextApiRequest) => NextAuthOptions = (req) => ({
         ...user,
       };
     },
+
     async session({ session, token, user }) {
       /* console.log(
         'session callback ---> ',
@@ -354,5 +360,5 @@ const getOptions: (req: NextApiRequest) => NextAuthOptions = (req) => ({
 
 export default async function auth(req: NextApiRequest, res: NextApiResponse) {
   // Do whatever you want here, before the request is passed down to `NextAuth`
-  return NextAuth(req, res, getOptions(req));
+  return NextAuth(req, res, getOptions(req, res));
 }
