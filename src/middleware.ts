@@ -17,6 +17,10 @@ export async function middleware(request: NextRequest) {
       .then((res) => res.payload);
   }
 
+  if (request.nextUrl.pathname.startsWith('/activate') && !token?.accountType) {
+    return NextResponse.redirect(new URL('/404', request.url));
+  }
+
   if (request.nextUrl.pathname.startsWith('/auth') && token?.accountType) {
     if (token?.accountType === 'APPLICANT') {
       return NextResponse.redirect(
@@ -68,6 +72,7 @@ export const config = {
     '/company/:path*',
     '/auth/login',
     '/auth/register',
+    '/activate/:path*',
   ],
 };
 

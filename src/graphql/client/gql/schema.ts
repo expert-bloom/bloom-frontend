@@ -289,6 +289,11 @@ export type AuthPayload = PayloadError & {
   errors: Array<Error>;
 };
 
+export enum CacheControlScope {
+  Private = 'PRIVATE',
+  Public = 'PUBLIC',
+}
+
 export type Company = Node & {
   account: Account;
   companyName: Maybe<Scalars['String']['output']>;
@@ -551,9 +556,11 @@ export type Mutation = {
   saveApplicant: Maybe<Scalars['Boolean']['output']>;
   saveJobPost: Maybe<JobPost>;
   sayHi: Scalars['String']['output'];
+  sendEmail: Maybe<Scalars['Boolean']['output']>;
   sendInterviewRequest: Maybe<Interview>;
   signUp: AuthPayload;
   signUpOAuth: AuthPayload;
+  verifyAccount: VerifyAccountPayload;
 };
 
 export type MutationApplicantProfileUpdateArgs = {
@@ -610,6 +617,10 @@ export type MutationSignUpArgs = {
 
 export type MutationSignUpOAuthArgs = {
   input: OAuthSignUpInput;
+};
+
+export type MutationVerifyAccountArgs = {
+  input: VerifyAccountInput;
 };
 
 /** An object with an ID */
@@ -819,6 +830,15 @@ export type UpdateProfileInput = {
   applicant?: InputMaybe<ApplicantUpdateInput>;
 };
 
+export type VerifyAccountInput = {
+  token: Scalars['String']['input'];
+};
+
+export type VerifyAccountPayload = PayloadError & {
+  account: Maybe<Account>;
+  errors: Array<Error>;
+};
+
 export type WorkExperience = {
   accomplishment: Scalars['String']['output'];
   companyName: Scalars['String']['output'];
@@ -949,6 +969,10 @@ export type UpdateProfileMutation = {
     } | null;
   };
 };
+
+export type SendEmailMutationVariables = Exact<{ [key: string]: never }>;
+
+export type SendEmailMutation = { sendEmail: boolean | null };
 
 export type AccountFragmentFragment = {
   id: string;
@@ -1877,6 +1901,28 @@ export type SignUpOAuthMutation = {
   };
 };
 
+export type VerifyAccountMutationVariables = Exact<{
+  input: VerifyAccountInput;
+}>;
+
+export type VerifyAccountMutation = {
+  verifyAccount: {
+    errors: Array<{ message: string }>;
+    account: {
+      id: string;
+      email: string;
+      emailVerified: any | null;
+      accountType: AccountType;
+      image: string;
+      firstName: string;
+      fullName: string;
+      lastName: string;
+      createdAt: any;
+      phone: string | null;
+    } | null;
+  };
+};
+
 export type SaveApplicantMutationVariables = Exact<{
   input: SaveApplicantInput;
 }>;
@@ -2613,6 +2659,52 @@ export type UpdateProfileMutationResult =
 export type UpdateProfileMutationOptions = Apollo.BaseMutationOptions<
   UpdateProfileMutation,
   UpdateProfileMutationVariables
+>;
+export const SendEmailDocument = gql`
+  mutation SendEmail {
+    sendEmail
+  }
+`;
+export type SendEmailMutationFn = Apollo.MutationFunction<
+  SendEmailMutation,
+  SendEmailMutationVariables
+>;
+
+/**
+ * __useSendEmailMutation__
+ *
+ * To run a mutation, you first call `useSendEmailMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendEmailMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendEmailMutation, { data, loading, error }] = useSendEmailMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSendEmailMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    SendEmailMutation,
+    SendEmailMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<SendEmailMutation, SendEmailMutationVariables>(
+    SendEmailDocument,
+    options,
+  );
+}
+export type SendEmailMutationHookResult = ReturnType<
+  typeof useSendEmailMutation
+>;
+export type SendEmailMutationResult = Apollo.MutationResult<SendEmailMutation>;
+export type SendEmailMutationOptions = Apollo.BaseMutationOptions<
+  SendEmailMutation,
+  SendEmailMutationVariables
 >;
 export const FindAccountDocument = gql`
   query FindAccount($input: FindAccountFilterInput!) {
@@ -3371,6 +3463,62 @@ export type SignUpOAuthMutationResult =
 export type SignUpOAuthMutationOptions = Apollo.BaseMutationOptions<
   SignUpOAuthMutation,
   SignUpOAuthMutationVariables
+>;
+export const VerifyAccountDocument = gql`
+  mutation VerifyAccount($input: VerifyAccountInput!) {
+    verifyAccount(input: $input) {
+      errors {
+        message
+      }
+      account {
+        ...AccountFragment
+      }
+    }
+  }
+  ${AccountFragmentFragmentDoc}
+`;
+export type VerifyAccountMutationFn = Apollo.MutationFunction<
+  VerifyAccountMutation,
+  VerifyAccountMutationVariables
+>;
+
+/**
+ * __useVerifyAccountMutation__
+ *
+ * To run a mutation, you first call `useVerifyAccountMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useVerifyAccountMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [verifyAccountMutation, { data, loading, error }] = useVerifyAccountMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useVerifyAccountMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    VerifyAccountMutation,
+    VerifyAccountMutationVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    VerifyAccountMutation,
+    VerifyAccountMutationVariables
+  >(VerifyAccountDocument, options);
+}
+export type VerifyAccountMutationHookResult = ReturnType<
+  typeof useVerifyAccountMutation
+>;
+export type VerifyAccountMutationResult =
+  Apollo.MutationResult<VerifyAccountMutation>;
+export type VerifyAccountMutationOptions = Apollo.BaseMutationOptions<
+  VerifyAccountMutation,
+  VerifyAccountMutationVariables
 >;
 export const SaveApplicantDocument = gql`
   mutation SaveApplicant($input: SaveApplicantInput!) {

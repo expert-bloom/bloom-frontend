@@ -64,3 +64,16 @@ mutation SignUpOAuth($input: OAuthSignUpInput!) {
         }
     }
 }
+
+
+mutation VerifyAccount($input: VerifyAccountInput!) {
+    verifyAccount(input: $input) {
+        errors {
+            message
+        }
+
+        account {
+            ...AccountFragment
+        }
+    }
+}

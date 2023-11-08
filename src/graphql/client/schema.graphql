@@ -5,6 +5,8 @@ schema {
     mutation: Mutation
 }
 
+directive @cacheControl(maxAge: Int, scope: CacheControlScope) on OBJECT | FIELD_DEFINITION
+
 interface IAccount {
     accountType: AccountType!
     createdAt: DateTime!
@@ -284,9 +286,11 @@ type Mutation {
     saveApplicant(input: SaveApplicantInput!): Boolean
     saveJobPost(input: SaveJobPostInput!): JobPost
     sayHi: String!
+    sendEmail: Boolean
     sendInterviewRequest(input: SendInterviewRequestInput!): Interview
     signUp(input: SignUpInput!): AuthPayload!
     signUpOAuth(input: OAuthSignUpInput!): AuthPayload!
+    verifyAccount(input: VerifyAccountInput!): VerifyAccountPayload!
 }
 
 type OAuth {
@@ -337,6 +341,11 @@ type Query {
     sayHi: String
 }
 
+type VerifyAccountPayload implements PayloadError {
+    account: Account
+    errors: [Error!]!
+}
+
 type WorkExperience {
     accomplishment: String!
     companyName: String!
@@ -373,6 +382,11 @@ enum ApplicationStatus {
     OFFER
     PENDING
     REJECTED
+}
+
+enum CacheControlScope {
+    PRIVATE
+    PUBLIC
 }
 
 enum EnglishLevel {
@@ -705,6 +719,10 @@ input UpdateProfileInput {
     account: AccountUpdateInput
     accountId: String!
     applicant: ApplicantUpdateInput
+}
+
+input VerifyAccountInput {
+    token: String!
 }
 
 input WorkExperienceInput {

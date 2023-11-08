@@ -3,6 +3,7 @@ import { type NextApiRequest, type NextApiResponse } from 'next';
 import type { Account, Awaitable, NextAuthOptions, User } from 'next-auth';
 import NextAuth from 'next-auth';
 import { type AdapterUser } from 'next-auth/adapters';
+import EmailProvider from 'next-auth/providers/email';
 import GithubProvider from 'next-auth/providers/github';
 import GoogleProvider from 'next-auth/providers/google';
 

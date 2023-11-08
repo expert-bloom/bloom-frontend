@@ -8,3 +8,7 @@ mutation UpdateProfile($input: UpdateProfileInput!) {
         }
     }
 }
+
+mutation SendEmail {
+    sendEmail
+}

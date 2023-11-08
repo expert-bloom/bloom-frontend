@@ -10,9 +10,15 @@ import {
   Typography,
 } from '@mui/material';
 
+import useMe from '@/hooks/useMe';
+
 import s from './confirmemail.module.scss';
 
 const HowItWork = () => {
+  const { me } = useMe();
+
+  if (me?.emailVerified) return null;
+
   return (
     <Card className={s.container} elevation={0}>
       <CardHeader
