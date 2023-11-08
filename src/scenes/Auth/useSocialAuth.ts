@@ -46,10 +46,17 @@ export default function useSocialAuth() {
   ) => {
     // document.cookie = `authType=${authType}`;
     // document.cookie = `clientType=${clientType ?? '-'}`;
+
+    const opt = {
+      domain: process.env.NEXT_PUBLIC_DOMAIN ?? 'localhost',
+      sameSite: 'none' as any,
+    };
+
     Cookies.remove('authType');
     Cookies.remove('clientType');
-    Cookies.set('authType', authType);
-    Cookies.set('clientType', clientType ?? '-');
+
+    Cookies.set('authType', authType, opt);
+    Cookies.set('clientType', clientType ?? '-', opt);
 
     popupCenter(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/signup/${social}/?authType=${authType}&clientType=${clientType}`,
