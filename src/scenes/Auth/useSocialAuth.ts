@@ -48,8 +48,9 @@ export default function useSocialAuth() {
     // document.cookie = `clientType=${clientType ?? '-'}`;
 
     const opt = {
-      domain: process.env.NEXT_PUBLIC_DOMAIN ?? 'localhost',
+      domain: process.env.NEXT_PUBLIC_DOMAIN || 'localhost',
       sameSite: 'none' as any,
+      path: '/',
     };
 
     Cookies.remove('authType');

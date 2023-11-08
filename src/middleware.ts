@@ -11,7 +11,7 @@ export async function middleware(request: NextRequest) {
   if (rawJwt && s2) {
     token = await jose
       .jwtVerify(rawJwt, s2, {
-        issuer: process.env.DOMAIN ?? 'localhost',
+        issuer: process.env.NEXT_PUBLIC_DOMAIN ?? 'localhost',
         algorithms: ['HS256'],
       })
       .then((res) => res.payload);
