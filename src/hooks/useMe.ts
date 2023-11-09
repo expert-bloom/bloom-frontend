@@ -11,7 +11,7 @@ function useMe() {
   const { data, loading, error } = mePayload;
 
   useEffect(() => {
-    console.log('mePayload : ', mePayload);
+    // console.log('mePayload : ', mePayload);
 
     if (error) {
       console.log('mePayload: ', mePayload);

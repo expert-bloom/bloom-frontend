@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 
-import Cookies from 'js-cookie';
+import Cookies, { type CookieAttributes } from 'js-cookie';
 
 import { type AccountType } from '@/graphql/client/gql/schema';
 import { capitalize } from '@/utils';
@@ -47,11 +47,13 @@ export default function useSocialAuth() {
     // document.cookie = `authType=${authType}`;
     // document.cookie = `clientType=${clientType ?? '-'}`;
 
-    const opt = {
+    const opt: CookieAttributes = {
       domain: process.env.NEXT_PUBLIC_DOMAIN || 'localhost',
-      sameSite: 'none' as any,
+      sameSite: 'None',
       path: '/',
     };
+
+    console.log('domain : ', opt.domain);
 
     Cookies.remove('authType');
     Cookies.remove('clientType');
