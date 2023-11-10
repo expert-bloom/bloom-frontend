@@ -17,6 +17,8 @@ export async function middleware(request: NextRequest) {
       .then((res) => res.payload);
   }
 
+  console.log('token : ', token);
+
   if (request.nextUrl.pathname.startsWith('/activate') && !token?.accountType) {
     return NextResponse.redirect(new URL('/404', request.url));
   }
