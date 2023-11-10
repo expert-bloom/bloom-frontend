@@ -48,8 +48,9 @@ export default function useSocialAuth() {
     // document.cookie = `clientType=${clientType ?? '-'}`;
 
     const opt: CookieAttributes = {
-      domain: process.env.NEXT_PUBLIC_DOMAIN || 'localhost',
-      sameSite: 'Lax',
+      // domain: process.env.NEXT_PUBLIC_DOMAIN || 'localhost',
+      sameSite: 'None',
+      secure: true,
       path: '/',
       expires: 20,
     };
@@ -59,8 +60,9 @@ export default function useSocialAuth() {
     // Cookies.remove('authType');
     // Cookies.remove('clientType');
 
-    // Cookies.set('authType', authType, opt);
-    // Cookies.set('clientType', clientType ?? '-', opt);
+    Cookies.set('authType', authType, opt);
+    Cookies.set('clientType', clientType ?? '-', opt);
+    Cookies.set('test-auth-type', clientType ?? '-', opt);
 
     popupCenter(
       `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/signup/${social}/?authType=${authType}&clientType=${clientType}`,
