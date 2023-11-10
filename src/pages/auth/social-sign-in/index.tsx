@@ -89,7 +89,7 @@ const SocialSignIn = () => {
             data: null,
           });
 
-          // window.close();
+          window.close();
         }
       })
       .catch((err) => {

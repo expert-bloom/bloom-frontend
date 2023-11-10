@@ -11,13 +11,14 @@ export async function middleware(request: NextRequest) {
   if (rawJwt && s2) {
     token = await jose
       .jwtVerify(rawJwt, s2, {
-        issuer: process.env.NEXT_PUBLIC_DOMAIN ?? 'localhost',
+        issuer: 'bloom-experts',
         algorithms: ['HS256'],
       })
       .then((res) => res.payload);
   }
 
-  console.log('token : ', token);
+  console.log('token : ', token, rawJwt);
+  console.log('secret  : ', secret);
 
   if (request.nextUrl.pathname.startsWith('/activate') && !token?.accountType) {
     return NextResponse.redirect(new URL('/404', request.url));

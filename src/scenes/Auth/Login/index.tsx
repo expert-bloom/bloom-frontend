@@ -73,7 +73,7 @@ const LoginScene = () => {
             .then((res) => {
               if (res.data.me?.id) {
                 toast.success('Login success');
-                router.reload();
+                // router.reload();
               }
             })
             .catch((err) => {
