@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 
+import Cookies from 'js-cookie';
+
 import { useMeQuery } from '@/graphql/client/gql/schema';
 import { useResponseErrorHandler } from '@/hooks/useResponseErrorHandler';
 
@@ -11,7 +13,13 @@ function useMe() {
   const { data, loading, error } = mePayload;
 
   useEffect(() => {
-    // console.log('mePayload : ', mePayload);
+    // console.log('mePayload : ', data);
+
+    console.log(
+      'coooo : ',
+
+      Cookies.get('authorization'),
+    );
 
     if (error) {
       console.log('mePayload: ', mePayload);

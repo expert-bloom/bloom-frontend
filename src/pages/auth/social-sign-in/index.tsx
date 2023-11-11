@@ -80,15 +80,14 @@ const SocialSignIn = () => {
 
           const opt: CookieAttributes = {
             // domain: process.env.NEXT_PUBLIC_DOMAIN || 'localhost',
-            sameSite: 'lax',
-            // secure: true,
+            sameSite: 'lax', // secure: true,
             path: '/',
             expires: 20,
           };
 
           // mePayload.client.
 
-          Cookies.set('test-auth', 'I want this', opt);
+          Cookies.set('test-auth', Cookies.get('authorization') ?? '-', opt);
 
           window.close();
         } else {

@@ -27,7 +27,7 @@ export const AccountPopover = (props: any) => {
   const handleSignOut = useCallback(() => {
     void logout({
       refetchQueries: [MeDocument],
-      awaitRefetchQueries: true,
+      // awaitRefetchQueries: true,
     })
       .then(() => {
         onClose?.();
