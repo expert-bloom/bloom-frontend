@@ -1,8 +1,9 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 import { Logout } from '@mui/icons-material';
 import {
   Box,
+  CircularProgress,
   Divider,
   ListItemIcon,
   MenuItem,
@@ -21,10 +22,32 @@ import s from './applicant_nav.module.scss';
 export const AccountPopover = (props: any) => {
   const { anchorEl, onClose, open } = props;
   const router = useRouter();
-  const { me: session } = useMe();
-  const [logout] = useLogOutMutation();
+  const { me: session, mePayload } = useMe();
+  const [logout, logoutPayload] = useLogOutMutation();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSignOut = useCallback(() => {
+    setIsLoading(true);
+
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/logout`, {
+      credentials: 'include',
+      mode: 'no-cors',
+    })
+      .then(async (res) => {
+        console.log('res : ', res);
+        await mePayload.refetch().then((res) => {
+          setIsLoading(false);
+          router.replace('/auth/login');
+        });
+      })
+      .catch((err) => {
+        console.log('err : ', err);
+        toast.error('Error signing out');
+        setIsLoading(false);
+      });
+
+    return;
+
     void logout({
       refetchQueries: [MeDocument],
       awaitRefetchQueries: true,
@@ -85,9 +108,17 @@ export const AccountPopover = (props: any) => {
           </MenuItem>
         </Link> */}
 
-        <MenuItem onClick={handleSignOut} className={s.logout}>
+        <MenuItem
+          onClick={handleSignOut}
+          className={s.logout}
+          disabled={isLoading || logoutPayload.loading}
+        >
           <ListItemIcon color="error">
-            <Logout color="error" />
+            {isLoading || logoutPayload.loading ? (
+              <CircularProgress size={20} />
+            ) : (
+              <Logout color="error" />
+            )}
           </ListItemIcon>
           <Typography variant="body1">Logout</Typography>
         </MenuItem>

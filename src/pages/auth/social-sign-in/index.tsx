@@ -5,13 +5,13 @@ import Cookies, { type CookieAttributes } from 'js-cookie';
 import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
 
-import { MeDocument } from '@/graphql/client/gql/schema';
 import useMe from '@/hooks/useMe';
 import s from '@/pages/auth/social-sign-in/signin.module.scss';
 
 const SocialSignIn = () => {
   const { me, mePayload } = useMe();
   const { error, social, success = false } = useRouter().query;
+  const router = useRouter();
 
   if (!social) {
     console.log('social : ', social);
@@ -44,71 +44,69 @@ const SocialSignIn = () => {
       return;
     }
 
-    void mePayload.client.refetchQueries({
-      include: [MeDocument],
-    });
+    if (social) {
+      void mePayload
+        .refetch()
+        .then((res) => {
+          console.log('me refetch : ', res);
 
-    void mePayload
-      .refetch()
-      .then((res) => {
-        console.log('me refetch : ', res);
+          if (res.errors?.length) {
+            window.opener?.postMessage({
+              type: 'auth',
+              social: (function () {
+                return social;
+              })(),
+              status: 'error',
+              message: res.errors.map((er) => er.message).join(', '),
+              data: null,
+            });
+            window.close();
+            return;
+          }
 
-        if (res.errors?.length) {
-          window.opener?.postMessage({
-            type: 'auth',
-            social: (function () {
-              return social;
-            })(),
-            status: 'error',
-            message: res.errors.map((er) => er.message).join(', '),
-            data: null,
-          });
-          window.close();
-          return;
-        }
+          if (res.data.me?.id) {
+            window.opener?.postMessage({
+              type: 'auth',
+              social: (function () {
+                return social;
+              })(),
+              status: 'success',
+              message: 'Successfully logged in',
+              data: null,
+            });
 
-        if (res.data.me?.id) {
-          window.opener?.postMessage({
-            type: 'auth',
-            social: (function () {
-              return social;
-            })(),
-            status: 'success',
-            message: 'Successfully logged in',
-            data: null,
-          });
+            const opt: CookieAttributes = {
+              // domain: process.env.NEXT_PUBLIC_DOMAIN || 'localhost',
+              sameSite: 'lax', // secure: true,
+              path: '/',
+              expires: 20,
+            };
 
-          const opt: CookieAttributes = {
-            // domain: process.env.NEXT_PUBLIC_DOMAIN || 'localhost',
-            sameSite: 'lax', // secure: true,
-            path: '/',
-            expires: 20,
-          };
+            // mePayload.client.
 
-          // mePayload.client.
+            // Cookies.set('test-auth', Cookies.get('authorization') ?? '-', opt);
 
-          Cookies.set('test-auth', Cookies.get('authorization') ?? '-', opt);
+            window.close();
+          } else {
+            window.opener?.postMessage({
+              type: 'auth',
+              social: (function () {
+                return social;
+              })(),
+              status: 'error',
+              message: 'Faild to Fetch Me query',
+              data: null,
+            });
 
-          window.close();
-        } else {
-          window.opener?.postMessage({
-            type: 'auth',
-            social: (function () {
-              return social;
-            })(),
-            status: 'error',
-            message: 'Faild to Fetch Me query',
-            data: null,
-          });
-
-          window.close();
-        }
-      })
-      .catch((err) => {
-        console.log('err : ', err);
-        toast.error('error fetching me ----');
-      });
-  }, [error, mePayload]);
+            window.close();
+          }
+        })
+        .catch((err) => {
+          console.log('err : ', err);
+          toast.error('error fetching me ----');
+        });
+    }
+  }, [error, mePayload, social]);
 
   return (
     <div

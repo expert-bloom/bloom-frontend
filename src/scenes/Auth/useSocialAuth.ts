@@ -30,7 +30,7 @@ export default function useSocialAuth() {
 
     const newWindow = window.open(
       url,
-      title,
+      'loading ...',
       `width=${500 / systemZoom},height=${
         550 / systemZoom
       },top=${top},left=${left}`,

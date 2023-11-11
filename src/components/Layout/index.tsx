@@ -102,7 +102,6 @@ const LayoutContents = ({ children }: any) => {
       void router.replace('/company/dashboard');
       return <LoadingSpinner />;
     } else {
-      // unknown account type
       void router.replace('/404');
       return <LoadingSpinner />;
     }
@@ -112,12 +111,12 @@ const LayoutContents = ({ children }: any) => {
     router.pathname.startsWith('/applicant') &&
     me?.accountType !== 'APPLICANT'
   ) {
-    void router.replace('/404');
+    void router.replace('/auth/login');
     return <LoadingSpinner />;
   }
 
   if (router.pathname.startsWith('/company') && me?.accountType !== 'COMPANY') {
-    void router.replace('/404');
+    void router.replace('/auth/login');
     return <LoadingSpinner />;
   }
 

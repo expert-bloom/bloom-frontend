@@ -19,7 +19,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // console.log('token : ', token, rawJwt);
-  console.log('text -cookie   : ', request.cookies.get('test-auth'));
+  // console.log('text -cookie   : ', request.cookies.get('test-auth'));
 
   return NextResponse.next();
 
