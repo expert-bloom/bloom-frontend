@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import React, { useLayoutEffect } from 'react';
 
+import Cookies, { type CookieAttributes } from 'js-cookie';
 import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
 
@@ -76,6 +77,18 @@ const SocialSignIn = () => {
             message: 'Successfully logged in',
             data: null,
           });
+
+          const opt: CookieAttributes = {
+            // domain: process.env.NEXT_PUBLIC_DOMAIN || 'localhost',
+            sameSite: 'lax',
+            // secure: true,
+            path: '/',
+            expires: 20,
+          };
+
+          // mePayload.client.
+
+          Cookies.set('test-auth', 'I want this', opt);
 
           window.close();
         } else {

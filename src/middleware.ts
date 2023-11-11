@@ -19,7 +19,9 @@ export async function middleware(request: NextRequest) {
   }
 
   // console.log('token : ', token, rawJwt);
-  console.log('secret  : ', request.headers.has('Authorization'));
+  console.log('text -cookie   : ', request.cookies.get('test-auth'));
+
+  return NextResponse.next();
 
   if (request.nextUrl.pathname.startsWith('/activate') && !token?.accountType) {
     return NextResponse.redirect(new URL('/404', request.url));
