@@ -1,0 +1,23 @@
+@use 'src/styles' as s;
+
+
+.layout {
+
+
+  & :local {
+    .wrapper {
+
+
+    }
+
+
+  }
+
+}
+
+.loader{
+  height: 100vh;
+  border: 1px solid red;
+  display: grid;
+  place-items: center;
+}

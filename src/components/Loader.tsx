@@ -4,7 +4,9 @@ import Image from 'next/image';
 
 import LoadingGif from '@/public/loader.gif';
 
-const Loader = (props: any) => {
+type Props = {} & React.HTMLAttributes<HTMLDivElement>;
+
+const Loader = (props: Props) => {
   return (
     <div
       style={{

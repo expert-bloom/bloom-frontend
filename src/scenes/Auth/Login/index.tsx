@@ -62,6 +62,24 @@ const LoginScene = () => {
   });
 
   useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/get-token`, {
+      credentials: 'include',
+      mode: 'no-cors',
+    })
+      .then(async (res) => {
+        console.log('headers : ', res.headers);
+
+        return await res.json();
+      })
+      .then((res) => {
+        console.log('res : ', res);
+      })
+      .catch((err) => {
+        console.log('err : ', err);
+      });
+  }, []);
+
+  useEffect(() => {
     window.onmessage = (event) => {
       if (event.data.type === 'auth') {
         // console.log('onmessage event : --- ', event.data);

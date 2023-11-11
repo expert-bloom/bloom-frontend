@@ -1,16 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { useNextCssRemovalPrevention } from '@madeinhaus/nextjs-page-transition';
 import { AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/router';
-import { Toaster } from 'react-hot-toast';
+import { toast, Toaster } from 'react-hot-toast';
 
 import FixedLayer from '@/components/commons/FixedLayer';
 import Applicant from '@/components/Layout/Applicant';
 import LayoutEmpty from '@/components/Layout/LayoutEmpty';
+import Loader from '@/components/Loader';
 import { MotionParent } from '@/components/MotionItems';
 import useMe from '@/hooks/useMe';
 import LayoutCompany from 'src/components/Layout/Company';
+
+import s from './layout.module.scss';
 
 const useRoleLayout = (pathname: string) => {
   const { me } = useMe();
@@ -43,11 +46,80 @@ const useRoleLayout = (pathname: string) => {
   }
 };
 
+const LoadingSpinner = () => (
+  <div className={s.loader}>
+    <Loader
+      style={{
+        height: '100vh',
+        display: 'grid',
+        placeItems: 'center',
+      }}
+    />
+  </div>
+);
+
+let loadingId: string | undefined;
+
 const LayoutContents = ({ children }: any) => {
-  const { pathname } = useRouter();
+  const router = useRouter();
+  const { pathname } = router;
+
+  const { me, mePayload } = useMe();
 
   const getLayout = useRoleLayout(pathname);
   const removeUnusedStyles = useNextCssRemovalPrevention();
+
+  // handle protected routes
+
+  useEffect(() => {
+    if (mePayload.loading && me?.id && !loadingId) {
+      loadingId = toast.loading('loading ... ');
+    }
+
+    if (!mePayload.loading && loadingId) {
+      toast.dismiss(loadingId);
+      loadingId = undefined;
+    }
+  }, [me]);
+
+  if (mePayload.loading && !me?.id) {
+    return <LoadingSpinner />;
+  }
+
+  if (router.pathname.startsWith('/activate') && !me?.id) {
+    void router.replace('/404');
+    return <LoadingSpinner />;
+  }
+
+  if (
+    (router.pathname.startsWith('/auth') || router.pathname === '/') &&
+    me?.id
+  ) {
+    if (me?.accountType === 'APPLICANT') {
+      void router.replace('/applicant/dashboard');
+      return <LoadingSpinner />;
+    } else if (me?.accountType === 'COMPANY') {
+      void router.replace('/company/dashboard');
+      return <LoadingSpinner />;
+    } else {
+      // unknown account type
+      void router.replace('/404');
+      return <LoadingSpinner />;
+    }
+  }
+
+  if (
+    router.pathname.startsWith('/applicant') &&
+    me?.accountType !== 'APPLICANT'
+  ) {
+    void router.replace('/404');
+    return <LoadingSpinner />;
+  }
+
+  if (router.pathname.startsWith('/company') && me?.accountType !== 'COMPANY') {
+    void router.replace('/404');
+    return <LoadingSpinner />;
+  }
 
   return getLayout(
     <>

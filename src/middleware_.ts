@@ -6,7 +6,8 @@ const secret: any = process.env.JWT_SECRET;
 export async function middleware(request: NextRequest) {
   let token: any = {};
 
-  const rawJwt = request.cookies.get('authorization')?.value;
+  // const rawJwt = request.cookies.get('authorization')?.value;
+  const rawJwt = request.headers.get('Authorization');
   const s2 = new TextEncoder().encode(secret);
   if (rawJwt && s2) {
     token = await jose
@@ -17,8 +18,8 @@ export async function middleware(request: NextRequest) {
       .then((res) => res.payload);
   }
 
-  console.log('token : ', token, rawJwt);
-  console.log('secret  : ', secret);
+  // console.log('token : ', token, rawJwt);
+  console.log('secret  : ', request.headers.has('Authorization'));
 
   if (request.nextUrl.pathname.startsWith('/activate') && !token?.accountType) {
     return NextResponse.redirect(new URL('/404', request.url));
