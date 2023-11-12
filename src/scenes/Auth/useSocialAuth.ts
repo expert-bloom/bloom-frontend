@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 
-import Cookies, { type CookieAttributes } from 'js-cookie';
+import { type CookieAttributes } from 'js-cookie';
 
 import { type AccountType } from '@/graphql/client/gql/schema';
 import { capitalize } from '@/utils';
@@ -36,6 +36,10 @@ export default function useSocialAuth() {
       },top=${top},left=${left}`,
     );
 
+    if (newWindow) {
+      newWindow.document.title = 'Loading ... ';
+    }
+
     newWindow?.focus();
   };
 
@@ -60,12 +64,13 @@ export default function useSocialAuth() {
     // Cookies.remove('authType');
     // Cookies.remove('clientType');
 
-    Cookies.set('authType', authType, opt);
-    Cookies.set('clientType', clientType ?? '-', opt);
-    Cookies.set('test-auth-type', clientType ?? '-', opt);
+    // Cookies.set('authType', authType, opt);
+    // Cookies.set('clientType', clientType ?? '-', opt);
+    // Cookies.set('test-auth-type', clientType ?? '-', opt);
 
     popupCenter(
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/signup/${social}/?authType=${authType}&clientType=${clientType}`,
+      // `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/signup/${social}/?authType=${authType}&clientType=${clientType}`,
+      `/auth/social-sign-in/?authType=${authType}&clientType=${clientType}&social=${social}&start=${true}`,
       `${capitalize(social)} Sign In`,
     );
   };

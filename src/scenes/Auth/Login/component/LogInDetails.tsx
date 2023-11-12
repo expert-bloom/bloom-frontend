@@ -44,7 +44,7 @@ const LogInDetails = ({ onReturn }: any) => {
     <div className={s.auth_detail}>
       <header>
         <Typography variant="h4" className={s.title}>
-          Sing In to your account
+          Sign In to your account
         </Typography>
       </header>
 

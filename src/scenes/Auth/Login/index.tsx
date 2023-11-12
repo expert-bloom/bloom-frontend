@@ -1,8 +1,17 @@
 import React, { useEffect, useState } from 'react';
 
-import { GitHub, Login } from '@mui/icons-material';
-import { Alert, Button, Stack, Typography } from '@mui/material';
-import { Form, Formik, type FormikProps } from 'formik';
+import { CorporateFare, GitHub, Login, WorkTwoTone } from '@mui/icons-material';
+import {
+  Alert,
+  Button,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Stack,
+  Typography,
+} from '@mui/material';
+import { Form, Formik } from 'formik';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
@@ -10,6 +19,7 @@ import { toast } from 'react-hot-toast';
 import GoogleIcon from '@/components/Icons/Google';
 import { MoButton } from '@/components/MoButton';
 import {
+  AccountType,
   useLoginMutation,
   useLogOutMutation,
 } from '@/graphql/client/gql/schema';
@@ -60,38 +70,17 @@ const LoginScene = () => {
   const [currentStep, setCurrentStep] = useState<typeof formSteps[number]>({
     ...formSteps[activeStep],
   });
-
-  useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/get-token`, {
-      credentials: 'include',
-      mode: 'no-cors',
-    })
-      .then(async (res) => {
-        console.log('headers : ', res.headers);
-
-        return await res.json();
-      })
-      .then((res) => {
-        console.log('res : ', res);
-      })
-      .catch((err) => {
-        console.log('err : ', err);
-      });
-  }, []);
-
   useEffect(() => {
     window.onmessage = (event) => {
       if (event.data.type === 'auth') {
         // console.log('onmessage event : --- ', event.data);
         if (event.data.status === 'success') {
-          // close the small window
-          // window.close();
           void mePayload
             .refetch()
-            .then((res) => {
+            .then(async (res) => {
               if (res.data.me?.id) {
                 toast.success('Login success');
-                // router.reload();
+                await router.replace('/');
               }
             })
             .catch((err) => {
@@ -116,11 +105,23 @@ const LoginScene = () => {
     setActiveStep((activeStep) => Math.max(0, activeStep - 1));
   };
 
-  const getBtnTxt = (props: FormikProps<AuthSignInFormValuesType>) => {
-    return {
-      disabled: false,
-      label: 'Login',
-    };
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = (
+    clientType: AccountType,
+    social: 'github' | 'google',
+  ) => {
+    withSocial('login', social, clientType);
+    setErrorMsg(undefined);
+    setAnchorEl(null);
+  };
+
+  const handleMenuClose = () => {
+    setErrorMsg(undefined);
+    setAnchorEl(null);
   };
 
   useEffect(() => {
@@ -292,10 +293,7 @@ const LoginScene = () => {
                       variant="outlined"
                       fullWidth
                       startIcon={<GoogleIcon />}
-                      onClick={() => {
-                        withSocial('login', 'google', null);
-                        setErrorMsg(undefined);
-                      }}
+                      onClick={handleClick}
                     >
                       Continue with Google
                     </Button>
@@ -304,13 +302,46 @@ const LoginScene = () => {
                       variant="outlined"
                       fullWidth
                       startIcon={<GitHub />}
-                      onClick={() => {
-                        withSocial('login', 'github', null);
-                        setErrorMsg(undefined);
-                      }}
+                      onClick={handleClick}
+                      disabled
                     >
                       Continue with Github
                     </Button>
+
+                    <Menu
+                      anchorEl={anchorEl}
+                      anchorOrigin={{
+                        horizontal: 'center',
+                        vertical: 'bottom',
+                      }}
+                      open={open}
+                      onClose={handleMenuClose}
+                      MenuListProps={{
+                        'aria-labelledby': 'basic-button',
+                      }}
+                    >
+                      <MenuItem
+                        onClick={() => {
+                          handleClose(AccountType.Company, 'google');
+                        }}
+                      >
+                        <ListItemIcon>
+                          <CorporateFare fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText>As Company</ListItemText>
+                      </MenuItem>
+
+                      <MenuItem
+                        onClick={() => {
+                          handleClose(AccountType.Applicant, 'google');
+                        }}
+                      >
+                        <ListItemIcon>
+                          <WorkTwoTone fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText>As Applicant</ListItemText>
+                      </MenuItem>
+                    </Menu>
                   </Stack>
 
                   <Typography color="gray" fontWeight={300}>

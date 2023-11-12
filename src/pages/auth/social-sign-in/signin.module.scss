@@ -1,9 +1,5 @@
 @use '@/styles' as s;
 
-@mixin rotate-anim{
-  animation: rotate-svg 1s linear infinite;
-}
-
 .container {
   width: 100%;
   display: grid;

@@ -44,6 +44,12 @@ const RegisterDetails = ({ onReturn }: any) => {
 
   const [errorMsg, setErrorMsg] = useState<string>();
 
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
   useEffect(() => {
     if (me?.id) return;
 
@@ -55,7 +61,7 @@ const RegisterDetails = ({ onReturn }: any) => {
             .refetch()
             .then((res) => {
               if (res.data.me?.id) {
-                toast.success('Login success');
+                toast.success('Logged in successfully!');
               }
             })
             .catch((err) => {
@@ -138,25 +144,11 @@ const RegisterDetails = ({ onReturn }: any) => {
       </MoButton>
 
       <MoButton
-        // onClick={handleNext}
-        motionProps={{
-          whileHover: {
-            scale: 1.01,
-          },
-          whileTap: {
-            scale: 0.97,
-          },
-        }}
+        disabled
         variant="outlined"
-        disabled={formik.isSubmitting}
         loading={formik.isSubmitting}
         startIcon={<GitHub />}
         fullWidth
-        onClick={() => {
-          formik.setSubmitting(true);
-          console.log('accout type : ', formik.values.type);
-          withSocial('signup', 'github', formik.values.type);
-        }}
       >
         Continue with Github
       </MoButton>
