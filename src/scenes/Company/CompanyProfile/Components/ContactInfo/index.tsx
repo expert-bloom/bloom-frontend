@@ -59,7 +59,7 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
             <legend>
               <Typography variant="h6">Contact Information</Typography>
             </legend>
-            <Stack direction="row" gap=".5rem">
+            <Stack direction="row" gap="1.5rem">
               <Stack flex="1">
                 <FormLabel htmlFor="first">First Name</FormLabel>
                 <TextField
@@ -85,6 +85,48 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
                   helperText={formik.errors.account?.lastName}
                 />
               </Stack>
+            </Stack>
+
+            <Stack direction="row" gap="1.5rem">
+              <Stack flex="1">
+                <FormLabel htmlFor="email">Email</FormLabel>
+                <TextField
+                  id="account.email"
+                  name="email"
+                  // disabled
+                  fullWidth
+                  onChange={handleChange}
+                  value={values.account.email}
+                  error={Boolean(formik.errors.account?.email)}
+                  helperText={formik.errors.account?.email as string}
+                />
+              </Stack>
+              <FormControl sx={{ flex: '1' }}>
+                <FormLabel>Location</FormLabel>
+                <Autocomplete
+                  disablePortal
+                  fullWidth
+                  options={countryListOptions}
+                  getOptionLabel={(option) => option.label}
+                  isOptionEqualToValue={(option, value) =>
+                    option.label === value.label
+                  }
+                  value={{ label: values.company.location }}
+                  onChange={(event, newValue) => {
+                    void formik.setFieldValue(
+                      'applicant.location',
+                      newValue?.label ?? '',
+                    );
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      name="applicant.location"
+                      fullWidth
+                    />
+                  )}
+                />
+              </FormControl>
             </Stack>
 
             <Stack flex="1">
@@ -116,48 +158,6 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
                 }
               />
             </Stack>
-
-            <Stack direction="row" gap=".5rem">
-              <Stack flex="1">
-                <FormLabel htmlFor="email">Email</FormLabel>
-                <TextField
-                  id="account.email"
-                  name="email"
-                  // disabled
-                  fullWidth
-                  onChange={handleChange}
-                  value={values.account.email}
-                  error={Boolean(formik.errors.account?.email)}
-                  helperText={formik.errors.account?.email as string}
-                />
-              </Stack>
-              <FormControl sx={{ flex: '1' }}>
-                <FormLabel>Location</FormLabel>
-                <Autocomplete
-                  disablePortal
-                  fullWidth
-                  options={countryListOptions}
-                  getOptionLabel={(option) => option.label}
-                  isOptionEqualToValue={(option, value) =>
-                    option.label === value.label
-                  }
-                  value={{ label: values.applicant.location }}
-                  onChange={(event, newValue) => {
-                    void formik.setFieldValue(
-                      'applicant.location',
-                      newValue?.label ?? '',
-                    );
-                  }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      name="applicant.location"
-                      fullWidth
-                    />
-                  )}
-                />
-              </FormControl>
-            </Stack>
           </fieldset>
         </Stack>
 
@@ -173,9 +173,9 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
                 type="text"
                 fullWidth
                 onChange={handleChange}
-                value={values.applicant.linkedin}
-                error={Boolean(formik.errors.applicant?.linkedin)}
-                helperText={formik.errors.applicant?.linkedin as string}
+                value={values.company.linkedin}
+                error={Boolean(formik.errors.company?.linkedin)}
+                helperText={formik.errors.company?.linkedin as string}
               />
             </Stack>
 
@@ -186,9 +186,9 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
                 type="text"
                 fullWidth
                 onChange={handleChange}
-                value={values.applicant.portfolio}
-                error={Boolean(formik.errors.applicant?.portfolio)}
-                helperText={formik.errors.applicant?.portfolio as string}
+                value={values.company.portfolio}
+                error={Boolean(formik.errors.company?.portfolio)}
+                helperText={formik.errors.company?.portfolio as string}
               />
             </Stack>
           </fieldset>

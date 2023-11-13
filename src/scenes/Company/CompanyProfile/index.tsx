@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import React, {
   createContext,
   useEffect,
@@ -46,16 +45,17 @@ import {
 
 const formSteps = [
   {
-    name: 'Profile',
+    name: 'Company Info',
     component: (props: any) => <CompanyInfo {...props} />,
     schema: '',
-    Icon: AccountCircle,
+    Icon: Contacts,
   },
+
   {
-    name: 'Company Info',
+    name: 'Profile',
     component: (props: any) => <ContactInfo {...props} />,
     schema: '',
-    Icon: Contacts,
+    Icon: AccountCircle,
   },
 ];
 
@@ -138,12 +138,9 @@ const CompanyProfile = () => {
       const accountInput = nullify(changedValues);
 
       const changedApplicantValues: Record<
-        keyof typeof values.applicant,
+        keyof typeof values.company,
         string
-      > = getChangedFields(
-        values.applicant,
-        formik.initialValues.applicant,
-      ) as any;
+      > = getChangedFields(values.company, formik.initialValues.company) as any;
       const applicantInput = nullify(changedApplicantValues);
 
       console.log('accountInput : ', accountInput, 'applicant', applicantInput);
@@ -204,8 +201,8 @@ const CompanyProfile = () => {
     setOpen(false);
   };
   const reset = () => {
-    if (me.me?.applicant === null || me.me?.applicant === undefined) return;
-    const applicant = me.me.applicant;
+    if (!me.me?.company) return;
+    const company = me.me.company;
 
     console.log('me : ', me);
 
@@ -217,28 +214,16 @@ const CompanyProfile = () => {
         lastName: me.me.lastName ?? '',
         email: me.me.email ?? '',
       },
-      applicant: {
-        about: applicant.about ?? '',
-        accomplishment: applicant.accomplishment ?? '',
-        englishLevel: applicant.englishLevel ?? '',
-        skillLevel: applicant.skillLevel ?? '',
-        experienceYear: applicant.experienceYear ?? 0,
-        jobPosition: applicant.jobPosition ?? '',
-        location: applicant.location ?? '',
-        salaryExpectation: applicant.salaryExpectation ?? ('' as any),
-        skills: applicant.skills ?? [],
-        resume: applicant.resume ?? '',
-        github: applicant.github ?? '',
-        linkedin: applicant.linkedin ?? '',
-        portfolio: applicant.portfolio ?? '',
+      company: {
+        about: '',
 
-        // filter out the __typename from the workExperience
-        workExperience: applicant.workExperience.map((item) => {
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          delete (item as any)?.__typename;
-          return item;
-        }),
-      },
+        // location: company.location ?? '',
+        // skills: company.skills ?? [],
+        // github: company.github ?? '',
+        // linkedin: company.linkedin ?? '',
+        // portfolio: company.portfolio ?? '',
+        companyName: company?.companyName ?? '',
+      } as any,
     };
 
     console.log('initial : ', initial);
@@ -247,18 +232,16 @@ const CompanyProfile = () => {
       values: {
         ...formik.values,
         ...initial,
+        company: {
+          ...formik.values.company,
+          ...initial.company,
+        },
       },
     });
   };
 
   useEffect(() => {
-    if (
-      me.me?.applicant === null ||
-      me.me?.applicant === undefined ||
-      me.loading ||
-      me.error
-    )
-      return;
+    if (me.loading || me.error) return;
     reset();
   }, [me.me?.applicant]);
 
@@ -290,10 +273,7 @@ const CompanyProfile = () => {
                   <CircularProgress sx={{ position: 'absolute' }} />
                 )}
                 <Typography variant="h6">
-                  {`${me.me?.company?.companyName ?? '-'}`}
-                </Typography>
-                <Typography variant="body2" textAlign="center" color="gray">
-                  {me.me?.applicant?.jobPosition ?? '-'}
+                  {`${me.me?.company?.companyName ?? 'no-company name'}`}
                 </Typography>
               </div>
             </Stack>

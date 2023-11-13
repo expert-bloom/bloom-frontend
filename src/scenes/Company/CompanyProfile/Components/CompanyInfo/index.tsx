@@ -1,13 +1,9 @@
-/* eslint-disable @typescript-eslint/no-misused-promises,@typescript-eslint/restrict-template-expressions */
 import React, { useEffect, useRef } from 'react';
 
 import {
   Autocomplete,
   FormControl,
   FormLabel,
-  MenuItem,
-  Select,
-  Slider,
   Stack,
   TextField,
   Typography,
@@ -18,7 +14,6 @@ import { toast } from 'react-hot-toast';
 import Z from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 
-import { EnglishLevel } from '@/graphql/client/gql/schema';
 import useMe from '@/hooks/useMe';
 import { Editor } from '@/lib/filePong';
 import { usePresignedUpload } from '@/lib/uploader';
@@ -28,7 +23,6 @@ import {
 } from '@/scenes/Applicant/Profile/data';
 import { useCompanyProfileSettingFormContext } from '@/scenes/Company/CompanyProfile';
 import { skillOption } from '@/scenes/Company/CreateJobPost/JobRequirement';
-import { capitalize } from '@/utils';
 
 import s from './profileinfo.module.scss';
 
@@ -117,14 +111,12 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
   }, []);
 
   useEffect(() => {
-    if (!me.me?.image || !filePond.current) return;
+    if (!values.account.image || !filePond.current) return;
 
-    if (me.me?.image !== filePond.current.getFile()?.source) {
-      console.log('image values ', me.me?.image);
-
-      void filePond.current?.addFile(me.me?.image);
+    if (values.account.image !== filePond.current.getFile()?.source) {
+      void filePond.current?.addFile(values.account.image);
     }
-  }, [me.me?.image]);
+  }, [values.account.image]);
 
   return (
     <div className={s.container}>
@@ -183,7 +175,7 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
                         } - ${status.sub ?? err?.sub ?? ''}`,
                       );
                     }}
-                    onremovefile={async (error, file) => {
+                    onremovefile={(error, file) => {
                       if (error) {
                         return toast.error(
                           `Error removing thumbnail. ${error?.body ?? ''}`,
@@ -203,6 +195,8 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
                         console.log('onAdd file error : ', error);
                         return;
                       }
+
+                      console.log('onaddfile : ', formik.values.account.image);
 
                       if (file?.file && error === null) {
                         void formik.setFieldValue('account.image', file.source);
@@ -292,6 +286,19 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
             </Stack>
 
             <Stack spacing={0.5} flex="1" style={{ width: '100%' }}>
+              <FormLabel>Company Name</FormLabel>
+              <TextField
+                name="applicant.companyName"
+                fullWidth
+                // label="Job Description"
+                // onChange={handleChange}
+                // value={values.company.accomplishment}
+                // error={Boolean(formik.errors.accomplishment)}
+                // helperText={formik.errors.accomplishment as string}
+              />
+            </Stack>
+
+            <Stack spacing={0.5} flex="1" style={{ width: '100%' }}>
               <FormLabel>About Company</FormLabel>
               <TextField
                 name="applicant.about"
@@ -299,14 +306,14 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
                 multiline
                 rows={2}
                 onChange={handleChange}
-                value={values.applicant.about}
-                error={Boolean(formik.errors.applicant?.about)}
-                helperText={formik.errors.applicant?.about as string}
+                value={values.company.about}
+                error={Boolean(formik.errors.company?.about)}
+                helperText={formik.errors.company?.about as string}
               />
             </Stack>
 
             <FormControl>
-              <FormLabel htmlFor="skills">Skills</FormLabel>
+              <FormLabel htmlFor="skills">Company Skill Interest</FormLabel>
               <Autocomplete
                 id="applicant.skills"
                 disablePortal
@@ -320,7 +327,7 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
                 isOptionEqualToValue={(option, value) =>
                   option.label === value.label
                 }
-                value={values.applicant.skills.map((s) => ({ label: s }))}
+                value={values.company.skills.map((s) => ({ label: s }))}
                 onChange={(event, newValue) => {
                   console.log('newValue', newValue);
                   void formik.setFieldValue(
@@ -340,40 +347,6 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
                 )}
               />
             </FormControl>
-
-            <Stack gap={0.5} flex="1">
-              <FormLabel htmlFor="eng-level">
-                Level of English fluency
-              </FormLabel>
-
-              <Select
-                id="eng-level"
-                name="applicant.englishLevel"
-                onChange={handleChange}
-                value={values.applicant.englishLevel}
-              >
-                {Object.values(EnglishLevel).map((value, idx) => (
-                  <MenuItem value={value} key={idx}>
-                    {capitalize(value.toLowerCase()).replace('_', '-')}
-                  </MenuItem>
-                ))}
-              </Select>
-            </Stack>
-
-            <Stack spacing={0.5} flex="1" style={{ width: '100%' }}>
-              <FormLabel>Accomplishment</FormLabel>
-              <TextField
-                name="applicant.accomplishment"
-                fullWidth
-                // label="Job Description"
-                multiline
-                rows={4}
-                onChange={handleChange}
-                value={values.applicant.accomplishment}
-                // error={Boolean(formik.errors.accomplishment)}
-                // helperText={formik.errors.accomplishment as string}
-              />
-            </Stack>
           </fieldset>
         </Stack>
       </div>

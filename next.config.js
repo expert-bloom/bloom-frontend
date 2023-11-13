@@ -12,6 +12,7 @@ const nextConfig = {
       'xsgames.co',
       'd1lmgnqw69ga6t.cloudfront.net',
       'd3jm3hdd9b8409.cloudfront.net',
+      'lh3.googleusercontent.com',
     ],
   },
   modularizeImports: {
@@ -24,7 +25,6 @@ const nextConfig = {
     '@mui/lab': {
       transform: '@mui/lab/{{member}}',
     },
-
   },
 
   compiler: {
@@ -32,7 +32,6 @@ const nextConfig = {
   },
 
   // disable console log in production
-
 
   /*plugins: [
         new CopyWebpackPlugin({

@@ -22,6 +22,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import { usePopover } from '@/hooks/use-popover';
+import useMe from '@/hooks/useMe';
 import Logo from '@/public/logo.png';
 
 import { AccountPopover } from './AccountPopover';
@@ -90,6 +91,7 @@ const links = [
 export default function CompanyNav() {
   const router = useRouter();
   const accountPopover = usePopover();
+  const { me } = useMe();
 
   return (
     <HideOnScroll>
@@ -137,7 +139,7 @@ export default function CompanyNav() {
                 height: 40,
                 width: 40,
               }}
-              // src="/assets/avatars/avatar-anika-visser.png"
+              src={me?.image ?? ''}
             />
           </Tooltip>
 

@@ -8,11 +8,6 @@ import {
 } from '@mui/icons-material';
 import { type FormikHelpers } from 'formik/dist/types';
 
-import {
-  type EnglishLevel,
-  type ExperienceLevel,
-} from '@/graphql/client/gql/schema';
-
 export const settingCategories = [
   {
     label: 'Profile',
@@ -47,25 +42,15 @@ export const initialValues = {
     email: '' as string,
   },
 
-  applicant: {
+  company: {
+    companyName: '' as string,
     about: '' as string,
-    jobPosition: '' as string,
-    salaryExpectation: '' as unknown as number | null,
-    experienceYear: 0 as number,
-    skillLevel: 'Beginner' as ExperienceLevel | any,
-    englishLevel: 'FLUENT' as EnglishLevel | any,
-    accomplishment: '' as string,
     skills: [] as string[],
 
-    // contact info
     location: '' as string,
     linkedin: '' as string,
     github: '' as string,
     portfolio: '' as string,
-
-    // CV & Experience
-    resume: '' as string | undefined | null,
-    workExperience: [] as WorkExperienceFormValuesType[],
   },
 };
 
