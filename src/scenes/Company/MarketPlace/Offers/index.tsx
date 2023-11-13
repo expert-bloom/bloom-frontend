@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import React, { useEffect, useState } from 'react';
 
 import { BusinessCenter, MonetizationOn, Place } from '@mui/icons-material';
@@ -69,9 +68,9 @@ const InterviewApplicants = () => {
   const [activeCategories, setActiveCategories] = useState(
     tabCategories[0].value,
   );
-  const [filteredCategories, setFilteredCategories] = useState<Application[]>(
-    [],
-  );
+  const [filteredCategories, setFilteredCategories] = useState<
+    Array<Omit<Application, 'company'>>
+  >([]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: any) => {
     console.log('new vaues : ', newValue);
