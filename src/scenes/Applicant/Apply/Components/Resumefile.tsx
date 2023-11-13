@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import React, { useEffect } from 'react';
 
 import { toast } from 'react-hot-toast';
@@ -6,7 +5,6 @@ import { toast } from 'react-hot-toast';
 import FilePond from '@/lib/filePong';
 import { usePresignedUpload } from '@/lib/uploader';
 import { useJobPostApplicationContext } from '@/scenes/Applicant/Apply';
-import { type NestedOnSubmit } from '@/scenes/Applicant/Profile/data';
 
 import s from '../apply.module.scss';
 
@@ -23,65 +21,6 @@ const ResumeFile = ({ resume }: Props) => {
       void resumeFilePond.current.addFile(resume);
     }
   }, [resume]);
-
-  const onSubmit: NestedOnSubmit = async (values, formikHelpers) => {
-    if (!resumeFilePond.current) return null;
-    // check if the default is changed
-    const pond = resumeFilePond.current;
-    let loadingToast = '';
-
-    if (!resumeFilePond.current.getFile()) {
-      // toast.error('Resume file is required');
-      return values;
-    }
-
-    console.log('nested submit : ', values, resumeFilePond.current.getFile());
-
-    try {
-      // formikHelpers.setSubmitting(true);
-      if (
-        typeof values.applicant.resume === 'string' &&
-        values.applicant.resume === resumeFilePond.current.getFile().source
-      ) {
-        return values;
-      }
-
-      let url = {
-        serverId: resumeFilePond.current.getFile()?.serverId,
-      };
-
-      if (!url.serverId && pond.getFile().source instanceof File) {
-        // upload thumbnail to s3
-        loadingToast = toast.loading('uploading resume ... ');
-
-        url = await resumeFilePond.current.processFile();
-      }
-
-      console.log('url : ', url);
-
-      await formik.setFieldValue('applicant.resume', url.serverId);
-      toast.dismiss(loadingToast);
-      return {
-        ...values,
-        applicant: {
-          ...values.applicant,
-          resume: url.serverId,
-        },
-      };
-    } catch (err: any) {
-      console.log(' err : ', err);
-      toast.dismiss(loadingToast);
-
-      if (err?.error?.body === 'Item not found') {
-        console.log('filepond err : ', err);
-        toast.error('Resume file is required');
-        return null;
-      }
-
-      toast.error(err?.message ?? 'Error uploading resume.');
-      return null;
-    }
-  };
 
   return (
     <div className={s.file_pond_wrap}>
@@ -104,7 +43,7 @@ const ResumeFile = ({ resume }: Props) => {
         allowProcess={false}
         // add file extension that can be resume files
         acceptedFileTypes={['application/pdf', 'application/msword']}
-        // disabled={disabled}
+        disabled={formik.isSubmitting}
         labelIdle={
           'Drag & Drop your CV (Resume) or <b class="filepond--label-action">Browse</b>'
         }
@@ -115,7 +54,12 @@ const ResumeFile = ({ resume }: Props) => {
             return;
           }
 
-          if (file?.file && error === null) {
+          if (
+            file?.file &&
+            error === null &&
+            typeof formik.values.resume !== 'string' &&
+            !formik.values.resume
+          ) {
             void formik.setFieldValue('resume', file.source);
           }
         }}

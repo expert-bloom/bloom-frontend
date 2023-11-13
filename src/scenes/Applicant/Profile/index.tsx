@@ -7,7 +7,6 @@ import {
   PendingActions,
   Redo,
   Save,
-  Settings,
 } from '@mui/icons-material';
 import {
   Box,
@@ -64,16 +63,12 @@ const formSteps = [
     component: (props: any) => <CvExperience {...props} />,
     schema: '',
     Icon: PendingActions,
-  },
-  {
+  } /* {
     name: 'Account Setting',
     component: (props: any) => <CvExperience {...props} />,
     Icon: Settings,
     disabled: true,
-  } /* {
-    name: 'Done',
-    component: (props: any) => <h1>congradulation </h1>,
-  }, */,
+  }  */,
 ];
 
 interface ProfileSettingContextType {
@@ -340,7 +335,7 @@ const Profile = () => {
                   startIcon={<item.Icon />}
                   color="secondary"
                   key={idx}
-                  disabled={item.disabled}
+                  // disabled={item.disabled}
                   className={clsx([
                     s.tab,
                     currentStep.name === item.name && s.active,

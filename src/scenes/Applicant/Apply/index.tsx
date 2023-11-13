@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-import React, { createContext, useEffect, useRef } from 'react';
+import React, { createContext, useEffect, useRef, useState } from 'react';
 
 import { Subject } from '@mui/icons-material';
 import {
   Alert,
   Checkbox,
-  CircularProgress,
   FormControlLabel,
   FormLabel,
   Stack,
@@ -19,9 +17,11 @@ import { useRouter } from 'next/router';
 import { type FilePond } from 'react-filepond';
 import { toast } from 'react-hot-toast';
 
+import Loader from '@/components/Loader';
 import { MoButton } from '@/components/MoButton';
 import {
   GetJobApplicationsDocument,
+  type JobPost,
   useCreateJobApplicationMutation,
   useGetJobPostsQuery,
 } from '@/graphql/client/gql/schema';
@@ -30,7 +30,6 @@ import { useResponseErrorHandler } from '@/hooks/useResponseErrorHandler';
 import ApplicationJobPostDetail from '@/scenes/Applicant/Apply/Components/ApplicationJobPostDetail';
 import Attachment from '@/scenes/Applicant/Apply/Components/Attachment';
 import ResumeFile from '@/scenes/Applicant/Apply/Components/Resumefile';
-import { NestedOnSubmit } from '@/scenes/Applicant/Profile/data';
 
 import s from './apply.module.scss';
 
@@ -72,11 +71,8 @@ const Apply = () => {
   const { id: jobPostId } = router.query;
 
   const jopPostsPayload = useGetJobPostsQuery();
-  const { data: posts, loading } = jopPostsPayload;
 
-  const selectedJobPost = posts?.getJobPosts?.find(
-    (post) => post.id === jobPostId,
-  );
+  const [selectedJobPost, setSelectedJobPost] = useState<JobPost>();
 
   const resumeFilePond = useRef<FilePond>(null);
   const attachmentFilePond = useRef<FilePond>(null);
@@ -98,13 +94,26 @@ const Apply = () => {
     onSubmit: async (values, formikHelpers) => {
       if (!selectedJobPost || meLoading) return null;
 
-      const newValue = await onResumeSubmit(values, formikHelpers);
+      if (!me?.emailVerified) {
+        toast.error('Verify your Email to start applying for job-posts');
+        return;
+      }
+
+      let newValue = await onResumeSubmit(values, formikHelpers);
 
       console.log('submit value : ', newValue);
       if (!newValue?.resume) {
         // toast.error('Resume file is required');
         return null;
       }
+
+      newValue = await onAdditionalAttachmentUpload(values, formikHelpers);
+
+      if (!newValue) {
+        return null;
+      }
+
+      console.log('new values : ', newValue);
 
       try {
         const createApplicationRes = await createApplication({
@@ -130,9 +139,8 @@ const Apply = () => {
           );
         }
       } catch (err: any) {
-        toast.error(
-          err?.message ?? 'Something went wrong creating application',
-        );
+        console.log('error applying : ', err);
+        toast.error('Something went wrong creating application');
         return null;
       }
     },
@@ -182,6 +190,7 @@ const Apply = () => {
 
       await formik.setFieldValue('applicant.resume', url.serverId);
       toast.dismiss(loadingToast);
+
       return {
         ...values,
         resume: url.serverId,
@@ -197,6 +206,55 @@ const Apply = () => {
       }
 
       toast.error(err?.message ?? 'Error uploading resume.');
+      return null;
+    }
+  };
+
+  const onAdditionalAttachmentUpload = async (
+    values: typeof formik.values,
+    formikHelpers: FormikHelpers<ApplyProps>,
+  ) => {
+    if (!attachmentFilePond.current) {
+      return values;
+    }
+    // check if the default is changed
+    const pond = attachmentFilePond.current;
+    let loadingToast = '';
+
+    if (!pond.getFile()) {
+      return values;
+    }
+
+    try {
+      // formikHelpers.setSubmitting(true);
+      if (
+        typeof values.attachment === 'string' &&
+        values.attachment === pond.getFile().source
+      ) {
+        return values;
+      }
+
+      let url = {
+        serverId: pond.getFile()?.serverId,
+      };
+
+      if (!url.serverId && pond.getFile().source instanceof File) {
+        // upload thumbnail to s3
+        loadingToast = toast.loading('uploading attachment ... ');
+        url = await pond.processFile();
+      }
+
+      await formik.setFieldValue('applicant.attachment', url.serverId);
+      toast.dismiss(loadingToast);
+
+      return {
+        ...values,
+        attachment: url.serverId,
+      };
+    } catch (err: any) {
+      console.log(' err : ', err);
+      toast.dismiss(loadingToast);
+      toast.error(err?.message ?? 'Error uploading attachment.');
       return null;
     }
   };
@@ -219,20 +277,42 @@ const Apply = () => {
     });
   }, [me]);
 
+  useEffect(() => {
+    if (jopPostsPayload.loading || meLoading || selectedJobPost?.id) {
+      return;
+    }
+
+    const selected = jopPostsPayload.data?.getJobPosts?.find(
+      (post) => post.id === jobPostId,
+    );
+
+    if (!selected) {
+      toast.error('Selected JobPost not found');
+      return;
+    }
+
+    setSelectedJobPost(selected as JobPost);
+  }, [jobPostId, jopPostsPayload, meLoading, selectedJobPost?.id]);
+
   if (meLoading || jopPostsPayload.loading) {
     return (
       <div className={s.container}>
         <div className={s.wrapper}>
           <div className={s.loader}>
-            <CircularProgress />
+            <Loader />
           </div>
         </div>
       </div>
     );
   }
 
+  if (!me?.emailVerified) {
+    void router.replace('/404');
+    return null;
+  }
+
   if (!selectedJobPost) {
-    return <div className={s.container} />;
+    return null;
   }
 
   return (
@@ -329,8 +409,8 @@ const Apply = () => {
             </Stack>
 
             <Stack spacing={0.5} flex="1" sx={{ width: '100%', mt: '1rem' }}>
-              <FormLabel>Other attachments</FormLabel>
-              <Attachment />
+              <FormLabel>Other related attachments :</FormLabel>
+              <Attachment attachment={formik.values.attachment ?? undefined} />
             </Stack>
 
             <Alert severity="info">

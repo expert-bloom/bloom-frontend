@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { CorporateFare, GitHub, Login, WorkTwoTone } from '@mui/icons-material';
+import { LoadingButton } from '@mui/lab';
 import {
   Alert,
   Button,
@@ -275,7 +276,11 @@ const LoginScene = () => {
                       whileTap: {},
                     }}
                     disabled={btnAttribute.disabled || props.isSubmitting}
-                    loading={btnAttribute.loading || props.isSubmitting}
+                    loading={
+                      btnAttribute.loading ||
+                      props.isSubmitting ||
+                      mePayload.loading
+                    }
                     type="submit"
                     endIcon={!props.isSubmitting && <Login />}
                     loadingPosition="start"
@@ -289,16 +294,17 @@ const LoginScene = () => {
                   </div>
 
                   <Stack gap={2}>
-                    <Button
+                    <LoadingButton
                       variant="outlined"
                       fullWidth
                       startIcon={<GoogleIcon />}
                       onClick={handleClick}
+                      loading={mePayload.loading}
                     >
                       Continue with Google
-                    </Button>
+                    </LoadingButton>
 
-                    <Button
+                    <LoadingButton
                       variant="outlined"
                       fullWidth
                       startIcon={<GitHub />}
@@ -306,7 +312,7 @@ const LoginScene = () => {
                       disabled
                     >
                       Continue with Github
-                    </Button>
+                    </LoadingButton>
 
                     <Menu
                       anchorEl={anchorEl}

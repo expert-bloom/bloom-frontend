@@ -18,17 +18,20 @@ import {
   CircularProgress,
   IconButton,
   Stack,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import { AnimatePresence } from 'framer-motion';
 import moment from 'moment';
 import Link from 'next/link';
+import { toast } from 'react-hot-toast';
 import SimpleBar from 'simplebar-react';
 
 import { MoButton } from '@/components/MoButton';
 import { MotionChild, MotionParent } from '@/components/MotionItems';
 import 'simplebar-react/dist/simplebar.min.css';
 import { type JobPost } from '@/graphql/client/gql/schema';
+import useMe from '@/hooks/useMe';
 import { capitalize } from '@/utils';
 
 import s from '../job_detail_slider.module.scss';
@@ -46,6 +49,7 @@ interface Props {
 
 const DetailContent = ({ jobPost, isLoading, onCloseJobDetail }: Props) => {
   const [isNavigating, setIsNavigating] = useState(false);
+  const { me } = useMe();
 
   // check if the router is navigating
 
@@ -159,14 +163,36 @@ const DetailContent = ({ jobPost, isLoading, onCloseJobDetail }: Props) => {
 
                 <div className={s.job_action}>
                   <div className={s.apply}>
-                    <Link
-                      href={`/applicant/apply/${jobPost.id}`}
-                      onClick={onCloseJobDetail}
-                    >
-                      <MoButton fullWidth variant="contained">
-                        Apply Now
-                      </MoButton>
-                    </Link>
+                    {me?.emailVerified ? (
+                      <Link
+                        href={`/applicant/apply/${jobPost.id}`}
+                        onClick={(e) => {
+                          if (!me?.emailVerified) {
+                            toast.error(
+                              'Verify your Email to start applying for job-posts',
+                            );
+                            e.preventDefault();
+                            return;
+                          }
+                          onCloseJobDetail();
+                        }}
+                      >
+                        <MoButton fullWidth variant="contained">
+                          Apply Now
+                        </MoButton>
+                      </Link>
+                    ) : (
+                      <Tooltip
+                        title="Verify you email to start applying!"
+                        placement="top"
+                      >
+                        <div>
+                          <Button fullWidth variant="contained" disabled>
+                            Apply Now
+                          </Button>
+                        </div>
+                      </Tooltip>
+                    )}
 
                     <MoButton
                       fullWidth

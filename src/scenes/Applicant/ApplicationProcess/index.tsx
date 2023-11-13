@@ -78,7 +78,7 @@ interface StepType {
   name: string;
   status: string;
   description: string;
-  component: React.ReactElement;
+  component: React.FC;
   completed: boolean;
   skipped: boolean;
   expanded: boolean;
@@ -103,6 +103,10 @@ const ApplicationProcess = () => {
   useEffect(() => {
     if (!id || loading || !selectedApplication) return;
 
+    if (error) {
+      return;
+    }
+
     const steps: StepType[] = [];
 
     console.log('selected application ---- : ', selectedApplication);
@@ -110,7 +114,10 @@ const ApplicationProcess = () => {
     // application stage
     const applicationStep: StepType = {
       name: 'Your Application',
-      component: <ApplicationDetail application={selectedApplication} />,
+      // component: <ApplicationDetail application={selectedApplication} />,
+      component: (prop) => (
+        <ApplicationDetail application={selectedApplication} {...prop} />
+      ),
       status: selectedApplication.status,
       expanded: false,
       description:
@@ -127,7 +134,10 @@ const ApplicationProcess = () => {
     // interview stage
     const interviewStep: StepType = {
       name: 'Interview',
-      component: <InterviewDetail applicationId={id as string} />,
+      // component: <InterviewDetail applicationId={id as string} />,
+      component: (prop) => (
+        <InterviewDetail applicationId={id as string} {...prop} />
+      ),
       status: selectedApplication?.interview?.status ?? 'NO INTERVIEW',
       expanded: false,
       description:
@@ -143,7 +153,10 @@ const ApplicationProcess = () => {
     // offer stage
     const offerStep: StepType = {
       name: 'Offer',
-      component: <OfferDetail applicationId={id as string} />,
+      // component: <OfferDetail applicationId={id as string} />,
+      component: (prop) => (
+        <OfferDetail applicationId={id as string} {...prop} />
+      ),
       status: selectedApplication?.offer?.status ?? 'NO OFFER YET',
       expanded: false,
       description:
@@ -164,10 +177,10 @@ const ApplicationProcess = () => {
     } else {
       setActiveStepIdx(0);
     }
-  }, [selectedApplication]);
+  }, [id, loading, selectedApplication, error]);
 
   useEffect(() => {
-    if (!steps.length) return;
+    if (steps.length === 0) return;
 
     const selectedStep = steps[activeStepIdx];
     setActiveStep(selectedStep);
@@ -228,7 +241,7 @@ const ApplicationProcess = () => {
           </Stepper>
         </div>
 
-        <div className={s.action_center}>{activeStep?.component}</div>
+        <div className={s.action_center}>{activeStep?.component({})}</div>
       </Container>
     </div>
   );

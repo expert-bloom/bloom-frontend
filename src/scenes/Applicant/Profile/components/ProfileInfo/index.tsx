@@ -140,6 +140,8 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
     }
   }, [me.me?.image]);
 
+  console.log('image : ', values.account.image);
+
   return (
     <div className={s.container}>
       <div className={s.wrapper}>
@@ -233,6 +235,8 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
                             `${process.env.NEXT_PUBLIC_URL}/api/image?url=${url}`,
                           )
                             .then(async (response) => {
+                              console.log('respons : ', response);
+
                               if (!response.ok) {
                                 error('Failed to load profile pic');
                                 // abort();

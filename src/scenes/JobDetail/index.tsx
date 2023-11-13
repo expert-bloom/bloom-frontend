@@ -17,17 +17,19 @@ import {
   Chip,
   Container,
   Stack,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import moment from 'moment/moment';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
 import { useRouter } from 'next/router';
+import { toast } from 'react-hot-toast';
 
 import Loader from '@/components/Loader';
 import { MoButton } from '@/components/MoButton';
 import { MotionChild } from '@/components/MotionItems';
 import { useGetJobPostsQuery } from '@/graphql/client/gql/schema';
+import useMe from '@/hooks/useMe';
 import { capitalize } from '@/utils';
 
 import s from './jobdetail.module.scss';
@@ -36,6 +38,7 @@ const JobDetail = () => {
   // get the id from the url
   const router = useRouter();
   const { id } = router.query;
+  const { me } = useMe();
 
   const { data: jobPost, loading } = useGetJobPostsQuery();
 
@@ -164,11 +167,38 @@ const JobDetail = () => {
 
           <div className={s.job_action}>
             <div className={s.apply}>
-              <Link href={`/applicant/apply/${selectedJobPost.id}`}>
-                <MoButton fullWidth variant="contained">
-                  Apply Now
-                </MoButton>
-              </Link>
+              {me?.emailVerified ? (
+                <Link
+                  href={`/applicant/apply/${selectedJobPost.id}`}
+                  onClick={(e) => {
+                    if (!me?.emailVerified) {
+                      toast.error(
+                        'Verify your Email to start applying for job-posts',
+                      );
+                      e.preventDefault();
+                    }
+                  }}
+                >
+                  <MoButton
+                    fullWidth
+                    variant="contained"
+                    disabled={!me?.emailVerified}
+                  >
+                    Apply Now
+                  </MoButton>
+                </Link>
+              ) : (
+                <Tooltip
+                  title="Verify you email to start applying!"
+                  placement="top"
+                >
+                  <div>
+                    <Button fullWidth variant="contained" disabled>
+                      Apply Now
+                    </Button>
+                  </div>
+                </Tooltip>
+              )}
 
               <MoButton fullWidth variant="outlined" startIcon={<Bookmark />}>
                 Save Job

@@ -1,51 +1,137 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
+
+import { toast } from 'react-hot-toast';
 
 import FilePond from '@/lib/filePong';
+import { usePresignedUpload } from '@/lib/uploader';
+import { useJobPostApplicationContext } from '@/scenes/Applicant/Apply';
 
 import s from '../apply.module.scss';
 
 interface Props {
-  resume?: string;
+  attachment?: string;
 }
 
-const Attachment = ({ resume }: Props) => {
-  const filePond = useRef<FilePond>(null);
-
-  useEffect(() => {
-    if (filePond.current && resume) {
-      // void filePond.current.addFile(resume);
-    }
-  }, [resume]);
+const Attachment = ({ attachment }: Props) => {
+  const { uploadToS3 } = usePresignedUpload();
+  const { formik, attachmentFilePond: filePond } =
+    useJobPostApplicationContext();
 
   return (
     <div className={s.file_pond_wrap}>
       <FilePond
-        ref={filePond}
         name="resume-file"
+        ref={filePond}
         allowFileSizeValidation
-        maxFileSize="10MB"
+        maxFileSize="20MB"
         labelMaxFileSizeExceeded={'File is too large'}
-        required
+        // checkValidity
         allowFileMetadata
         allowFilePoster
-        files={[]}
-        allowReplace={false}
-        allowBrowse={false}
+        allowReplace
         // forceRevert
-        allowRevert={false}
-        // disabled
+        allowRevert
         allowMultiple={false}
         instantUpload={false}
         credits={false}
         allowProcess={false}
-        iconRemove={'cv'}
-        onactivatefile={(file) => {
-          console.log('file : ', file);
-        }}
-        // disabled={disabled}
+        disabled={formik.isSubmitting}
+        labelIdle={
+          'Drag & Drop your Attachment Doc or <b class="filepond--label-action">Browse</b>'
+        }
+        onaddfile={(error, file) => {
+          console.log('onAddFile :> ', file, error, file.fileType);
+          if (error) {
+            toast.error('Error adding resume file');
+            return;
+          }
 
-        onerror={(err) => {
-          console.log('Error cv resume: ', err);
+          if (file?.file && error === null && !formik.values.attachment) {
+            void formik.setFieldValue('attachment', file.source);
+          }
+        }}
+        onerror={(err: any, file, status) => {
+          console.log('Error attachment: ', err);
+          toast.error(
+            `${status.main ?? err?.main ?? 'Error processing attachment'} - ${
+              status.sub ?? err?.sub ?? ''
+            }`,
+          );
+        }}
+        onremovefile={(err, file) => {
+          console.log('file-pond -remove: ', err, file);
+
+          if (err) {
+            return toast.error(`Error removing attachment. ${err?.body ?? ''}`);
+          }
+
+          void formik.setFieldValue(
+            'attachment',
+            formik.initialValues.attachment
+              ? null
+              : formik.initialValues.attachment,
+          );
+        }}
+        onprocessfile={(err, file) => {
+          console.log('file-pond -process: ', err, file);
+        }}
+        server={{
+          fetch: (url, load, error, progress, abort, headers) => {
+            console.log('fetch url: --- ', url);
+
+            fetch(url)
+              .then(async (response) => {
+                const blob = await response.blob();
+                const file = new File(
+                  [blob],
+                  response.url.split('/').pop() ?? 'attachment',
+                  {
+                    type: blob.type,
+                  },
+                );
+
+                load(file);
+              })
+              .catch((err) => {
+                toast.error(
+                  'Error loading Your attachment. Check your connection.',
+                );
+                console.log('attachment fetch error : ', err);
+              });
+          },
+          process: (
+            fieldName,
+            file,
+            metadata,
+            load,
+            error,
+            progress,
+            abort,
+          ) => {
+            uploadToS3(file as File, {
+              progress,
+              endpoint: {
+                request: {
+                  body: {
+                    // filePath: 'bloom/cv/',
+                    filePath: 'bloom',
+                  },
+                },
+              },
+            })
+              .then(({ url, key, bucket }) => {
+                console.log('key  --------  : ', key, url);
+
+                load(url);
+                void formik.setFieldValue('attachment', url);
+              })
+              .catch((err) => {
+                abort();
+                error('Error uploading attachment. Please try again.');
+                toast.error('Error uploading attachment. Please try again.');
+                throw err;
+              });
+          },
         }}
       />
     </div>

@@ -32,9 +32,7 @@ import { useRouter } from 'next/router';
 import { MotionParent } from '@/components/MotionItems';
 import {
   type Application,
-  type JobPost,
   useGetJobApplicationsQuery,
-  useGetJobPostsQuery,
 } from '@/graphql/client/gql/schema';
 import useMe from '@/hooks/useMe';
 import { useResponseErrorHandler } from '@/hooks/useResponseErrorHandler';
@@ -86,6 +84,7 @@ const MyInterviews = () => {
   const jobApplications = useGetJobApplicationsQuery({
     skip: !me?.applicant?.id,
     variables: {
+      includeCompany: true,
       input: {
         filter: {
           applicantId: me?.applicant?.id ?? '',
@@ -209,7 +208,7 @@ const MyInterviews = () => {
                                   />
                                   <Stack textAlign="center">
                                     <Typography variant="h6">
-                                      Company name
+                                      {applciation?.company?.companyName ?? '-'}
                                     </Typography>
                                   </Stack>
                                 </Stack>

@@ -15,12 +15,6 @@ function useMe() {
   useEffect(() => {
     // console.log('mePayload : ', data);
 
-    console.log(
-      'coooo : ',
-
-      Cookies.get('authorization'),
-    );
-
     if (error) {
       console.log('mePayload: ', mePayload);
       console.log('me: ', mePayload.data?.me);

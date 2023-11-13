@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 
-import { Modal } from '@mui/material';
 import { type Variants } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 
@@ -95,28 +94,26 @@ const JobDetail = () => {
   };
 
   return (
-    <Modal open={true} onClose={onClose} hideBackdrop={true}>
-      <MotionParent className={s.container} variants={{}}>
-        <MotionChild
-          className={s.blur_bg}
-          onClick={onClose}
-          variants={blurBgVariants.variants}
-          transition={transition}
-        />
+    <MotionParent className={s.container}>
+      <MotionChild
+        className={s.blur_bg}
+        onClick={onClose}
+        variants={blurBgVariants.variants}
+        transition={transition}
+      />
 
-        <MotionChild
-          className={s.menu_wrapper}
-          variants={menuVariants.variants}
-          transition={menuVariants.transition}
-        >
-          <DetailContent
-            isLoading={jobPost.loading}
-            jobPost={jobPost.data?.getJobPost}
-            onCloseJobDetail={onClose}
-          />
-        </MotionChild>
-      </MotionParent>
-    </Modal>
+      <MotionChild
+        className={s.menu_wrapper}
+        variants={menuVariants.variants}
+        transition={menuVariants.transition}
+      >
+        <DetailContent
+          isLoading={jobPost.loading}
+          jobPost={jobPost.data?.getJobPost}
+          onCloseJobDetail={onClose}
+        />
+      </MotionChild>
+    </MotionParent>
   );
 };
 

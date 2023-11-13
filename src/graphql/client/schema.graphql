@@ -145,10 +145,11 @@ type ApplicantSavedJobPostEdge {
     node: JobPost!
 }
 
-type Application implements Node {
+type Application {
     applicant: Applicant
     applicantId: String!
     attachment: String
+    company: Company
     coverLetter: String!
     createdAt: DateTime!
     email: String!
@@ -225,6 +226,11 @@ type FindOnePayload implements PayloadError {
     errors: [Error!]!
 }
 
+type GetApplicationPayload implements PayloadError {
+    application: Application
+    errors: [Error!]!
+}
+
 type Interview implements Node {
     answerText: String
     answerVideo: String
@@ -285,7 +291,6 @@ type Mutation {
     respondToOffer(input: RespondOfferInput!): Offer
     saveApplicant(input: SaveApplicantInput!): Boolean
     saveJobPost(input: SaveJobPostInput!): JobPost
-    sayHi: String!
     sendEmail: Boolean
     sendInterviewRequest(input: SendInterviewRequestInput!): Interview
     signUp(input: SignUpInput!): AuthPayload!
@@ -331,14 +336,14 @@ type Query {
     getApplicants(input: GetApplicantsInput!): ApplicantConnection
     getCompanies: [Company!]!
     getCompanyJobPosts(input: GetCompanyJobPostsInput!): CompanyJobPostsResponse!
-    getCurrentUser: AccountPayload
+    getJobApplication(input: GetApplicationFilter!): Application
     getJobApplications(input: GetJobApplicationsInput!): ApplicationConnections!
     getJobPost(input: GetJobPostInput!): JobPost
     getJobPosts(input: JopPostFilterInput): [JobPost!]!
     getSavedApplicant(input: GetSavedApplicantInput!): [Applicant!]!
     getSavedJobPosts(input: SavedJobPostsInput!): [JobPost!]!
     me: AccountPayload
-    sayHi: String
+    sayHi(input: String): String
 }
 
 type VerifyAccountPayload implements PayloadError {
@@ -462,8 +467,10 @@ input AccountFilterInput {
 
 input AccountUpdateInput {
     email: String
+    emailVerified: DateTime
     firstName: String
     image: String
+    isVerified: Boolean
     lastName: String
     phone: String
 }
@@ -592,6 +599,12 @@ input GetApplicantsInput {
     first: Int
     last: Int
     orderBy: [ApplicantOrdering!]
+}
+
+input GetApplicationFilter {
+    id: String!
+    jobPostId: String
+    status: ApplicationStatus
 }
 
 input GetCompanyJobPostsInput {

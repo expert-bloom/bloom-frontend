@@ -89,17 +89,6 @@ const SocialSignIn = () => {
               data: null,
             });
 
-            const opt: CookieAttributes = {
-              // domain: process.env.NEXT_PUBLIC_DOMAIN || 'localhost',
-              sameSite: 'lax', // secure: true,
-              path: '/',
-              expires: 20,
-            };
-
-            // mePayload.client.
-
-            // Cookies.set('test-auth', Cookies.get('authorization') ?? '-', opt);
-
             window.close();
           } else {
             window.opener?.postMessage({

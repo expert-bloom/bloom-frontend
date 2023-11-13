@@ -66,7 +66,7 @@ const Workforce = () => {
           <Card className={s.owner}>
             <Stack>
               <Avatar>
-                {me?.company?.companyName?.charAt(0).toUpperCase()}
+                {me?.company?.companyName?.charAt(0)?.toUpperCase() ?? '-'}
               </Avatar>
               <Typography variant="h6">
                 {`${me?.firstName} ${me?.lastName} - ${me?.company?.companyName}`}

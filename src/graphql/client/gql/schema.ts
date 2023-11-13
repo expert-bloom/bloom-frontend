@@ -93,8 +93,10 @@ export type AccountUpdate = PayloadError & {
 
 export type AccountUpdateInput = {
   email?: InputMaybe<Scalars['String']['input']>;
+  emailVerified?: InputMaybe<Scalars['DateTime']['input']>;
   firstName?: InputMaybe<Scalars['String']['input']>;
   image?: InputMaybe<Scalars['String']['input']>;
+  isVerified?: InputMaybe<Scalars['Boolean']['input']>;
   lastName?: InputMaybe<Scalars['String']['input']>;
   phone?: InputMaybe<Scalars['String']['input']>;
 };
@@ -221,10 +223,11 @@ export type ApplicantUpdateInput = {
   workExperience?: InputMaybe<Array<WorkExperienceInput>>;
 };
 
-export type Application = Node & {
+export type Application = {
   applicant: Maybe<Applicant>;
   applicantId: Scalars['String']['output'];
   attachment: Maybe<Scalars['String']['output']>;
+  company: Maybe<Company>;
   coverLetter: Scalars['String']['output'];
   createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
@@ -428,6 +431,17 @@ export type GetApplicantsInput = {
   orderBy?: InputMaybe<Array<ApplicantOrdering>>;
 };
 
+export type GetApplicationFilter = {
+  id: Scalars['String']['input'];
+  jobPostId?: InputMaybe<Scalars['String']['input']>;
+  status?: InputMaybe<ApplicationStatus>;
+};
+
+export type GetApplicationPayload = PayloadError & {
+  application: Maybe<Application>;
+  errors: Array<Error>;
+};
+
 export type GetCompanyJobPostsInput = {
   companyId: Scalars['String']['input'];
 };
@@ -555,7 +569,6 @@ export type Mutation = {
   respondToOffer: Maybe<Offer>;
   saveApplicant: Maybe<Scalars['Boolean']['output']>;
   saveJobPost: Maybe<JobPost>;
-  sayHi: Scalars['String']['output'];
   sendEmail: Maybe<Scalars['Boolean']['output']>;
   sendInterviewRequest: Maybe<Interview>;
   signUp: AuthPayload;
@@ -723,7 +736,7 @@ export type Query = {
   getApplicants: Maybe<ApplicantConnection>;
   getCompanies: Array<Company>;
   getCompanyJobPosts: CompanyJobPostsResponse;
-  getCurrentUser: Maybe<AccountPayload>;
+  getJobApplication: Maybe<Application>;
   getJobApplications: ApplicationConnections;
   getJobPost: Maybe<JobPost>;
   getJobPosts: Array<JobPost>;
@@ -749,6 +762,10 @@ export type QueryGetCompanyJobPostsArgs = {
   input: GetCompanyJobPostsInput;
 };
 
+export type QueryGetJobApplicationArgs = {
+  input: GetApplicationFilter;
+};
+
 export type QueryGetJobApplicationsArgs = {
   input: GetJobApplicationsInput;
 };
@@ -767,6 +784,10 @@ export type QueryGetSavedApplicantArgs = {
 
 export type QueryGetSavedJobPostsArgs = {
   input: SavedJobPostsInput;
+};
+
+export type QuerySayHiArgs = {
+  input?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type RespondInterviewInput = {
@@ -1710,6 +1731,7 @@ export type GetApplicantQuery = {
 
 export type GetJobApplicationsQueryVariables = Exact<{
   input: GetJobApplicationsInput;
+  includeCompany?: InputMaybe<Scalars['Boolean']['input']>;
 }>;
 
 export type GetJobApplicationsQuery = {
@@ -1727,6 +1749,11 @@ export type GetJobApplicationsQuery = {
         attachment: string | null;
         email: string;
         phone: string;
+        company?: {
+          id: string;
+          companyName: string | null;
+          logo: string | null;
+        } | null;
         jobPost: {
           id: string;
           title: string;
@@ -3196,11 +3223,19 @@ export type GetApplicantQueryResult = Apollo.QueryResult<
   GetApplicantQueryVariables
 >;
 export const GetJobApplicationsDocument = gql`
-  query GetJobApplications($input: GetJobApplicationsInput!) {
+  query GetJobApplications(
+    $input: GetJobApplicationsInput!
+    $includeCompany: Boolean = false
+  ) {
     getJobApplications(input: $input) {
       edges {
         node {
           ...ApplicationFragment
+          company @include(if: $includeCompany) {
+            id
+            companyName
+            logo
+          }
         }
       }
     }
@@ -3221,6 +3256,7 @@ export const GetJobApplicationsDocument = gql`
  * const { data, loading, error } = useGetJobApplicationsQuery({
  *   variables: {
  *      input: // value for 'input'
+ *      includeCompany: // value for 'includeCompany'
  *   },
  * });
  */

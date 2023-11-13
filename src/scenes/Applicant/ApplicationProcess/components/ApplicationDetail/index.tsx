@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   BusinessCenter,
@@ -23,11 +23,9 @@ import moment from 'moment/moment';
 import Link from 'next/link';
 import { BiLinkExternal } from 'react-icons/bi';
 
-import Loader from '@/components/Loader';
 import {
   type Application,
   ApplicationStatus,
-  InterviewStatus,
   useGetJobApplicationsQuery,
 } from '@/graphql/client/gql/schema';
 import useMe from '@/hooks/useMe';
@@ -42,19 +40,37 @@ interface Props {
 
 export const useFindApplication = (applicationId: string) => {
   const { me } = useMe();
+  const [selected, setSelected] = useState<Application>();
   const jobApplicationsResponse = useGetJobApplicationsQuery({
-    skip: !me?.applicant?.id,
+    skip: !me?.applicant?.id || !applicationId,
     fetchPolicy: 'network-only',
     variables: {
       input: {
         filter: {
           applicantId: me?.applicant?.id ?? '',
+          ids: [applicationId],
         },
       },
     },
   });
 
+  console.log('job applications res  :', jobApplicationsResponse);
+
   const { data, error, loading } = jobApplicationsResponse;
+
+  useEffect(() => {
+    if (!applicationId || jobApplicationsResponse.loading) {
+      return;
+    }
+
+    const find = data?.getJobApplications.edges.find(
+      (ja) => ja.node.id === applicationId,
+    )?.node;
+
+    if (find) {
+      setSelected(find as Application);
+    }
+  }, [applicationId, jobApplicationsResponse]);
 
   useResponseErrorHandler(
     jobApplicationsResponse.error,
@@ -62,9 +78,7 @@ export const useFindApplication = (applicationId: string) => {
   );
 
   return {
-    data: data?.getJobApplications.edges.find(
-      (ja) => ja.node.id === applicationId,
-    )?.node,
+    data: selected,
     error,
     loading,
   };

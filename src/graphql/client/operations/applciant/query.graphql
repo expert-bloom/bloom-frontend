@@ -223,11 +223,17 @@ query GetApplicant($input: GetApplicantInput!){
     }
 }
 
-query GetJobApplications($input: GetJobApplicationsInput!){
+query GetJobApplications($input: GetJobApplicationsInput!, $includeCompany: Boolean = false){
     getJobApplications(input: $input){
         edges {
             node {
                 ...ApplicationFragment
+
+                company @include(if: $includeCompany) {
+                    id
+                    companyName
+                    logo
+                }
             }
         }
     }
