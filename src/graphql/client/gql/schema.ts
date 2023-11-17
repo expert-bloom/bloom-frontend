@@ -1561,6 +1561,7 @@ export type ApplicationFragmentFragment = {
   attachment: string | null;
   email: string;
   phone: string;
+  companyId: string;
   jobPost: {
     id: string;
     title: string;
@@ -1755,6 +1756,7 @@ export type GetJobApplicationsQuery = {
         attachment: string | null;
         email: string;
         phone: string;
+        companyId: string;
         company?: {
           id: string;
           companyName: string | null;
@@ -2180,6 +2182,7 @@ export type GetCompanyJobApplicationsQuery = {
         attachment: string | null;
         email: string;
         phone: string;
+        companyId: string;
         applicant: {
           id: string;
           about: string | null;
@@ -2602,6 +2605,7 @@ export const ApplicationFragmentFragmentDoc = gql`
     attachment
     email
     phone
+    companyId
     jobPost {
       ...JopPostFragment
     }

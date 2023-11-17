@@ -126,6 +126,7 @@ fragment ApplicationFragment on Application{
     attachment
     email
     phone
+    companyId
 
 
     jobPost {
