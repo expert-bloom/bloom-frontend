@@ -1,7 +1,5 @@
 import { useEffect } from 'react';
 
-import Cookies from 'js-cookie';
-
 import { useMeQuery } from '@/graphql/client/gql/schema';
 import { useResponseErrorHandler } from '@/hooks/useResponseErrorHandler';
 
@@ -21,7 +19,9 @@ function useMe() {
     }
   }, [mePayload]);
 
-  useResponseErrorHandler(error, 'Error getting me !');
+  useResponseErrorHandler(error, 'Error getting me !', {
+    isShowToast: process.env.NODE_ENV === 'development',
+  });
 
   return {
     me: data?.me,

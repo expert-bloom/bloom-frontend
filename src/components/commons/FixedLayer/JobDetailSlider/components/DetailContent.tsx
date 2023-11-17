@@ -47,6 +47,56 @@ interface Props {
   onCloseJobDetail: () => void;
 }
 
+interface ApplyButtonProps {
+  id: string;
+  onClick?: (prop: any) => void;
+}
+
+export const ApplyButton = ({ id, onClick = () => null }: ApplyButtonProps) => {
+  const { me } = useMe();
+
+  return (
+    <Tooltip
+      title={
+        !me?.emailVerified
+          ? 'Verify you email to start applying!'
+          : !me.profileCompleteness
+          ? 'Complete Your Profile'
+          : ''
+      }
+      placement="top"
+    >
+      <Link
+        href={`/applicant/apply/${id}`}
+        onClick={(e) => {
+          if (!me?.emailVerified) {
+            toast.error('Verify your Email to start applying for job-posts');
+            e.preventDefault();
+            return;
+          }
+          onClick(e);
+        }}
+      >
+        <MoButton
+          motionProps={{
+            style: {
+              cursor:
+                !me?.emailVerified || !me.profileCompleteness
+                  ? 'not-allowed'
+                  : 'pointer',
+            },
+          }}
+          fullWidth
+          variant="contained"
+          disabled={!me?.emailVerified || !me.profileCompleteness}
+        >
+          Apply Now
+        </MoButton>
+      </Link>
+    </Tooltip>
+  );
+};
+
 const DetailContent = ({ jobPost, isLoading, onCloseJobDetail }: Props) => {
   const [isNavigating, setIsNavigating] = useState(false);
   const { me } = useMe();
@@ -163,36 +213,7 @@ const DetailContent = ({ jobPost, isLoading, onCloseJobDetail }: Props) => {
 
                 <div className={s.job_action}>
                   <div className={s.apply}>
-                    {me?.emailVerified ? (
-                      <Link
-                        href={`/applicant/apply/${jobPost.id}`}
-                        onClick={(e) => {
-                          if (!me?.emailVerified) {
-                            toast.error(
-                              'Verify your Email to start applying for job-posts',
-                            );
-                            e.preventDefault();
-                            return;
-                          }
-                          onCloseJobDetail();
-                        }}
-                      >
-                        <MoButton fullWidth variant="contained">
-                          Apply Now
-                        </MoButton>
-                      </Link>
-                    ) : (
-                      <Tooltip
-                        title="Verify you email to start applying!"
-                        placement="top"
-                      >
-                        <div>
-                          <Button fullWidth variant="contained" disabled>
-                            Apply Now
-                          </Button>
-                        </div>
-                      </Tooltip>
-                    )}
+                    <ApplyButton id={jobPost.id} />
 
                     <MoButton
                       fullWidth

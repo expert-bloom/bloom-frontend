@@ -17,14 +17,12 @@ import {
   Chip,
   Container,
   Stack,
-  Tooltip,
   Typography,
 } from '@mui/material';
 import moment from 'moment/moment';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { toast } from 'react-hot-toast';
 
+import { ApplyButton } from '@/components/commons/FixedLayer/JobDetailSlider/components/DetailContent';
 import Loader from '@/components/Loader';
 import { MoButton } from '@/components/MoButton';
 import { MotionChild } from '@/components/MotionItems';
@@ -167,38 +165,7 @@ const JobDetail = () => {
 
           <div className={s.job_action}>
             <div className={s.apply}>
-              {me?.emailVerified ? (
-                <Link
-                  href={`/applicant/apply/${selectedJobPost.id}`}
-                  onClick={(e) => {
-                    if (!me?.emailVerified) {
-                      toast.error(
-                        'Verify your Email to start applying for job-posts',
-                      );
-                      e.preventDefault();
-                    }
-                  }}
-                >
-                  <MoButton
-                    fullWidth
-                    variant="contained"
-                    disabled={!me?.emailVerified}
-                  >
-                    Apply Now
-                  </MoButton>
-                </Link>
-              ) : (
-                <Tooltip
-                  title="Verify you email to start applying!"
-                  placement="top"
-                >
-                  <div>
-                    <Button fullWidth variant="contained" disabled>
-                      Apply Now
-                    </Button>
-                  </div>
-                </Tooltip>
-              )}
+              <ApplyButton id={selectedJobPost.id} />
 
               <MoButton fullWidth variant="outlined" startIcon={<Bookmark />}>
                 Save Job

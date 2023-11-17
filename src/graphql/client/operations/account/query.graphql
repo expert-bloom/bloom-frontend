@@ -22,6 +22,7 @@ fragment AccountPayloadFragment on AccountPayload{
     lastName
     createdAt
     phone
+    profileCompleteness
 
     applicant{
         ...ApplicantFragment

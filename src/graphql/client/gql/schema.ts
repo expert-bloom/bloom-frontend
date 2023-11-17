@@ -65,6 +65,7 @@ export type AccountPayload = {
   lastName: Scalars['String']['output'];
   oAuthClient: Array<OAuth>;
   phone: Maybe<Scalars['String']['output']>;
+  profileCompleteness: Scalars['Int']['output'];
 };
 
 export enum AccountSortField {
@@ -228,6 +229,7 @@ export type Application = {
   applicantId: Scalars['String']['output'];
   attachment: Maybe<Scalars['String']['output']>;
   company: Maybe<Company>;
+  companyId: Scalars['String']['output'];
   coverLetter: Scalars['String']['output'];
   createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
@@ -899,6 +901,7 @@ export type UpdateProfileMutation = {
       lastName: string;
       createdAt: any;
       phone: string | null;
+      profileCompleteness: number;
       applicant: {
         id: string;
         about: string | null;
@@ -1018,6 +1021,7 @@ export type AccountPayloadFragmentFragment = {
   lastName: string;
   createdAt: any;
   phone: string | null;
+  profileCompleteness: number;
   applicant: {
     id: string;
     about: string | null;
@@ -1125,6 +1129,7 @@ export type FindAccountQuery = {
       lastName: string;
       createdAt: any;
       phone: string | null;
+      profileCompleteness: number;
       applicant: {
         id: string;
         about: string | null;
@@ -1230,6 +1235,7 @@ export type MeQuery = {
     lastName: string;
     createdAt: any;
     phone: string | null;
+    profileCompleteness: number;
     applicant: {
       id: string;
       about: string | null;
@@ -2508,6 +2514,7 @@ export const AccountPayloadFragmentFragmentDoc = gql`
     lastName
     createdAt
     phone
+    profileCompleteness
     applicant {
       ...ApplicantFragment
     }

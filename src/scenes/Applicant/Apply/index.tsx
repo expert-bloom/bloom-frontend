@@ -306,7 +306,7 @@ const Apply = () => {
     );
   }
 
-  if (!me?.emailVerified) {
+  if (!me?.emailVerified || !me.profileCompleteness) {
     void router.replace('/404');
     return null;
   }

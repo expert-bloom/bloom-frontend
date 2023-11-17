@@ -22,6 +22,7 @@ import {
   Typography,
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
+import clsx from 'clsx';
 import { useFormik } from 'formik';
 import moment from 'moment';
 import { toast } from 'react-hot-toast';
@@ -350,8 +351,8 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
           </div>
         </fieldset>
 
-        <Stack>
-          <fieldset className={s.wrap}>
+        <Stack style={{ display: 'none' }}>
+          <fieldset className={clsx([s.wrap])}>
             <legend>Experience</legend>
             <Stack
               spacing={0.5}

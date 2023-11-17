@@ -3,7 +3,7 @@ import React, { useEffect, useState, useTransition } from 'react';
 
 import { Bookmark, LocationOn } from '@mui/icons-material';
 import { LoadingButton } from '@mui/lab';
-import { Chip, Stack, Typography } from '@mui/material';
+import { Alert, Chip, Stack, Typography } from '@mui/material';
 import moment from 'moment';
 import { toast } from 'react-hot-toast';
 import { BsClock } from 'react-icons/bs';
@@ -62,6 +62,12 @@ const JobPostCard = ({ post }: Props) => {
         });
       }}
     >
+      {!me.me.profileCompleteness && (
+        <Alert className={s.incomplete_profile} severity="warning">
+          <Typography>complete your profile to start applying</Typography>
+        </Alert>
+      )}
+
       <div className={s.title_div}>
         <Typography className={s.title} variant="h6">
           {post.title}

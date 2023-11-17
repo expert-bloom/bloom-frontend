@@ -56,6 +56,7 @@ type AccountPayload {
     lastName: String!
     oAuthClient: [OAuth!]!
     phone: String
+    profileCompleteness: Int!
 }
 
 type AccountUpdate implements PayloadError {
@@ -150,6 +151,7 @@ type Application {
     applicantId: String!
     attachment: String
     company: Company
+    companyId: String!
     coverLetter: String!
     createdAt: DateTime!
     email: String!

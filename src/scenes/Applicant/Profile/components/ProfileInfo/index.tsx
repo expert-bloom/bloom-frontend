@@ -13,7 +13,6 @@ import {
   Typography,
 } from '@mui/material';
 import clsx from 'clsx';
-import { isEqual } from 'lodash';
 import { FilePond } from 'react-filepond';
 import { toast } from 'react-hot-toast';
 import Z from 'zod';
@@ -131,14 +130,14 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
   }, []);
 
   useEffect(() => {
-    if (!me.me?.image || !filePond.current) return;
+    console.log('image --- : ', formik.values.account.image);
 
-    if (me.me?.image !== filePond.current.getFile()?.source) {
-      console.log('image values ', me.me?.image);
+    if (!formik.values.account.image || !filePond.current) return;
 
-      void filePond.current?.addFile(me.me?.image);
+    if (formik.values.account.image !== filePond.current.getFile()?.source) {
+      void filePond.current?.addFile(formik.values.account.image);
     }
-  }, [me.me?.image]);
+  }, [formik.values.account.image]);
 
   console.log('image : ', values.account.image);
 
@@ -328,7 +327,7 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
               <TextField
                 name="applicant.jobPosition"
                 // disabled
-
+                required
                 fullWidth
                 onChange={handleChange}
                 value={values.applicant.jobPosition}
@@ -409,6 +408,7 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
                   <TextField
                     {...params}
                     // disabled
+                    required={!values.applicant.skills.length}
                     name="skills"
                     // label="Search industry"
                     // placeholder="type ..."
