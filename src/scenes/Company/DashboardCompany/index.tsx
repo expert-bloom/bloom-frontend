@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Stack, Typography } from '@mui/material';
+import { Container, Stack, Typography } from '@mui/material';
 
 import useMe from '@/hooks/useMe';
 import AccountSteps from '@/scenes/Company/DashboardCompany/AccountSteps';
@@ -16,7 +16,7 @@ const DashboardCompany = () => {
 
   return (
     <div className={s.container}>
-      <div className={s.wrapper}>
+      <Container maxWidth={'xl' as any} className={s.wrapper}>
         <Typography variant="h5" className={s.greeting} fontWeight={300}>
           Welcome back,{' '}
           <b>
@@ -25,9 +25,7 @@ const DashboardCompany = () => {
         </Typography>
 
         <div className={s.content}>
-          <div className={s.marketplace}>
-            <MarketPlace />
-          </div>
+          <MarketPlace />
 
           <Stack gap="2rem">
             <div className={s.how_it_work}>
@@ -49,7 +47,7 @@ const DashboardCompany = () => {
             </div>
           </Stack>
         </div>
-      </div>
+      </Container>
     </div>
   );
 };

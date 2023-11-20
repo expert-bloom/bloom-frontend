@@ -37,25 +37,28 @@
       }
 
      .content{
-       display: grid;
+       display: flex;
        flex-wrap: wrap;
-       grid-template-columns: 1fr 1fr .7fr;
        gap: 2rem;
        margin-top: 1rem;
 
-       .marketplace{
-         grid-area: 1/1/1/2;
+       @include s.media-breakpoint-up(md){
+
+         & > * {
+           flex: calc(50% - 2.5rem);
+         }
 
        }
 
-       .faq{
-         grid-area: 2/2/3/3;
-         //margin-top: -5rem;
-       }
+       @include s.media-breakpoint-up(lg){
 
-       .profile{
-         grid-area: 2/3/3/4;
-         //margin-top: -5rem;
+         & > * {
+           flex: calc(33% - 2.5rem);
+         }
+
+         & > :last-child {
+           flex: calc(25% - 2.5rem);
+         }
        }
      }
     }

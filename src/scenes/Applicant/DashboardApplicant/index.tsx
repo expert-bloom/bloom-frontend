@@ -6,7 +6,7 @@ import Image from 'next/image';
 import useMe from '@/hooks/useMe';
 
 import HowItWork from './ConfirmEmail';
-import s from './db-comp.module.scss';
+import s from './db-applicant.module.scss';
 import EditProfile from './EditProfile';
 import Placeholder from './img_2.png';
 
@@ -26,13 +26,9 @@ const DashboardCompany = () => {
           </div>
 
           <Stack gap="1rem">
-            <div className={s.how_it_work}>
-              <HowItWork />
-            </div>
+            <HowItWork />
 
-            <div className={s.faq}>
-              <EditProfile />
-            </div>
+            <EditProfile />
           </Stack>
         </div>
       </div>

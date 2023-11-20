@@ -40,20 +40,30 @@
 
      .content{
        display: flex;
+       flex-flow: wrap;
        gap: 2rem;
        margin-top: 1rem;
 
 
+       @include s.media-breakpoint-up(md){
 
-       .faq{
-         grid-area: 2/2/3/3;
-         //margin-top: -5rem;
+         & > * {
+           flex: calc(50% - 2.5rem);
+         }
+
        }
 
-       .profile{
-         grid-area: 2/3/3/4;
-         //margin-top: -5rem;
+       @include s.media-breakpoint-up(lg){
+
+         & > * {
+           flex: calc(33% - 2.5rem);
+         }
+
+         & > :last-child {
+           max-width: 25rem;
+         }
        }
+
      }
     }
   }

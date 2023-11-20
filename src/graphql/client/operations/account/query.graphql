@@ -42,10 +42,6 @@ fragment AccountPayloadFragment on AccountPayload{
         id
         provider
     }
-
-    affiliate {
-        id
-    }
 }
 
 

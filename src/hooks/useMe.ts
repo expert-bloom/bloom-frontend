@@ -5,7 +5,6 @@ import { useResponseErrorHandler } from '@/hooks/useResponseErrorHandler';
 
 function useMe() {
   const mePayload = useMeQuery({
-    // skip: !session?.user?.id,
     nextFetchPolicy: 'network-only',
   });
   const { data, loading, error } = mePayload;

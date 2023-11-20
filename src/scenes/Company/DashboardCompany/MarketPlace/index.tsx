@@ -62,7 +62,7 @@ const MarketPlace = () => {
               job.
             </Typography>
 
-            <Button size="large" variant="outlined">
+            <Button size="large">
               <Link href="/company/create-job-post">
                 Create Your First Job Post
               </Link>
@@ -101,7 +101,9 @@ const MarketPlace = () => {
           </Link>
         ) : (
           <Link href="/company/create-job-post">
-            <Button size="small">Create Job Post</Button>
+            <Button size="small" variant="outlined">
+              Create Job Post
+            </Button>
           </Link>
         )}
       </CardActions>

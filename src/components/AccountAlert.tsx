@@ -16,7 +16,7 @@ const AccountAlert = () => {
   const [sendEmail, sendEmailPayload] = useSendEmailMutation();
 
   return (
-    <>
+    <div className={s.account_alert_container}>
       {!me?.emailVerified && (
         <Alert severity="warning" className={s.account_alert}>
           Please verify your email address by sending a verification link to{' '}
@@ -45,7 +45,7 @@ const AccountAlert = () => {
         </Alert>
       )}
 
-      {!me?.profileCompleteness && (
+      {!me?.profileCompleteness && me?.applicant?.id && (
         <Alert severity="warning" className={s.account_alert}>
           Please Complete your profile to start applying for Job Post.
           <Link href="/applicant/profile">
@@ -55,7 +55,23 @@ const AccountAlert = () => {
           </Link>
         </Alert>
       )}
-    </>
+
+      {!me?.profileCompleteness && me?.company?.id && (
+        <Alert
+          severity="warning"
+          className={s.account_alert}
+          action={
+            <Link href="/company/profile">
+              <LoadingButton variant="text" sx={{ padding: 0 }}>
+                Complete Profile
+              </LoadingButton>
+            </Link>
+          }
+        >
+          Please Complete your profile to start receiving resumes.
+        </Alert>
+      )}
+    </div>
   );
 };
 

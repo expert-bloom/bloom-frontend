@@ -53,7 +53,6 @@ export type AccountFilterInput = {
 
 export type AccountPayload = {
   accountType: AccountType;
-  affiliate: Maybe<AffiliateLight>;
   applicant: Maybe<Applicant>;
   company: Maybe<Company>;
   createdAt: Scalars['DateTime']['output'];
@@ -118,7 +117,7 @@ export type AffiliateLight = {
   id: Scalars['String']['output'];
 };
 
-export type Applicant = Node & {
+export type Applicant = {
   WorkExperienceYears: Maybe<Scalars['Int']['output']>;
   about: Maybe<Scalars['String']['output']>;
   accomplishment: Maybe<Scalars['String']['output']>;
@@ -299,7 +298,7 @@ export enum CacheControlScope {
   Public = 'PUBLIC',
 }
 
-export type Company = Node & {
+export type Company = {
   account: Account;
   companyName: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
@@ -989,7 +988,6 @@ export type UpdateProfileMutation = {
         savedApplicants: Array<{ id: string }>;
       } | null;
       oAuthClient: Array<{ id: string; provider: string }>;
-      affiliate: { id: string } | null;
     } | null;
   };
 };
@@ -1109,7 +1107,6 @@ export type AccountPayloadFragmentFragment = {
     savedApplicants: Array<{ id: string }>;
   } | null;
   oAuthClient: Array<{ id: string; provider: string }>;
-  affiliate: { id: string } | null;
 };
 
 export type FindAccountQueryVariables = Exact<{
@@ -1217,7 +1214,6 @@ export type FindAccountQuery = {
         savedApplicants: Array<{ id: string }>;
       } | null;
       oAuthClient: Array<{ id: string; provider: string }>;
-      affiliate: { id: string } | null;
     } | null;
   } | null;
 };
@@ -1323,7 +1319,6 @@ export type MeQuery = {
       savedApplicants: Array<{ id: string }>;
     } | null;
     oAuthClient: Array<{ id: string; provider: string }>;
-    affiliate: { id: string } | null;
   } | null;
 };
 
@@ -2532,9 +2527,6 @@ export const AccountPayloadFragmentFragmentDoc = gql`
     oAuthClient {
       id
       provider
-    }
-    affiliate {
-      id
     }
   }
   ${ApplicantFragmentFragmentDoc}

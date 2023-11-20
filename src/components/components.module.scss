@@ -1,6 +1,10 @@
 @use 'src/styles' as s;
 
 
+.account_alert_container{
+  padding: 0;
+}
+
 .account_alert {
   //position: absolute;
   top: 100%;
@@ -15,6 +19,7 @@
   align-items: center;
   padding: 0;
   justify-content: center;
+
 
 
 

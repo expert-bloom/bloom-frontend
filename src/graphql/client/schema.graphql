@@ -44,7 +44,6 @@ type Account implements IAccount {
 
 type AccountPayload {
     accountType: AccountType!
-    affiliate: AffiliateLight
     applicant: Applicant
     company: Company
     createdAt: DateTime!
@@ -80,7 +79,7 @@ type AffiliateLight {
     id: String!
 }
 
-type Applicant implements Node {
+type Applicant {
     WorkExperienceYears: Int
     about: String
     accomplishment: String
@@ -201,7 +200,7 @@ type AuthPayload implements PayloadError {
     errors: [Error!]!
 }
 
-type Company implements Node {
+type Company {
     account: Account!
     companyName: String
     id: ID!

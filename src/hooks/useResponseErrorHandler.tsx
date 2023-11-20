@@ -17,8 +17,8 @@ export function useResponseErrorHandler(
       console.error(error);
       if (isShowToast) {
         toast.error(
-          message ||
-            error.message ||
+          error.message ||
+            message ||
             'Something went wrong, please try again later',
         );
       }
