@@ -14,6 +14,16 @@
 
     .wrapper {
       display: flex;
+      flex-flow: wrap;
+      margin-top: 3rem;
+      max-width: initial;
+      gap: 3rem;
+
+      @include s.media-breakpoint-up(md){
+        margin-top: 0;
+        flex-flow: nowrap;
+        gap: 1rem;
+      }
 
       & > * {
         width: 100%;
@@ -23,20 +33,32 @@
 
     .left {
       padding-top: 14vw;
-      padding-bottom: 9vw;
-      padding-left: 9vw;
+
       display: flex;
       flex-flow: column;
       gap: 3.2rem;
+      text-align: center;
 
       //border: 1px solid #000;
+
+      @include s.media-breakpoint-up(md) {
+        padding-bottom: 9vw;
+        padding-left: 9vw;
+        text-align: initial;
+      }
 
       .txt_big {
         position: relative;
         display: flex;
         max-width: max-content;
-        //border: 1px solid #000;
         overflow: hidden;
+        margin: 0 auto;
+
+        //border: 1px solid #000;
+
+        @include s.media-breakpoint-up(md) {
+          margin: 0;
+        }
 
         &:not(:first-child) {
           margin-top: .1rem;
@@ -49,8 +71,9 @@
 
         .title {
           font-weight: 300;
-          font-size: 5rem;
+          //font-size: 5rem;
           line-height: 130%;
+          margin: 0 auto;
         }
 
         .line {
@@ -64,15 +87,25 @@
       }
 
       .search {
-        align-items: center;
-        //border: 1px solid red;
+        display: flex;
+        flex-flow: column;
+        align-items: flex-start;
+        gap: 1rem;
+
+        @include s.media-breakpoint-up(md) {
+          flex-flow: row;
+          align-items: center;
+
+        }
 
         .search_input {
           width: 100%;
-          max-width: 20rem;
           //padding: .2rem;
           //padding: .5rem;
 
+          @include s.media-breakpoint-up(md) {
+            max-width: 20rem;
+          }
 
           & :global {
             .MuiInputBase-root {
@@ -94,9 +127,10 @@
               }
             }
           }
+
         }
 
-        button {
+        button.btn {
           p {
             margin: 0 0 -.3rem;
             padding: .5rem 0;
@@ -116,8 +150,12 @@
     .right {
       position: relative;
       overflow: hidden;
-      min-height: 100vh;
       display: flex;
+      padding: 3rem 0;
+
+      @include s.media-breakpoint-up(lg){
+        min-height: 100vh;
+      }
 
       .bg_circle {
         position: absolute;
@@ -140,13 +178,19 @@
       }
 
       .img_list {
-        max-width: 76%;
-        margin: auto auto -10%;
+        max-width: 86%;
+        margin: auto auto;
         //border: 1px solid red;
         display: flex;
         flex-flow: column;
         gap: 3rem;
         z-index: 2;
+
+        @include s.media-breakpoint-up(md){
+          margin: auto auto 0;
+          max-width: 76%;
+
+        }
 
         .img {
 

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { ManageSearch } from '@mui/icons-material';
-import { Button, Stack, TextField, Typography } from '@mui/material';
+import { Button, Container, Stack, TextField, Typography } from '@mui/material';
 import { motion, MotionConfig, type Variants } from 'framer-motion';
 import Image from 'next/image';
 
@@ -123,7 +123,7 @@ const heroTexts = ['We Can Help', 'You Find Your', 'Dream Job'];
 const Hero = () => {
   return (
     <div className={s.container}>
-      <div className={s.wrapper}>
+      <Container className={s.wrapper}>
         <MotionConfig transition={transition}>
           <motion.div
             className={s.left}
@@ -150,7 +150,7 @@ const Hero = () => {
                       }}
                       key={outerIdx + idx}
                     >
-                      <Typography variant="body1" className={s.title}>
+                      <Typography variant="h1" className={s.title}>
                         {letter === ' ' ? <>&nbsp;</> : letter}
                       </Typography>
                     </motion.div>
@@ -211,7 +211,7 @@ const Hero = () => {
             </motion.div>
           </motion.div>
         </MotionConfig>
-      </div>
+      </Container>
     </div>
   );
 };
