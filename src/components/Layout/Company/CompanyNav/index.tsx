@@ -4,6 +4,7 @@ import {
   CreateNewFolderRounded,
   Dashboard,
   Handshake,
+  ViewHeadline,
   WorkHistory,
 } from '@mui/icons-material';
 import {
@@ -11,8 +12,10 @@ import {
   Button,
   Slide,
   Stack,
+  type Theme,
   Tooltip,
   Typography,
+  useMediaQuery,
   useScrollTrigger,
 } from '@mui/material';
 import clsx from 'clsx';
@@ -21,6 +24,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
+import { SideNav } from '@/components/Layout/Company/CompanyNav/side-nav';
 import { usePopover } from '@/hooks/use-popover';
 import useMe from '@/hooks/useMe';
 import Logo from '@/public/logo.png';
@@ -89,6 +93,8 @@ const links = [
 ];
 
 export default function CompanyNav() {
+  const lgUp = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
+
   const router = useRouter();
   const accountPopover = usePopover();
   const { me } = useMe();
@@ -131,23 +137,35 @@ export default function CompanyNav() {
           </div>
 
           <Tooltip title="Profile">
-            <Avatar
-              onClick={accountPopover.handleOpen}
-              ref={accountPopover.anchorRef}
-              sx={{
-                cursor: 'pointer',
-                height: 40,
-                width: 40,
-              }}
-              src={me?.image ?? ''}
-            />
+            <Stack direction="row" alignItems="center" gap=".5rem">
+              <Avatar
+                onClick={accountPopover.handleOpen}
+                ref={accountPopover.anchorRef}
+                sx={{
+                  cursor: 'pointer',
+                  height: 40,
+                  width: 40,
+                }}
+                src={me?.image ?? ''}
+              />
+              {!lgUp && <ViewHeadline fontSize="medium" />}
+            </Stack>
           </Tooltip>
 
-          <AccountPopover
-            anchorEl={accountPopover.anchorRef.current}
-            open={accountPopover.open}
-            onClose={accountPopover.handleClose}
-          />
+          {lgUp ? (
+            <AccountPopover
+              anchorEl={accountPopover.anchorRef.current}
+              open={accountPopover.open}
+              onClose={accountPopover.handleClose}
+            />
+          ) : (
+            <SideNav
+              onClose={() => {
+                accountPopover.handleClose();
+              }}
+              open={accountPopover.open}
+            />
+          )}
         </motion.nav>
       </div>
     </HideOnScroll>

@@ -4,7 +4,7 @@
 .container {
   width: 100%;
   //max-width: 70rem;
-  padding: 0rem 4rem;
+  padding: 1rem;
   //margin: 1rem auto 0;
   margin: auto 0;
   display: flex;
@@ -19,6 +19,10 @@
   box-shadow: 0 .7rem 1rem 0 rgba(0, 0, 0, .02);
   //border-radius: 500000px;
   border-bottom: 1px solid #e0e0e0;
+
+  @include s.media-breakpoint-up(md) {
+    padding: 0 4rem;
+  }
 
 
   & > * {
@@ -35,7 +39,6 @@
         //padding: 1rem 0;
         box-sizing: border-box;
         padding-top: .3rem;
-        //border: 1px solid #000;
 
         img {
           display: block;
@@ -52,10 +55,14 @@
 
 
     .links {
-      display: flex;
+      display: none;
       gap: 1rem;
       margin-right: auto;
       margin-left: 2rem;
+
+      @include s.media-breakpoint-up(lg) {
+        display: flex;
+      }
 
       .link {
 
@@ -146,4 +153,69 @@
       padding: 2rem;
     }
   }
+}
+
+.side_nav {
+  color: black;
+
+  & :local {
+
+    .logo {
+      position: relative;
+      margin: .5rem auto .5rem 1.5rem;
+      gap: .5rem;
+
+    }
+  }
+}
+
+.list_item {
+  align-items: center;
+  border-radius: .5rem;
+  display: flex;
+  justify-content: flex-start;
+  padding: 1rem 1.3rem;
+  text-align: left;
+  width: 100%;
+  color: black;
+
+  &:hover {
+    //background-color: #EBEEFE;
+  }
+
+  &.active {
+
+    & :local {
+      .name {
+        color: white;
+        font-weight: 900;
+      }
+    }
+  }
+;
+
+  & :local {
+
+    .list_item_icon {
+
+      align-items: center;
+      //color: #4D5761;
+      display: inline-flex;
+      justify-content: center;
+      margin-right: 1rem;
+
+      svg {
+        fill: #4D5761;
+      }
+
+      &.active {
+        svg {
+          fill: white;
+        }
+      }
+    }
+
+
+  }
+
 }

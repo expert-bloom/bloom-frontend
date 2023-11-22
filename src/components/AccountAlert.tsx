@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { LoadingButton } from '@mui/lab';
-import { Alert } from '@mui/material';
+import { Alert, Stack } from '@mui/material';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 
@@ -57,19 +57,16 @@ const AccountAlert = () => {
       )}
 
       {!me?.profileCompleteness && me?.company?.id && (
-        <Alert
-          severity="warning"
-          className={s.account_alert}
-          action={
-            <Link href="/company/profile">
-              <LoadingButton variant="text" sx={{ padding: 0 }}>
-                Complete Profile
-              </LoadingButton>
-            </Link>
-          }
-        >
-          Please Complete your profile to start receiving resumes.
-        </Alert>
+        <Link href="/company/profile">
+          <Alert severity="warning" className={s.account_alert}>
+            <Stack direction="row" alignItems="center">
+              Please Complete your profile to start receiving resumes.
+              <Link href="/company/profile">
+                <LoadingButton variant="text">Complete Profile</LoadingButton>
+              </Link>
+            </Stack>
+          </Alert>
+        </Link>
       )}
     </div>
   );
