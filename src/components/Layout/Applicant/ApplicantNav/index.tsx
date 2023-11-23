@@ -6,14 +6,17 @@ import {
   Event,
   Handshake,
   Save,
+  ViewHeadline,
 } from '@mui/icons-material';
 import {
   Avatar,
   Button,
   Slide,
   Stack,
+  type Theme,
   Tooltip,
   Typography,
+  useMediaQuery,
   useScrollTrigger,
 } from '@mui/material';
 import clsx from 'clsx';
@@ -22,6 +25,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
+import { clientPaths } from '@/components/Layout/Applicant/config';
+import { SideNav } from '@/components/Layout/side-nav';
 import { usePopover } from '@/hooks/use-popover';
 import useMe from '@/hooks/useMe';
 import Logo from '@/public/logo.png';
@@ -99,17 +104,8 @@ export default function Applicant({ pageProps }: any) {
   // console.log('data: ', session, isTalent);
   const router = useRouter();
   const accountPopover = usePopover();
-
-  const { me: session } = useMe();
-
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const { me } = useMe();
+  const lgUp = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
 
   return (
     <HideOnScroll>
@@ -150,23 +146,38 @@ export default function Applicant({ pageProps }: any) {
           </div>
 
           <Tooltip title="Profile">
-            <Avatar
-              onClick={accountPopover.handleOpen}
-              ref={accountPopover.anchorRef}
-              sx={{
-                cursor: 'pointer',
-                height: 40,
-                width: 40,
-              }}
-              src={session?.image ?? ''}
-            />
+            <Stack direction="row" alignItems="center" gap=".5rem">
+              <Avatar
+                onClick={accountPopover.handleOpen}
+                ref={accountPopover.anchorRef}
+                sx={{
+                  cursor: 'pointer',
+                  height: 40,
+                  width: 40,
+                }}
+                src={me?.image ?? ''}
+              >
+                {me?.firstName?.charAt(0).toUpperCase()}
+              </Avatar>
+              {!lgUp && <ViewHeadline fontSize="medium" />}
+            </Stack>
           </Tooltip>
 
-          <AccountPopover
-            anchorEl={accountPopover.anchorRef.current}
-            open={accountPopover.open}
-            onClose={accountPopover.handleClose}
-          />
+          {lgUp ? (
+            <AccountPopover
+              anchorEl={accountPopover.anchorRef.current}
+              open={accountPopover.open}
+              onClose={accountPopover.handleClose}
+            />
+          ) : (
+            <SideNav
+              onClose={() => {
+                accountPopover.handleClose();
+              }}
+              open={accountPopover.open}
+              paths={clientPaths}
+            />
+          )}
         </motion.nav>
       </div>
     </HideOnScroll>

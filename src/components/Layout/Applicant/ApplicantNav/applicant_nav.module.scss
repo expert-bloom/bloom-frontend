@@ -4,7 +4,7 @@
 .container {
   width: 100%;
   //max-width: 70rem;
-  padding: 0rem 4rem;
+  padding: .8rem 1rem;
   //margin: 1rem auto 0;
   margin: auto 0;
   display: flex;
@@ -55,10 +55,14 @@
 
 
     .links {
-      display: flex;
+      display: none;
       gap: 1rem;
       margin-right: auto;
       margin-left: 2rem;
+
+      @include s.media-breakpoint-up(lg) {
+        display: flex;
+      }
 
       .link {
 

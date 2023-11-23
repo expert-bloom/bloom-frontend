@@ -24,7 +24,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import { SideNav } from '@/components/Layout/Company/CompanyNav/side-nav';
+import { companyPaths } from '@/components/Layout/Company/CompanyNav/config';
+import { SideNav } from '@/components/Layout/side-nav';
 import { usePopover } from '@/hooks/use-popover';
 import useMe from '@/hooks/useMe';
 import Logo from '@/public/logo.png';
@@ -93,11 +94,11 @@ const links = [
 ];
 
 export default function CompanyNav() {
+  const { me } = useMe();
   const lgUp = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
 
   const router = useRouter();
   const accountPopover = usePopover();
-  const { me } = useMe();
 
   return (
     <HideOnScroll>
@@ -147,7 +148,9 @@ export default function CompanyNav() {
                   width: 40,
                 }}
                 src={me?.image ?? ''}
-              />
+              >
+                {me?.firstName?.charAt(0).toUpperCase()}
+              </Avatar>
               {!lgUp && <ViewHeadline fontSize="medium" />}
             </Stack>
           </Tooltip>
@@ -164,6 +167,7 @@ export default function CompanyNav() {
                 accountPopover.handleClose();
               }}
               open={accountPopover.open}
+              paths={companyPaths}
             />
           )}
         </motion.nav>

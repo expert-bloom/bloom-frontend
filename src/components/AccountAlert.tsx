@@ -47,12 +47,14 @@ const AccountAlert = () => {
 
       {!me?.profileCompleteness && me?.applicant?.id && (
         <Alert severity="warning" className={s.account_alert}>
-          Please Complete your profile to start applying for Job Post.
-          <Link href="/applicant/profile">
-            <LoadingButton variant="text" sx={{ padding: 0, pl: '1.5rem' }}>
-              Complete Profile
-            </LoadingButton>
-          </Link>
+          <Stack direction="row" alignItems="center">
+            Please Complete your profile to start applying for Job Post.
+            <Link href="/applicant/profile">
+              <LoadingButton variant="text" sx={{ padding: 0, pl: '1.5rem' }}>
+                Complete Profile
+              </LoadingButton>
+            </Link>
+          </Stack>
         </Alert>
       )}
 

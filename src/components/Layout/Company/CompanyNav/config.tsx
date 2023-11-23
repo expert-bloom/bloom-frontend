@@ -8,7 +8,7 @@ import {
 } from '@mui/icons-material';
 import { SvgIcon } from '@mui/material';
 
-export const clientPaths = [
+export const companyPaths = [
   {
     title: 'Dashboard',
     path: '/company/dashboard',

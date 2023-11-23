@@ -7,14 +7,23 @@ import SimpleBar from 'simplebar-react';
 
 import useMe from '@/hooks/useMe';
 
-import s from './companynav.module.scss';
-import { clientPaths } from './config';
+import s from './Company/CompanyNav/companynav.module.scss';
 import { SideNavItem } from './side-nav-item';
 
 export const Scrollbar = styled(SimpleBar)``;
 
-export const SideNav = (props: any) => {
-  const { open, onClose } = props;
+interface Props {
+  open: boolean;
+  onClose: () => void;
+  paths: Array<{
+    title: string;
+    path: string;
+    icon: JSX.Element;
+    subPaths?: string[];
+  }>;
+}
+
+export const SideNav = ({ open, onClose, paths }: Props) => {
   const pathname = usePathname();
   const { me } = useMe();
 
@@ -55,9 +64,26 @@ export const SideNav = (props: any) => {
             <Typography>
               {me?.firstName} {me?.lastName}
             </Typography>
-            <Typography variant="subtitle2" color="gray" sx={{ mt: '-.2rem' }}>
-              {me?.company?.companyName ?? <i>no-company name</i>}
-            </Typography>
+
+            {me?.applicant && (
+              <Typography
+                variant="subtitle2"
+                color="gray"
+                sx={{ mt: '-.2rem' }}
+              >
+                {me?.applicant?.jobPosition ?? <i>no-job-position</i>}
+              </Typography>
+            )}
+
+            {me?.company && (
+              <Typography
+                variant="subtitle2"
+                color="gray"
+                sx={{ mt: '-.2rem' }}
+              >
+                {me?.company?.companyName ?? <i>no-company-name</i>}
+              </Typography>
+            )}
           </Stack>
         </Stack>
         <Divider sx={{ borderColor: 'neutral.200' }} />
@@ -78,7 +104,7 @@ export const SideNav = (props: any) => {
               m: 0,
             }}
           >
-            {clientPaths.map((item: any) => {
+            {paths.map((item: any) => {
               const active = item.path ? pathname === item.path : false;
 
               return (

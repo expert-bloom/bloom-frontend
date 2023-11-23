@@ -4,7 +4,7 @@ import { Box, ButtonBase, Typography } from '@mui/material';
 import clsx from 'clsx';
 import NextLink from 'next/link';
 
-import s from './companynav.module.scss';
+import s from './Company/CompanyNav/companynav.module.scss';
 
 /* SideNavItem.propTypes = {
   active: PropTypes.bool,
