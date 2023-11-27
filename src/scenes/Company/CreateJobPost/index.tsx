@@ -139,7 +139,7 @@ export const initialValuesShape = {
 
   // requirements
   experience: 3,
-  experienceLevel: '' as ExperienceLevel,
+  experienceLevel: 'Beginner' as ExperienceLevel,
   skills: [
     {
       label: '',
@@ -218,14 +218,13 @@ const PostJob = () => {
         <div className={s.content}>
           {/* <form onSubmit={formik.handleSubmit}> */}
           <Formik
+            initialValues={initialValuesShape}
             validateOnMount={false}
             validateOnChange={false}
             validateOnBlur={true}
             enableReinitialize
             validationSchema={currentStep?.schema}
             onSubmit={async (values, { setSubmitting }) => {
-              console.log('onSubmit values :', values);
-
               switch (currentStep.name) {
                 case stepNames.Details:
                   handleNext();
@@ -263,7 +262,7 @@ const PostJob = () => {
                     isVisible: true,
 
                     postedBy: me?.id ?? '',
-                    affiliateId: me?.affiliate?.id ?? null,
+                    affiliateId: null,
                     companyId:
                       me?.accountType === 'COMPANY'
                         ? (me?.company?.id as string)
@@ -311,7 +310,6 @@ const PostJob = () => {
                   break;
               }
             }}
-            initialValues={initialValuesShape}
           >
             {(props) => {
               return (
@@ -343,8 +341,6 @@ const PostJob = () => {
                         )(activeStep)}
                       />
                     </div>
-
-                    <Button variant="text">Exit</Button>
 
                     <div className={s.controlle_right} id="sticky">
                       <MoButton

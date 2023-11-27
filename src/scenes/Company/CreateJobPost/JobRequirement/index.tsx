@@ -101,7 +101,7 @@ const JobRequirement = () => {
         Job Requirements
       </Typography>
 
-      <Stack gap={3} direction="row">
+      <Stack gap={3} direction="row" alignItems="flex-start">
         <Stack gap={0.5} flex="1" justifyContent="space-between">
           <FormLabel htmlFor="skills">List of Skills required</FormLabel>
 
@@ -154,7 +154,7 @@ const JobRequirement = () => {
         </Stack>
       </Stack>
 
-      <Stack gap={3} direction="row">
+      <Stack gap={3} direction="row" alignItems="flex-start">
         <Stack gap={0.5} flex="1">
           <FormLabel htmlFor="eng-level">Level of English fluency</FormLabel>
 

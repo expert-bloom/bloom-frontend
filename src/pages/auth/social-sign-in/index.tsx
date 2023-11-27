@@ -1,7 +1,6 @@
 import React, { useEffect, useLayoutEffect } from 'react';
 
 import { Stack, Typography } from '@mui/material';
-import { type CookieAttributes } from 'js-cookie';
 import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
 
@@ -23,7 +22,7 @@ const SocialSignIn = () => {
 
   if (me?.id) {
     console.log('closing window ----> ');
-    toast.loading('Closing widnow ----> ');
+    toast.loading('Closing window ----> ');
     // window.close();
   }
 
@@ -97,7 +96,10 @@ const SocialSignIn = () => {
                 return social;
               })(),
               status: 'error',
-              message: 'Faild to Fetch Me query',
+              message:
+                process.env.NODE_ENV === 'production'
+                  ? 'Something went wrong!'
+                  : 'Failed to Fetch Me query',
               data: null,
             });
 
