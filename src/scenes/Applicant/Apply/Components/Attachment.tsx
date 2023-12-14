@@ -27,8 +27,6 @@ const Attachment = ({ attachment }: Props) => {
         labelMaxFileSizeExceeded={'File is too large'}
         // checkValidity
         allowFileMetadata
-        allowFilePoster
-        allowReplace
         // forceRevert
         allowRevert
         allowMultiple={false}

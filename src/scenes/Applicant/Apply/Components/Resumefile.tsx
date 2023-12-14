@@ -33,7 +33,6 @@ const ResumeFile = ({ resume }: Props) => {
         labelMaxFileSizeExceeded={'File is too large'}
         // checkValidity
         allowFileMetadata
-        allowFilePoster
         allowReplace
         // forceRevert
         allowRevert

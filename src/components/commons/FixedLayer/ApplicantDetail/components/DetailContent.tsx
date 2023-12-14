@@ -316,7 +316,6 @@ const DetailContent = () => {
                     // checkValidity
 
                     allowFileMetadata
-                    allowFilePoster
                     files={[
                       profile.resume ??
                         `${process.env.NEXT_PUBLIC_S3_CLOUD_FRONT_URL}/next-s3-uploads/bloom/Resume-20(1)-compressed.pdf`,

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises,@typescript-eslint/prefer-nullish-coalescing,@typescript-eslint/restrict-template-expressions */
 import React, { useEffect, useRef } from 'react';
 
 import { AddCircle, CalendarMonth, ExpandMore } from '@mui/icons-material';
@@ -51,6 +50,26 @@ const initialExperience: WorkExperienceFormValuesType = {
   endDate: null as unknown as string,
   accomplishment: '' as string,
   skills: [] as string[],
+};
+
+const downloadCv = (url: string | null | undefined | File) => {
+  if (!url) {
+    toast.error('Empty file');
+    return;
+  }
+
+  const element: HTMLAnchorElement = document.createElement('a');
+  if (typeof url === 'string') {
+    element.href = url;
+    element.download = url?.split('/')?.pop() || 'filename';
+    element.target = '_blank';
+    element.click();
+  } else if (url instanceof File) {
+    element.href = URL.createObjectURL(url);
+    // element.download = url?.name || 'filename';
+    element.target = '_blank';
+    element.click();
+  }
 };
 
 const ProfileInfo = ({ stepUtil }: StepProps) => {
@@ -192,7 +211,7 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
               labelMaxFileSizeExceeded={'File is too large'}
               // checkValidity
               allowFileMetadata
-              allowFilePoster
+              // allowFilePoster
               allowReplace
               // forceRevert
               allowRevert
@@ -242,23 +261,11 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
               onprocessfile={(err, file) => {
                 console.log('file-pond -process: ', err, file);
               }}
+              onactivatefile={(file) => {
+                console.log('file.serverId : ', file.serverId, file);
+                downloadCv(file.source as string);
+              }}
               server={{
-                /* fetch: async (url, load, error, progress, abort, headers) => {
-                 console.log('fetch url: --- ', url);
-
-                 fetch(url)
-                   .then(async (response) => {
-                     const blob = await response.blob();
-                     const file = new File([blob], 'fileName', {
-                       type: blob.type,
-                     });
-
-                     load(file);
-                   })
-                   .catch((err) => {
-                     console.log('image fetch error : ', err);
-                   });
-               }, */
                 process: async (
                   fieldName,
                   file,
@@ -316,11 +323,17 @@ const ProfileInfo = ({ stepUtil }: StepProps) => {
               <TextField
                 name="applicant.introVideo"
                 fullWidth
-                placeholder="Ex. https://www.youtube.com/watch?v=1234567890"
+                // placeholder="Ex. https://www.youtube.com/watch?v=1234567890"
                 onChange={formik.handleChange}
                 value={formik.values.applicant.introVideo}
                 error={Boolean(formik.errors.applicant?.introVideo)}
-                helperText={formik.errors.applicant?.introVideo as string}
+                helperText={
+                  formik.values.applicant.introVideo &&
+                  (getYoutubeIdFromURL(formik.values.applicant.introVideo) ===
+                  ''
+                    ? 'Invalid Youtube URL'
+                    : '')
+                }
               />
               <FormControlLabel
                 control={<Checkbox />}

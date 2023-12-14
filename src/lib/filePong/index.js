@@ -7,13 +7,7 @@ import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orien
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import FilePondPluginImageResize from 'filepond-plugin-image-resize';
 import FilePondPluginImageTransform from 'filepond-plugin-image-transform';
-// Import the plugin code
-import FilePondPluginFilePoster from 'filepond-plugin-file-poster';
 import FilePondPluginFileMetadata from 'filepond-plugin-file-metadata';
-
-// Import the plugin styles
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import FilePondPluginMediaPreview from 'filepond-plugin-media-preview';
 import { FilePond, registerPlugin } from 'react-filepond';
 
@@ -25,6 +19,7 @@ import 'filepond-plugin-file-poster/dist/filepond-plugin-file-poster.css';
 import 'filepond/dist/filepond.min.css';
 
 import { create as dokaCreate } from './doka/doka.esm.min';
+import dynamic from 'next/dynamic';
 
 // Register the plugins
 registerPlugin(
@@ -37,7 +32,6 @@ registerPlugin(
   FilePondPluginMediaPreview,
   FilePondPluginFileValidateType,
   FilePondPluginFileValidateSize,
-  FilePondPluginFilePoster,
   FilePondPluginFileMetadata,
 );
 
