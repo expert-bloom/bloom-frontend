@@ -57,6 +57,9 @@ const RegisterDetails = ({ onReturn }: any) => {
       // console.log('onmessage event : --- ', event.data);
       if (event.data.type === 'auth') {
         if (event.data.status === 'success') {
+          router.reload();
+          return;
+
           void mePayload
             .refetch()
             .then((res) => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect } from 'react';
+import React, { useEffect } from 'react';
 
 import { Stack, Typography } from '@mui/material';
 import { useRouter } from 'next/router';
@@ -26,7 +26,7 @@ const SocialSignIn = () => {
     // window.close();
   }
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (start && social && clientType) {
       // `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/signup/${social}/?authType=${authType}&clientType=${clientType}`,
 
@@ -58,6 +58,20 @@ const SocialSignIn = () => {
 
   useEffect(() => {
     if (success) {
+      window.opener?.postMessage({
+        type: 'auth',
+        social: (function () {
+          return social;
+        })(),
+        status: 'success',
+        message: 'Successfully logged in',
+        data: null,
+      });
+
+      window.close();
+
+      return;
+
       void mePayload
         .refetch()
         .then((res) => {

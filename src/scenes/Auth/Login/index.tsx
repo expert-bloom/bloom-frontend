@@ -71,11 +71,20 @@ const LoginScene = () => {
   const [currentStep, setCurrentStep] = useState<typeof formSteps[number]>({
     ...formSteps[activeStep],
   });
+
+  console.log('me : ', mePayload);
+
   useEffect(() => {
     window.onmessage = (event) => {
       if (event.data.type === 'auth') {
-        // console.log('onmessage event : --- ', event.data);
+        console.log('onmessage event : --- ', event.data);
+
         if (event.data.status === 'success') {
+          console.log('sucess ---> ');
+
+          router.reload();
+          return;
+
           void mePayload
             .refetch()
             .then(async (res) => {
@@ -96,7 +105,7 @@ const LoginScene = () => {
     return () => {
       window.onmessage = null;
     };
-  }, []);
+  }, [mePayload]);
 
   const handleNext = () => {
     setActiveStep((activeStep) => Math.min(formSteps.length, activeStep + 1));
