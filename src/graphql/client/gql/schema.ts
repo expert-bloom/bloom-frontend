@@ -1546,7 +1546,6 @@ export type OfferFragmentFragment = {
 
 export type ApplicationFragmentFragment = {
   id: string;
-  createdAt: any;
   updatedAt: any;
   status: ApplicationStatus;
   resume: string;
@@ -1741,7 +1740,6 @@ export type GetJobApplicationsQuery = {
     edges: Array<{
       node: {
         id: string;
-        createdAt: any;
         updatedAt: any;
         status: ApplicationStatus;
         resume: string;
@@ -2167,7 +2165,6 @@ export type GetCompanyJobApplicationsQuery = {
     edges: Array<{
       node: {
         id: string;
-        createdAt: any;
         updatedAt: any;
         status: ApplicationStatus;
         resume: string;
@@ -2587,7 +2584,6 @@ export const OfferFragmentFragmentDoc = gql`
 export const ApplicationFragmentFragmentDoc = gql`
   fragment ApplicationFragment on Application {
     id
-    createdAt
     updatedAt
     status
     resume

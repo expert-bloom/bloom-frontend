@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import Link from 'next/link';
 
-import { useGetJobPostsQuery } from '@/graphql/client/gql/schema';
+import { useGetCompanyJobPostsQuery } from '@/graphql/client/gql/schema';
 import useMe from '@/hooks/useMe';
 
 import s from './marketplace.module.scss';
@@ -24,9 +24,8 @@ import s from './marketplace.module.scss';
 const MarketPlace = () => {
   const { me } = useMe();
 
-  const jobPostPayload = useGetJobPostsQuery({
+  const jobPostPayload = useGetCompanyJobPostsQuery({
     skip: !me?.company?.id,
-    fetchPolicy: 'cache-and-network',
     variables: {
       input: {
         companyId: me?.company?.id ?? '',
@@ -37,7 +36,7 @@ const MarketPlace = () => {
   const { data: posts, loading } = jobPostPayload;
 
   useEffect(() => {
-    // console.log('posts : ', posts);
+    console.log('posts : ', me);
   }, [posts]);
 
   return (
@@ -50,11 +49,15 @@ const MarketPlace = () => {
         </div>
       )}
 
-      {!(!loading && posts?.getJobPosts && posts?.getJobPosts?.length > 0) && (
+      {!(
+        !loading &&
+        posts?.getCompanyJobPosts &&
+        posts?.getCompanyJobPosts?.jobPosts?.length > 0
+      ) && (
         <CardContent>
           <Alert severity="info" className={s.alert}>
             <AlertTitle>
-              <Typography variant="h5">No Job Post</Typography>
+              <Typography variant="h5">No Job Post </Typography>
             </AlertTitle>
 
             <Typography variant="body1" fontWeight={300}>
@@ -72,8 +75,8 @@ const MarketPlace = () => {
       )}
 
       <div className={s.posts}>
-        {posts?.getJobPosts &&
-          posts.getJobPosts.slice(0, 3).map((post) => (
+        {posts?.getCompanyJobPosts &&
+          posts.getCompanyJobPosts?.jobPosts?.map((post) => (
             <ButtonBase className={s.post} key={post.id}>
               <Link href="/company/marketplace">
                 <Typography>{post.title}</Typography>
@@ -95,7 +98,8 @@ const MarketPlace = () => {
       </div>
 
       <CardActions>
-        {posts?.getJobPosts && posts?.getJobPosts?.length > 0 ? (
+        {posts?.getCompanyJobPosts &&
+        posts?.getCompanyJobPosts?.jobPosts.length > 0 ? (
           <Link href="/company/marketplace">
             <Button size="small">See More</Button>
           </Link>

@@ -116,7 +116,7 @@ fragment OfferFragment on Offer{
 
 fragment ApplicationFragment on Application{
     id
-    createdAt
+#    createdAt
     updatedAt
     status
     resume
